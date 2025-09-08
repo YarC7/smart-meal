@@ -8,6 +8,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Layout from "@/components/layout/Layout";
+import Planner from "@/pages/Planner";
+import Grocery from "@/pages/Grocery";
+import Progress from "@/pages/Progress";
 
 const queryClient = new QueryClient();
 
