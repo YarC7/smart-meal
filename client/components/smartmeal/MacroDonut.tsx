@@ -19,12 +19,21 @@ export default function MacroDonut({
     <div className="h-48">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Pie data={data} dataKey="value" nameKey="name" innerRadius={36} outerRadius={64} paddingAngle={4}>
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            innerRadius={36}
+            outerRadius={64}
+            paddingAngle={4}
+          >
             {data.map((d, i) => (
               <Cell key={i} fill={d.color} />
             ))}
           </Pie>
-          <Tooltip formatter={(v: number) => `${Math.round((v / total) * 100)}%`} />
+          <Tooltip
+            formatter={(v: number) => `${Math.round((v / total) * 100)}%`}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>

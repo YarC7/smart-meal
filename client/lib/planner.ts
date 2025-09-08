@@ -3,7 +3,12 @@ import { MEALS, Meal, Ingredient } from "@/data/meals";
 export type Sex = "male" | "female";
 export type Activity = "sedentary" | "light" | "moderate" | "very" | "extra";
 export type Goal = "lose" | "maintain" | "gain";
-export type Preference = "omnivore" | "vegetarian" | "vegan" | "low_carb" | "high_protein";
+export type Preference =
+  | "omnivore"
+  | "vegetarian"
+  | "vegan"
+  | "low_carb"
+  | "high_protein";
 
 export interface ProfileInput {
   age: number;
@@ -33,7 +38,12 @@ export interface WeekPlan {
   targets: MacroTargets;
 }
 
-export function mifflinStJeorBMR({ sex, weightKg, heightCm, age }: ProfileInput) {
+export function mifflinStJeorBMR({
+  sex,
+  weightKg,
+  heightCm,
+  age,
+}: ProfileInput) {
   // kcal/day
   const s = sex === "male" ? 5 : -161;
   return 10 * weightKg + 6.25 * heightCm - 5 * age + s;
@@ -85,10 +95,20 @@ export function computeTargets(input: ProfileInput): MacroTargets {
 
 export function filterMeals(pref: Preference): Meal[] {
   let list = MEALS;
-  if (pref === "vegetarian") list = MEALS.filter((m) => !m.tags.includes("beef") && !m.tags.includes("pork") && !/shrimp|chicken|beef|salmon/i.test(m.name));
+  if (pref === "vegetarian")
+    list = MEALS.filter(
+      (m) =>
+        !m.tags.includes("beef") &&
+        !m.tags.includes("pork") &&
+        !/shrimp|chicken|beef|salmon/i.test(m.name),
+    );
   if (pref === "vegan") list = MEALS.filter((m) => m.tags.includes("vegan"));
-  if (pref === "low_carb") list = MEALS.filter((m) => m.tags.includes("low_carb") || m.carbs <= 35);
-  if (pref === "high_protein") list = MEALS.filter((m) => m.tags.includes("high_protein") || m.protein >= 30);
+  if (pref === "low_carb")
+    list = MEALS.filter((m) => m.tags.includes("low_carb") || m.carbs <= 35);
+  if (pref === "high_protein")
+    list = MEALS.filter(
+      (m) => m.tags.includes("high_protein") || m.protein >= 30,
+    );
   return list;
 }
 
@@ -97,21 +117,33 @@ export function buildWeekPlan(input: ProfileInput): WeekPlan {
   const list = filterMeals(input.preference);
   // Ensure we have some breakfast/lunch/dinner categorization
   const breakfasts = list.filter((m) => m.tags.includes("breakfast"));
-  const mains = list.filter((m) => m.tags.includes("lunch") || m.tags.includes("dinner"));
+  const mains = list.filter(
+    (m) => m.tags.includes("lunch") || m.tags.includes("dinner"),
+  );
   const fallback = list;
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const plan = days.map((d, i) => {
-    const b = breakfasts[i % (breakfasts.length || 1)] || fallback[i % fallback.length];
-    const l = mains[(i * 2) % (mains.length || 1)] || fallback[(i * 2) % fallback.length];
-    const dn = mains[(i * 2 + 1) % (mains.length || 1)] || fallback[(i * 2 + 1) % fallback.length];
+    const b =
+      breakfasts[i % (breakfasts.length || 1)] || fallback[i % fallback.length];
+    const l =
+      mains[(i * 2) % (mains.length || 1)] ||
+      fallback[(i * 2) % fallback.length];
+    const dn =
+      mains[(i * 2 + 1) % (mains.length || 1)] ||
+      fallback[(i * 2 + 1) % fallback.length];
     return { day: d, meals: [b, l, dn] } as DayPlan;
   });
 
   return { days: plan, targets };
 }
 
-export type GroceryItem = { name: string; unit: string; qty: number; cost?: number };
+export type GroceryItem = {
+  name: string;
+  unit: string;
+  qty: number;
+  cost?: number;
+};
 
 export function aggregateGroceries(plan: WeekPlan) {
   const map = new Map<string, GroceryItem>();
@@ -159,7 +191,13 @@ export function loadPlan(): WeekPlan | null {
   return v ? (JSON.parse(v) as WeekPlan) : null;
 }
 
-export type DayLog = { date: string; calories: number; protein: number; carbs: number; fat: number };
+export type DayLog = {
+  date: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
 export type Logs = Record<string, DayLog>; // key by yyyy-mm-dd
 
 export function loadLogs(): Logs {

@@ -46,7 +46,9 @@ export default function Planner() {
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Form */}
         <section className="lg:col-span-1 space-y-4">
-          <h1 className="text-2xl font-extrabold tracking-tight">Meal Planner</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight">
+            Meal Planner
+          </h1>
           <div className="rounded-xl border bg-card p-6 space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <label className="text-sm">
@@ -55,7 +57,9 @@ export default function Planner() {
                   type="number"
                   className="mt-1 w-full rounded-md border bg-background px-3 py-2"
                   value={profile.age}
-                  onChange={(e) => setProfile({ ...profile, age: +e.target.value })}
+                  onChange={(e) =>
+                    setProfile({ ...profile, age: +e.target.value })
+                  }
                   min={10}
                   max={99}
                 />
@@ -65,7 +69,9 @@ export default function Planner() {
                 <select
                   className="mt-1 w-full rounded-md border bg-background px-3 py-2"
                   value={profile.sex}
-                  onChange={(e) => setProfile({ ...profile, sex: e.target.value as any })}
+                  onChange={(e) =>
+                    setProfile({ ...profile, sex: e.target.value as any })
+                  }
                 >
                   <option value="male">Male</option>
                   <option value="female">Female</option>
@@ -77,7 +83,9 @@ export default function Planner() {
                   type="number"
                   className="mt-1 w-full rounded-md border bg-background px-3 py-2"
                   value={profile.heightCm}
-                  onChange={(e) => setProfile({ ...profile, heightCm: +e.target.value })}
+                  onChange={(e) =>
+                    setProfile({ ...profile, heightCm: +e.target.value })
+                  }
                   min={120}
                   max={220}
                 />
@@ -88,7 +96,9 @@ export default function Planner() {
                   type="number"
                   className="mt-1 w-full rounded-md border bg-background px-3 py-2"
                   value={profile.weightKg}
-                  onChange={(e) => setProfile({ ...profile, weightKg: +e.target.value })}
+                  onChange={(e) =>
+                    setProfile({ ...profile, weightKg: +e.target.value })
+                  }
                   min={35}
                   max={200}
                 />
@@ -98,7 +108,9 @@ export default function Planner() {
                 <select
                   className="mt-1 w-full rounded-md border bg-background px-3 py-2"
                   value={profile.activity}
-                  onChange={(e) => setProfile({ ...profile, activity: e.target.value as any })}
+                  onChange={(e) =>
+                    setProfile({ ...profile, activity: e.target.value as any })
+                  }
                 >
                   <option value="sedentary">Sedentary</option>
                   <option value="light">Light</option>
@@ -112,7 +124,9 @@ export default function Planner() {
                 <select
                   className="mt-1 w-full rounded-md border bg-background px-3 py-2"
                   value={profile.goal}
-                  onChange={(e) => setProfile({ ...profile, goal: e.target.value as any })}
+                  onChange={(e) =>
+                    setProfile({ ...profile, goal: e.target.value as any })
+                  }
                 >
                   <option value="lose">Lose</option>
                   <option value="maintain">Maintain</option>
@@ -124,7 +138,12 @@ export default function Planner() {
                 <select
                   className="mt-1 w-full rounded-md border bg-background px-3 py-2"
                   value={profile.preference}
-                  onChange={(e) => setProfile({ ...profile, preference: e.target.value as any })}
+                  onChange={(e) =>
+                    setProfile({
+                      ...profile,
+                      preference: e.target.value as any,
+                    })
+                  }
                 >
                   <option value="omnivore">Omnivore</option>
                   <option value="vegetarian">Vegetarian</option>
@@ -142,14 +161,18 @@ export default function Planner() {
                     max={120}
                     step={1}
                     value={profile.budgetPerWeek}
-                    onChange={(e) => setProfile({ ...profile, budgetPerWeek: +e.target.value })}
+                    onChange={(e) =>
+                      setProfile({ ...profile, budgetPerWeek: +e.target.value })
+                    }
                     className="w-full"
                   />
                   <input
                     type="number"
                     className="w-24 rounded-md border bg-background px-3 py-2"
                     value={profile.budgetPerWeek}
-                    onChange={(e) => setProfile({ ...profile, budgetPerWeek: +e.target.value })}
+                    onChange={(e) =>
+                      setProfile({ ...profile, budgetPerWeek: +e.target.value })
+                    }
                   />
                 </div>
               </label>
@@ -167,13 +190,28 @@ export default function Planner() {
             <h2 className="text-sm font-semibold">Daily targets</h2>
             <div className="mt-4 grid grid-cols-2 gap-4">
               <div>
-                <MacroDonut protein={targets.protein} carbs={targets.carbs} fat={targets.fat} />
+                <MacroDonut
+                  protein={targets.protein}
+                  carbs={targets.carbs}
+                  fat={targets.fat}
+                />
               </div>
               <ul className="text-sm space-y-2">
-                <li>Calories: <span className="font-semibold">{targets.calories} kcal</span></li>
-                <li>Protein: <span className="font-semibold">{targets.protein} g</span></li>
-                <li>Carbs: <span className="font-semibold">{targets.carbs} g</span></li>
-                <li>Fat: <span className="font-semibold">{targets.fat} g</span></li>
+                <li>
+                  Calories:{" "}
+                  <span className="font-semibold">{targets.calories} kcal</span>
+                </li>
+                <li>
+                  Protein:{" "}
+                  <span className="font-semibold">{targets.protein} g</span>
+                </li>
+                <li>
+                  Carbs:{" "}
+                  <span className="font-semibold">{targets.carbs} g</span>
+                </li>
+                <li>
+                  Fat: <span className="font-semibold">{targets.fat} g</span>
+                </li>
               </ul>
             </div>
           </div>
@@ -198,9 +236,14 @@ export default function Planner() {
                   </div>
                   <ul className="mt-3 space-y-2 text-sm">
                     {d.meals.map((m) => (
-                      <li key={m.id} className="flex items-center justify-between rounded-md border px-3 py-2">
+                      <li
+                        key={m.id}
+                        className="flex items-center justify-between rounded-md border px-3 py-2"
+                      >
                         <span className="truncate mr-3">{m.name}</span>
-                        <span className="text-foreground/60 whitespace-nowrap">{m.calories} kcal</span>
+                        <span className="text-foreground/60 whitespace-nowrap">
+                          {m.calories} kcal
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -208,7 +251,9 @@ export default function Planner() {
               ))}
             </div>
           ) : (
-            <p className="mt-4 text-foreground/70">Fill the form and generate a plan. It will be saved automatically.</p>
+            <p className="mt-4 text-foreground/70">
+              Fill the form and generate a plan. It will be saved automatically.
+            </p>
           )}
           {plan && (
             <div className="mt-6 flex flex-wrap items-center gap-3">

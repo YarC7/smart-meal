@@ -10,7 +10,14 @@ import {
   saveLogs,
 } from "@/lib/planner";
 import { MEALS } from "@/data/meals";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+} from "recharts";
 
 function todayKey() {
   const d = new Date();
@@ -20,10 +27,18 @@ function todayKey() {
 export default function Progress() {
   const profile = loadProfile();
   const plan = loadPlan();
-  const targets = profile ? computeTargets(profile) : { calories: 2000, protein: 150, carbs: 225, fat: 56 };
+  const targets = profile
+    ? computeTargets(profile)
+    : { calories: 2000, protein: 150, carbs: 225, fat: 56 };
   const [logs, setLogs] = useState<Logs>(() => loadLogs());
 
-  const today = logs[todayKey()] || { date: todayKey(), calories: 0, protein: 0, carbs: 0, fat: 0 };
+  const today = logs[todayKey()] || {
+    date: todayKey(),
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0,
+  };
 
   useEffect(() => saveLogs(logs), [logs]);
 
@@ -73,12 +88,36 @@ export default function Progress() {
 
         <aside className="rounded-xl border bg-card p-6 space-y-4">
           <h2 className="text-sm font-semibold">Today's macros</h2>
-          <MacroDonut protein={today.protein} carbs={today.carbs} fat={today.fat} />
+          <MacroDonut
+            protein={today.protein}
+            carbs={today.carbs}
+            fat={today.fat}
+          />
           <ul className="text-sm space-y-1">
-            <li>Calories: <span className="font-semibold">{today.calories}/{targets.calories}</span></li>
-            <li>Protein: <span className="font-semibold">{today.protein}/{targets.protein} g</span></li>
-            <li>Carbs: <span className="font-semibold">{today.carbs}/{targets.carbs} g</span></li>
-            <li>Fat: <span className="font-semibold">{today.fat}/{targets.fat} g</span></li>
+            <li>
+              Calories:{" "}
+              <span className="font-semibold">
+                {today.calories}/{targets.calories}
+              </span>
+            </li>
+            <li>
+              Protein:{" "}
+              <span className="font-semibold">
+                {today.protein}/{targets.protein} g
+              </span>
+            </li>
+            <li>
+              Carbs:{" "}
+              <span className="font-semibold">
+                {today.carbs}/{targets.carbs} g
+              </span>
+            </li>
+            <li>
+              Fat:{" "}
+              <span className="font-semibold">
+                {today.fat}/{targets.fat} g
+              </span>
+            </li>
           </ul>
 
           <div className="pt-2 border-t">
@@ -91,7 +130,9 @@ export default function Progress() {
                   className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary"
                 >
                   <span className="truncate mr-3">{m.name}</span>
-                  <span className="text-foreground/60 whitespace-nowrap">{m.calories} kcal</span>
+                  <span className="text-foreground/60 whitespace-nowrap">
+                    {m.calories} kcal
+                  </span>
                 </button>
               ))}
             </div>
@@ -100,9 +141,14 @@ export default function Progress() {
       </div>
 
       {plan ? (
-        <p className="mt-6 text-xs text-foreground/60">Tip: keep a streak by logging daily. Nudges will remind you when you're 40% below targets.</p>
+        <p className="mt-6 text-xs text-foreground/60">
+          Tip: keep a streak by logging daily. Nudges will remind you when
+          you're 40% below targets.
+        </p>
       ) : (
-        <p className="mt-6 text-xs text-foreground/60">Generate a plan to see personalized targets.</p>
+        <p className="mt-6 text-xs text-foreground/60">
+          Generate a plan to see personalized targets.
+        </p>
       )}
     </div>
   );
