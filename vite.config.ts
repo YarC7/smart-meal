@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => ({
         ]
       },
       devOptions: {
-        enabled: true
+        enabled: false
       },
       manifest: {
         name: "SmartMeal — Personalized Meal Plans",
