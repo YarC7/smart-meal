@@ -91,14 +91,17 @@ export default function Index() {
                             style={{ background: m.color }}
                           />
                           <span>
-                            {m.name}: {Math.round((m.value / totalMacros) * 100)}%
+                            {m.name}:{" "}
+                            {Math.round((m.value / totalMacros) * 100)}%
                           </span>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold">This Week's Groceries</h3>
+                    <h3 className="text-sm font-semibold">
+                      This Week's Groceries
+                    </h3>
                     <ul className="mt-4 space-y-2">
                       {groceries.map((g) => (
                         <li

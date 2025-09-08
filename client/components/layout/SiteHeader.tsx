@@ -13,7 +13,9 @@ export function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <div className="size-8 rounded-md bg-gradient-to-br from-primary to-accent animate-glow" />
-          <span className="text-lg font-extrabold tracking-tight">SmartMeal</span>
+          <span className="text-lg font-extrabold tracking-tight">
+            SmartMeal
+          </span>
         </Link>
         <nav className="hidden md:flex items-center gap-1">
           <NavLink to="/" className={navLinkClass} end>
