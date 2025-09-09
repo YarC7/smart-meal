@@ -62,6 +62,7 @@ export default function Progress() {
       fat: m.fat,
     });
     setLogs({ ...logs, [todayKey()]: updated });
+    try { const n = m?.name || "Meal"; (await import("@/hooks/use-toast")).toast({ title: "Logged", description: `${n} added to today.` }); } catch {}
   };
 
   const undo = () => {
