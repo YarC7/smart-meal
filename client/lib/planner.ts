@@ -78,6 +78,20 @@ export function swapMeal(
   return updated;
 }
 
+export function swapMealWith(
+  plan: WeekPlan,
+  dayIndex: number,
+  mealIndex: number,
+  newMeal: Meal,
+): WeekPlan {
+  const newDays = plan.days.map((d, i) =>
+    i !== dayIndex ? d : { ...d, meals: d.meals.map((m, j) => (j === mealIndex ? newMeal : m)) },
+  );
+  const updated: WeekPlan = { ...plan, days: newDays };
+  savePlan(updated);
+  return updated;
+}
+
 export function regenerateDay(
   plan: WeekPlan,
   dayIndex: number,
