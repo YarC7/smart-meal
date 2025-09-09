@@ -8,6 +8,8 @@ import {
   loadPlan,
   loadProfile,
   saveLogs,
+  pushLogAction,
+  popLastLogAction,
 } from "@/lib/planner";
 import { MEALS } from "@/data/meals";
 import {
