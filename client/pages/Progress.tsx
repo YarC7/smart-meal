@@ -97,6 +97,19 @@ export default function Progress() {
 
       <div className="mt-6 grid lg:grid-cols-3 gap-8">
         <section className="rounded-xl border bg-card p-6 space-y-4 lg:col-span-2">
+          {plan && (
+            <div className="rounded-lg border p-4">
+              <h3 className="text-sm font-semibold mb-2">Today's planned meals</h3>
+              <div className="grid gap-2">
+                {plan.days[(new Date().getDay() + 6) % 7].meals.map((pm) => (
+                  <button key={pm.id} onClick={() => addMeal(pm.id)} className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary">
+                    <span className="truncate mr-3">{pm.name}</span>
+                    <span className="text-foreground/60 whitespace-nowrap">{pm.calories} kcal</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <h2 className="text-sm font-semibold">Weekly calories</h2>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
