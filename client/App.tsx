@@ -10,9 +10,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Layout from "@/components/layout/Layout";
-import Planner from "@/pages/Planner";
-import Grocery from "@/pages/Grocery";
-import Progress from "@/pages/Progress";
+import { lazy, Suspense } from "react";
+const Planner = lazy(() => import("@/pages/Planner"));
+const Grocery = lazy(() => import("@/pages/Grocery"));
+const Progress = lazy(() => import("@/pages/Progress"));
 
 const queryClient = new QueryClient();
 
