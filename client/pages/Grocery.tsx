@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { toast } from "@/hooks/use-toast";
 import {
   aggregateGroceries,
   formatQty,
@@ -35,8 +36,10 @@ export default function Grocery() {
       .join("\n");
     try {
       await navigator.clipboard.writeText(text);
-      alert("Copied to clipboard");
-    } catch {}
+      toast({ title: "Copied", description: "Grocery list copied to clipboard." });
+    } catch {
+      toast({ title: "Copy failed", description: "Could not copy to clipboard." });
+    }
   };
 
   if (!plan || !profile) {
@@ -115,7 +118,10 @@ export default function Grocery() {
               Copy list
             </button>
             <button
-              onClick={() => window.print()}
+              onClick={() => {
+                window.print();
+                toast({ title: "Print", description: "Print dialog opened." });
+              }}
               className="rounded-md bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80"
             >
               Print
