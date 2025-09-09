@@ -76,6 +76,7 @@ export default function Progress() {
       fat: Math.max(0, today.fat - last.fat),
     };
     setLogs({ ...logs, [todayKey()]: updated });
+    try { (await import("@/hooks/use-toast")).toast({ title: "Undone", description: "Reverted last log." }); } catch {}
   };
 
   const last7 = useMemo(() => {
