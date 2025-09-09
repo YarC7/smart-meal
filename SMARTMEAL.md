@@ -3,6 +3,7 @@
 This document describes the implemented features, workflows, data types, and PWA architecture.
 
 ## Summary
+
 - Responsive SPA with pages: Home, Planner, Grocery, Progress.
 - Science‑backed rule engine (BMR × activity ± goal) for daily macro targets and 7‑day plan generation.
 - Grocery aggregation with budget awareness, cost sorting, copy/print.
@@ -10,6 +11,7 @@ This document describes the implemented features, workflows, data types, and PWA
 - Starbucks‑grade PWA via vite-plugin-pwa (injectManifest) + custom Workbox SW: app‑shell precache, offline fallbacks, image/assets caching, background sync queues, install prompt, iOS support. SW disabled during dev to keep HMR stable; fully enabled in production.
 
 ## App Structure
+
 - client/components/layout/
   - SiteHeader.tsx (nav + install button + route prefetch)
   - Layout.tsx (header/main/footer shell)
@@ -32,33 +34,82 @@ This document describes the implemented features, workflows, data types, and PWA
 - vite.config.ts (VitePWA configuration + Express dev integration)
 
 ## Core Types
+
 From client/data/meals.ts:
+
 ```ts
-export type Ingredient = { name: string; unit: string; qty: number; costPerUnit?: number };
+export type Ingredient = {
+  name: string;
+  unit: string;
+  qty: number;
+  costPerUnit?: number;
+};
 export type Meal = {
-  id: string; name: string; calories: number; protein: number; carbs: number; fat: number;
-  tags: string[]; ingredients: Ingredient[];
+  id: string;
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  tags: string[];
+  ingredients: Ingredient[];
 };
 ```
+
 From client/lib/planner.ts:
+
 ```ts
-export type Sex = 'male' | 'female';
-export type Activity = 'sedentary' | 'light' | 'moderate' | 'very' | 'extra';
-export type Goal = 'lose' | 'maintain' | 'gain';
-export type Preference = 'omnivore' | 'vegetarian' | 'vegan' | 'low_carb' | 'high_protein';
+export type Sex = "male" | "female";
+export type Activity = "sedentary" | "light" | "moderate" | "very" | "extra";
+export type Goal = "lose" | "maintain" | "gain";
+export type Preference =
+  | "omnivore"
+  | "vegetarian"
+  | "vegan"
+  | "low_carb"
+  | "high_protein";
 export interface ProfileInput {
-  age: number; sex: Sex; heightCm: number; weightKg: number; activity: Activity; goal: Goal;
-  preference: Preference; budgetPerWeek: number;
+  age: number;
+  sex: Sex;
+  heightCm: number;
+  weightKg: number;
+  activity: Activity;
+  goal: Goal;
+  preference: Preference;
+  budgetPerWeek: number;
 }
-export interface MacroTargets { calories: number; protein: number; carbs: number; fat: number }
-export interface DayPlan { day: string; meals: Meal[] }
-export interface WeekPlan { days: DayPlan[]; targets: MacroTargets }
-export type GroceryItem = { name: string; unit: string; qty: number; cost?: number };
-export type DayLog = { date: string; calories: number; protein: number; carbs: number; fat: number };
+export interface MacroTargets {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+export interface DayPlan {
+  day: string;
+  meals: Meal[];
+}
+export interface WeekPlan {
+  days: DayPlan[];
+  targets: MacroTargets;
+}
+export type GroceryItem = {
+  name: string;
+  unit: string;
+  qty: number;
+  cost?: number;
+};
+export type DayLog = {
+  date: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
 export type Logs = Record<string, DayLog>;
 ```
 
 ## Planner Engine
+
 - Form inputs captured into `ProfileInput` (age, sex, height, weight, activity, goal, preference, budget).
 - BMR (Mifflin-St Jeor) → TDEE = BMR × activityFactor → goal adjustment (−20% lose, +15% gain).
 - Macro split by preference:
@@ -69,15 +120,18 @@ export type Logs = Record<string, DayLog>;
 - Persistence: `saveProfile/loadProfile`, `savePlan/loadPlan` (localStorage).
 
 ## Grocery Aggregation
+
 - `aggregateGroceries(plan)`: merges all `Meal.ingredients` by (name|unit), sums quantities, estimates total cost from `costPerUnit`, sorts by cost desc; returns `{ items, totalCost }`.
 - UI: copy to clipboard, print, budget vs. estimated total indicator.
 
 ## Progress & Logging
+
 - `Logs` persisted in localStorage under `smartmeal.logs.v1`.
 - Today key: ISO date (YYYY-MM-DD). Quick add buttons add full meal macros into today’s log.
 - Charts: Recharts (BarChart for weekly calories, MacroDonut for daily split).
 
 ## PWA Architecture
+
 - Plugin: `vite-plugin-pwa` with `strategies: 'injectManifest'`.
 - Service Worker: `client/sw.ts` (Workbox) with:
   - App‑shell precache: `precacheAndRoute(self.__WB_MANIFEST)`.
@@ -95,30 +149,36 @@ export type Logs = Record<string, DayLog>;
 - iOS support: `apple-mobile-web-app-capable`, status bar style, apple title in `index.html`.
 
 ## Route Prefetch & Code Splitting
+
 - Pages `Planner`, `Grocery`, `Progress` are lazy‑loaded with `React.lazy` + `Suspense` fallback.
 - Hover prefetch in `SiteHeader` triggers dynamic `import()` of page modules.
 
 ## Theming & UI
+
 - TailwindCSS brand tokens in HSL (global.css) with emerald primary; dark mode supported.
 - `fontFamily.sans` extended; glow animation for brand dot.
 
 ## Dev vs Production Behavior
+
 - Dev: SW disabled (`devOptions.enabled=false`, unregister in pwa.ts) to avoid HMR issues.
 - Prod: SW enabled with autoUpdate; background sync and caching active.
 
 ## Build & Run
+
 - Dev: `pnpm dev`
 - Build: `pnpm build`
 - Start: `pnpm start`
 - Test: `pnpm test`
 
 ## Testing PWA
+
 1. Open the app (production or local build over HTTPS).
 2. Install prompt appears or use browser menu to Install/Add to Home Screen.
 3. Visit `/`, `/planner`, `/grocery`, `/progress`; then go offline and revisit—shell and cached assets load.
 4. Try image requests offline—fallback placeholder is served.
 
 ## Integration & Next Steps
+
 - Push Notifications: requires VAPID keys + server endpoints to send notifications. We can add subscription flow and server push handler (`/api/notify`).
 - USDA/FDC integration for food DB + barcode scanning (ZXing) with local caching to meet <2s latency.
 - Authentication (OAuth2 + PKCE) and encrypted-at-rest storage for sensitive data.
