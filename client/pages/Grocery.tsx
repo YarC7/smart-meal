@@ -91,42 +91,29 @@ export default function Grocery() {
 
       <div className="mt-6 grid lg:grid-cols-3 gap-8">
         <section className="lg:col-span-2 rounded-xl border bg-card p-6">
-          <ul className="space-y-2">
-            {items.map((i) => (
-              <li
-                key={`${i.name}-${i.unit}`}
-                className="flex items-center justify-between rounded-md border px-3 py-2 text-sm"
-              >
-                <span className="truncate mr-3">{i.name}</span>
-                <div className="flex items-center gap-4">
-                  <span className="text-foreground/70">
-                    {formatQty(i.qty)} {i.unit}
-                  </span>
-                  {i.cost !== undefined && (
-                    <span className="text-foreground/60">
-                      {i.cost.toFixed(2)}
-                    </span>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
+          {groupGroceries(items).map(({ category, list }) => (
+            <details key={category} className="group mb-4" open>
+              <summary className="flex items-center justify-between cursor-pointer select-none">
+                <h3 className="text-sm font-semibold">{category}</h3>
+                <span className="text-xs text-foreground/60">{list.length} items</span>
+              </summary>
+              <ul className="mt-2 space-y-2">
+                {list.map((i) => (
+                  <li key={`${category}-${i.name}-${i.unit}`} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+                    <span className="truncate mr-3">{i.name}</span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-foreground/70">{formatQty(i.qty)} {i.unit}</span>
+                      {i.cost !== undefined && (<span className="text-foreground/60">{i.cost.toFixed(2)}</span>)}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ))}
+
           <div className="mt-6 flex gap-3">
-            <button
-              onClick={copy}
-              className="rounded-md bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80"
-            >
-              Copy list
-            </button>
-            <button
-              onClick={() => {
-                window.print();
-                toast({ title: "Print", description: "Print dialog opened." });
-              }}
-              className="rounded-md bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80"
-            >
-              Print
-            </button>
+            <button onClick={copy} className="rounded-md bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80">Copy list</button>
+            <button onClick={() => { window.print(); toast({ title: "Print", description: "Print dialog opened." }); }} className="rounded-md bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80">Print</button>
           </div>
         </section>
         <aside className="rounded-xl border bg-card p-6">
@@ -138,18 +125,23 @@ export default function Grocery() {
             </div>
             <div className="flex items-center justify-between">
               <span>Remaining vs budget</span>
-              <span
-                className={overUnder >= 0 ? "text-emerald-600" : "text-red-600"}
-              >
-                {overUnder >= 0 ? "+" : ""}
-                {overUnder.toFixed(2)}
-              </span>
+              <span className={overUnder >= 0 ? "text-emerald-600" : "text-red-600"}>{overUnder >= 0 ? "+" : ""}{overUnder.toFixed(2)}</span>
             </div>
+            {profile && (
+              <div className="mt-2">
+                {(() => { const pct = Math.min(150, Math.round((totalCost / Math.max(1, profile.budgetPerWeek)) * 100)); const color = pct < 80 ? 'bg-emerald-500' : pct <= 100 ? 'bg-amber-500' : 'bg-red-500'; return (
+                  <div>
+                    <div className="h-2 rounded bg-muted overflow-hidden">
+                      <div className={`h-2 ${color}`} style={{ width: `${Math.min(100, pct)}%` }} />
+                    </div>
+                    <div className="mt-1 text-xs text-foreground/60">{pct}% of budget</div>
+                  </div>
+                ); })()}
+              </div>
+            )}
           </div>
           <p className="mt-4 text-xs text-foreground/60">
-            Ingredients sorted by cost to help you trim the bill. Consider
-            swapping high‑cost items like salmon or avocado for cheaper protein
-            sources if over budget.
+            Ingredients grouped by category to simplify shopping.
           </p>
         </aside>
       </div>
