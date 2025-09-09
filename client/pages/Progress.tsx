@@ -54,6 +54,20 @@ export default function Progress() {
       carbs: today.carbs + m.carbs,
       fat: today.fat + m.fat,
     };
+    pushLogAction(todayKey(), { mealId, calories: m.calories, protein: m.protein, carbs: m.carbs, fat: m.fat });
+    setLogs({ ...logs, [todayKey()]: updated });
+  };
+
+  const undo = () => {
+    const last = popLastLogAction(todayKey());
+    if (!last) return;
+    const updated: DayLog = {
+      date: todayKey(),
+      calories: Math.max(0, today.calories - last.calories),
+      protein: Math.max(0, today.protein - last.protein),
+      carbs: Math.max(0, today.carbs - last.carbs),
+      fat: Math.max(0, today.fat - last.fat),
+    };
     setLogs({ ...logs, [todayKey()]: updated });
   };
 
@@ -123,7 +137,10 @@ export default function Progress() {
           </ul>
 
           <div className="pt-2 border-t">
-            <label className="text-sm block mb-2">Quick add from meals</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm">Quick add from meals</label>
+              <button onClick={undo} className="rounded-md border px-2 py-1 text-xs hover:bg-secondary" title="Undo last">Undo</button>
+            </div>
             <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
               {MEALS.map((m) => (
                 <button
