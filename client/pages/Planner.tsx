@@ -250,17 +250,17 @@ export default function Planner() {
                           {m.calories} kcal
                         </span>
                         <button
-                          onClick={() =>
-                            plan &&
-                            setPlan(
-                              swapMeal(
-                                plan,
-                                plan.days.indexOf(d),
-                                mi,
-                                profile.preference,
-                              ),
-                            )
-                          }
+                          onClick={() => {
+                            if (!plan) return;
+                            const updated = swapMeal(
+                              plan,
+                              plan.days.indexOf(d),
+                              mi,
+                              profile.preference,
+                            );
+                            setPlan(updated);
+                            toast({ title: "Meal swapped", description: `${m.name} replaced.` });
+                          }}
                           className="rounded-md border px-2 py-1 hover:bg-secondary"
                           title="Swap meal"
                         >
@@ -271,16 +271,16 @@ export default function Planner() {
                   </ul>
                   <div className="mt-3 flex justify-end">
                     <button
-                      onClick={() =>
-                        plan &&
-                        setPlan(
-                          regenerateDay(
-                            plan,
-                            plan.days.indexOf(d),
-                            profile.preference,
-                          ),
-                        )
-                      }
+                      onClick={() => {
+                        if (!plan) return;
+                        const updated = regenerateDay(
+                          plan,
+                          plan.days.indexOf(d),
+                          profile.preference,
+                        );
+                        setPlan(updated);
+                        toast({ title: "Day regenerated", description: `${d.day} updated.` });
+                      }}
                       className="rounded-md border px-3 py-1 text-xs hover:bg-secondary"
                     >
                       Regenerate Day
