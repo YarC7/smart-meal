@@ -96,7 +96,10 @@ export default function Progress() {
       totalLogged += cal;
       if (plan) {
         const idx = (dowIndex - (6 - i) + 7) % 7;
-        totalPlanned += plan.days[idx].meals.reduce((s, m) => s + m.calories, 0);
+        totalPlanned += plan.days[idx].meals.reduce(
+          (s, m) => s + m.calories,
+          0,
+        );
       }
     }
     // Seed demo data if all zeros
@@ -112,17 +115,20 @@ export default function Progress() {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const key = d.toISOString().slice(0, 10);
-      if ((logs[key]?.calories || 0) > 0) count++; else break;
+      if ((logs[key]?.calories || 0) > 0) count++;
+      else break;
     }
     return count;
   }, [logs]);
 
   const compliance = useMemo(() => {
     if (!plan) return null;
-    let logged = 0, planned = 0;
+    let logged = 0,
+      planned = 0;
     const dowIndex = (new Date().getDay() + 6) % 7;
     for (let i = 0; i < 7; i++) {
-      const d = new Date(); d.setDate(d.getDate() - (6 - i));
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
       const key = d.toISOString().slice(0, 10);
       logged += logs[key]?.calories || 0;
       const idx = (dowIndex - (6 - i) + 7) % 7;
@@ -136,8 +142,14 @@ export default function Progress() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-extrabold tracking-tight">Progress</h1>
         <div className="text-sm flex items-center gap-4">
-          <span className="rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 ring-1 ring-emerald-300">🔥 Streak: {streak} days</span>
-          {compliance !== null && <span className="rounded-full bg-blue-100 text-blue-700 px-3 py-1 ring-1 ring-blue-300">✅ Compliance: {compliance}%</span>}
+          <span className="rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 ring-1 ring-emerald-300">
+            🔥 Streak: {streak} days
+          </span>
+          {compliance !== null && (
+            <span className="rounded-full bg-blue-100 text-blue-700 px-3 py-1 ring-1 ring-blue-300">
+              ✅ Compliance: {compliance}%
+            </span>
+          )}
         </div>
       </div>
 
@@ -145,12 +157,20 @@ export default function Progress() {
         <section className="rounded-xl border bg-card p-6 space-y-4 lg:col-span-2">
           {plan && (
             <div className="rounded-lg border p-4">
-              <h3 className="text-sm font-semibold mb-2">Today's planned meals</h3>
+              <h3 className="text-sm font-semibold mb-2">
+                Today's planned meals
+              </h3>
               <div className="grid gap-2">
                 {plan.days[(new Date().getDay() + 6) % 7].meals.map((pm) => (
-                  <button key={pm.id} onClick={() => addMeal(pm.id)} className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary">
+                  <button
+                    key={pm.id}
+                    onClick={() => addMeal(pm.id)}
+                    className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary"
+                  >
                     <span className="truncate mr-3">{pm.name}</span>
-                    <span className="text-foreground/60 whitespace-nowrap">{pm.calories} kcal</span>
+                    <span className="text-foreground/60 whitespace-nowrap">
+                      {pm.calories} kcal
+                    </span>
                   </button>
                 ))}
               </div>

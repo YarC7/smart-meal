@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import MacroDonut from "@/components/smartmeal/MacroDonut";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   ProfileInput,
   WeekPlan,
@@ -34,7 +39,11 @@ export default function Planner() {
     () => loadProfile() || defaultProfile,
   );
   const [plan, setPlan] = useState<WeekPlan | null>(() => loadPlan());
-  const [swapState, setSwapState] = useState<{ open: boolean; dayIndex: number; mealIndex: number } | null>(null);
+  const [swapState, setSwapState] = useState<{
+    open: boolean;
+    dayIndex: number;
+    mealIndex: number;
+  } | null>(null);
 
   const targets = useMemo(() => computeTargets(profile), [profile]);
 
@@ -232,13 +241,27 @@ export default function Planner() {
               <h3 className="text-xs font-semibold">Daily targets</h3>
               <div className="mt-2 grid grid-cols-2 gap-2 items-center">
                 <div className="h-24 w-24">
-                  <MacroDonut protein={targets.protein} carbs={targets.carbs} fat={targets.fat} />
+                  <MacroDonut
+                    protein={targets.protein}
+                    carbs={targets.carbs}
+                    fat={targets.fat}
+                  />
                 </div>
                 <ul className="text-xs space-y-1">
-                  <li>Cals: <span className="font-semibold">{targets.calories}</span></li>
-                  <li>P: <span className="font-semibold">{targets.protein} g</span></li>
-                  <li>C: <span className="font-semibold">{targets.carbs} g</span></li>
-                  <li>F: <span className="font-semibold">{targets.fat} g</span></li>
+                  <li>
+                    Cals:{" "}
+                    <span className="font-semibold">{targets.calories}</span>
+                  </li>
+                  <li>
+                    P:{" "}
+                    <span className="font-semibold">{targets.protein} g</span>
+                  </li>
+                  <li>
+                    C: <span className="font-semibold">{targets.carbs} g</span>
+                  </li>
+                  <li>
+                    F: <span className="font-semibold">{targets.fat} g</span>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -272,7 +295,10 @@ export default function Planner() {
                               profile.preference,
                             );
                             setPlan(updated);
-                            toast({ title: "Meal swapped", description: `${m.name} replaced.` });
+                            toast({
+                              title: "Meal swapped",
+                              description: `${m.name} replaced.`,
+                            });
                           }}
                           className="rounded-md border px-2 py-1 hover:bg-secondary"
                           title="Swap meal"
@@ -292,7 +318,10 @@ export default function Planner() {
                           profile.preference,
                         );
                         setPlan(updated);
-                        toast({ title: "Day regenerated", description: `${d.day} updated.` });
+                        toast({
+                          title: "Day regenerated",
+                          description: `${d.day} updated.`,
+                        });
                       }}
                       className="rounded-md border px-3 py-1 text-xs hover:bg-secondary"
                     >
@@ -325,17 +354,39 @@ export default function Planner() {
           )}
         </section>
       </div>
-      <Dialog open={!!swapState?.open} onOpenChange={(o) => setSwapState(o ? swapState : null)}>
+      <Dialog
+        open={!!swapState?.open}
+        onOpenChange={(o) => setSwapState(o ? swapState : null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Chọn món thay thế</DialogTitle>
           </DialogHeader>
           <div className="max-h-80 overflow-y-auto grid gap-2">
             {filterMeals(profile.preference).map((alt) => (
-              <button key={alt.id} className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary"
-                onClick={() => { if (!plan || !swapState) return; const updated = swapMealWith(plan, swapState.dayIndex, swapState.mealIndex, alt); setPlan(updated); setSwapState(null); toast({ title: "Đã thay", description: `Đổi sang: ${alt.name}` }); }}>
+              <button
+                key={alt.id}
+                className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary"
+                onClick={() => {
+                  if (!plan || !swapState) return;
+                  const updated = swapMealWith(
+                    plan,
+                    swapState.dayIndex,
+                    swapState.mealIndex,
+                    alt,
+                  );
+                  setPlan(updated);
+                  setSwapState(null);
+                  toast({
+                    title: "Đã thay",
+                    description: `Đổi sang: ${alt.name}`,
+                  });
+                }}
+              >
                 <span className="truncate mr-3">{alt.name}</span>
-                <span className="text-foreground/60 whitespace-nowrap">{alt.calories} kcal</span>
+                <span className="text-foreground/60 whitespace-nowrap">
+                  {alt.calories} kcal
+                </span>
               </button>
             ))}
           </div>
