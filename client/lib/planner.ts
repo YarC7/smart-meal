@@ -269,3 +269,19 @@ export function loadLogStacks(): LogStacks {
 export function saveLogStacks(stacks: LogStacks) {
   localStorage.setItem(LOG_STACK_KEY, JSON.stringify(stacks));
 }
+
+export function pushLogAction(date: string, action: LogAction) {
+  const stacks = loadLogStacks();
+  const arr = stacks[date] || [];
+  stacks[date] = [...arr, action];
+  saveLogStacks(stacks);
+}
+
+export function popLastLogAction(date: string): LogAction | null {
+  const stacks = loadLogStacks();
+  const arr = stacks[date] || [];
+  const last = arr.pop() || null;
+  stacks[date] = arr;
+  saveLogStacks(stacks);
+  return last;
+}
