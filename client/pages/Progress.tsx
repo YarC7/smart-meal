@@ -83,19 +83,63 @@ export default function Progress() {
 
   const last7 = useMemo(() => {
     const arr: { day: string; calories: number }[] = [];
+    let totalLogged = 0;
+    let totalPlanned = 0;
+    const dowIndex = (new Date().getDay() + 6) % 7; // Mon=0
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const key = d.toISOString().slice(0, 10);
       const label = d.toLocaleDateString(undefined, { weekday: "short" });
-      arr.push({ day: label, calories: logs[key]?.calories || 0 });
+      const cal = logs[key]?.calories ?? 0;
+      arr.push({ day: label, calories: cal });
+      totalLogged += cal;
+      if (plan) {
+        const idx = (dowIndex - (6 - i) + 7) % 7;
+        totalPlanned += plan.days[idx].meals.reduce((s, m) => s + m.calories, 0);
+      }
+    }
+    // Seed demo data if all zeros
+    if (arr.every((x) => x.calories === 0)) {
+      for (let i = 0; i < arr.length; i++) arr[i].calories = 1200 + i * 60;
     }
     return arr;
+  }, [logs, plan]);
+
+  const streak = useMemo(() => {
+    let count = 0;
+    for (let i = 0; i < 30; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      if ((logs[key]?.calories || 0) > 0) count++; else break;
+    }
+    return count;
   }, [logs]);
+
+  const compliance = useMemo(() => {
+    if (!plan) return null;
+    let logged = 0, planned = 0;
+    const dowIndex = (new Date().getDay() + 6) % 7;
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(); d.setDate(d.getDate() - (6 - i));
+      const key = d.toISOString().slice(0, 10);
+      logged += logs[key]?.calories || 0;
+      const idx = (dowIndex - (6 - i) + 7) % 7;
+      planned += plan.days[idx].meals.reduce((s, m) => s + m.calories, 0);
+    }
+    return planned > 0 ? Math.round((logged / planned) * 100) : null;
+  }, [logs, plan]);
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-extrabold tracking-tight">Progress</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-extrabold tracking-tight">Progress</h1>
+        <div className="text-sm flex items-center gap-4">
+          <span className="rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 ring-1 ring-emerald-300">🔥 Streak: {streak} days</span>
+          {compliance !== null && <span className="rounded-full bg-blue-100 text-blue-700 px-3 py-1 ring-1 ring-blue-300">✅ Compliance: {compliance}%</span>}
+        </div>
+      </div>
 
       <div className="mt-6 grid lg:grid-cols-3 gap-8">
         <section className="rounded-xl border bg-card p-6 space-y-4 lg:col-span-2">
