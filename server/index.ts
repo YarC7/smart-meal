@@ -21,5 +21,11 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
+  // Mock APIs for PWA background sync validation
+  app.get("/api/logs", getLogs);
+  app.post("/api/logs", postLogs);
+  app.get("/api/grocery", getGrocery);
+  app.post("/api/grocery", postGrocery);
+
   return app;
 }
