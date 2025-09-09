@@ -20,7 +20,12 @@ export default function Grocery() {
   useEffect(() => {
     if (items.length === 0) return;
     try {
-      fetch('/api/grocery', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ items }), keepalive: true }).catch(() => {});
+      fetch("/api/grocery", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ items }),
+        keepalive: true,
+      }).catch(() => {});
     } catch {}
   }, [items]);
 
@@ -38,7 +43,10 @@ export default function Grocery() {
     return (
       <section className="container mx-auto py-24 text-center">
         <h1 className="text-2xl font-bold">No plan found</h1>
-        <p className="mt-2 text-foreground/70">Create your 7‑day plan to generate a smart grocery list optimized for your budget.</p>
+        <p className="mt-2 text-foreground/70">
+          Create your 7‑day plan to generate a smart grocery list optimized for
+          your budget.
+        </p>
         <div className="mt-6 flex items-center justify-center gap-3">
           <Link
             to="/planner"
@@ -71,7 +79,9 @@ export default function Grocery() {
 
       {overUnder < 0 && (
         <div className="mt-4 rounded-lg border border-red-300 bg-red-50 text-red-800 px-4 py-3">
-          You are over your weekly budget by {Math.abs(overUnder).toFixed(2)}. Consider swapping high‑cost items (e.g., salmon, avocado) for cheaper alternatives.
+          You are over your weekly budget by {Math.abs(overUnder).toFixed(2)}.
+          Consider swapping high‑cost items (e.g., salmon, avocado) for cheaper
+          alternatives.
         </div>
       )}
 

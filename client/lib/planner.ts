@@ -43,32 +43,51 @@ export function getAlternates(current: Meal, pref: Preference): Meal[] {
   // Prefer same meal time (breakfast vs mains) and similar calories +- 120
   const isBreakfast = current.tags.includes("breakfast");
   const pool = list.filter((m) =>
-    isBreakfast ? m.tags.includes("breakfast") : (m.tags.includes("lunch") || m.tags.includes("dinner"))
+    isBreakfast
+      ? m.tags.includes("breakfast")
+      : m.tags.includes("lunch") || m.tags.includes("dinner"),
   );
   const similar = pool
     .filter((m) => m.id !== current.id)
-    .sort((a, b) => Math.abs(a.calories - current.calories) - Math.abs(b.calories - current.calories));
+    .sort(
+      (a, b) =>
+        Math.abs(a.calories - current.calories) -
+        Math.abs(b.calories - current.calories),
+    );
   return similar;
 }
 
-export function swapMeal(plan: WeekPlan, dayIndex: number, mealIndex: number, pref: Preference): WeekPlan {
+export function swapMeal(
+  plan: WeekPlan,
+  dayIndex: number,
+  mealIndex: number,
+  pref: Preference,
+): WeekPlan {
   const day = plan.days[dayIndex];
   const current = day.meals[mealIndex];
   const alts = getAlternates(current, pref);
   const usedIds = new Set(day.meals.map((m) => m.id));
   const next = alts.find((m) => !usedIds.has(m.id)) || alts[0] || current;
   const newDays = plan.days.map((d, i) =>
-    i !== dayIndex ? d : { ...d, meals: d.meals.map((m, j) => (j === mealIndex ? next : m)) }
+    i !== dayIndex
+      ? d
+      : { ...d, meals: d.meals.map((m, j) => (j === mealIndex ? next : m)) },
   );
   const updated: WeekPlan = { ...plan, days: newDays };
   savePlan(updated);
   return updated;
 }
 
-export function regenerateDay(plan: WeekPlan, dayIndex: number, pref: Preference): WeekPlan {
+export function regenerateDay(
+  plan: WeekPlan,
+  dayIndex: number,
+  pref: Preference,
+): WeekPlan {
   const list = filterMeals(pref);
   const breakfasts = list.filter((m) => m.tags.includes("breakfast"));
-  const mains = list.filter((m) => m.tags.includes("lunch") || m.tags.includes("dinner"));
+  const mains = list.filter(
+    (m) => m.tags.includes("lunch") || m.tags.includes("dinner"),
+  );
   const i = (dayIndex + 3) % Math.max(1, breakfasts.length);
   const j = (dayIndex * 2 + 1) % Math.max(1, mains.length);
   const k = (dayIndex * 2 + 2) % Math.max(1, mains.length);
@@ -77,7 +96,9 @@ export function regenerateDay(plan: WeekPlan, dayIndex: number, pref: Preference
     mains[j] || list[1] || list[0],
     mains[k] || list[2] || list[0],
   ];
-  const newDays = plan.days.map((d, idx) => (idx === dayIndex ? { ...d, meals } : d));
+  const newDays = plan.days.map((d, idx) =>
+    idx === dayIndex ? { ...d, meals } : d,
+  );
   const updated: WeekPlan = { ...plan, days: newDays };
   savePlan(updated);
   return updated;
@@ -254,12 +275,23 @@ export function saveLogs(logs: Logs) {
   localStorage.setItem(LOG_KEY, JSON.stringify(logs));
   try {
     const body = JSON.stringify({ logs: Object.values(logs) });
-    fetch("/api/logs", { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true }).catch(() => {});
+    fetch("/api/logs", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+      keepalive: true,
+    }).catch(() => {});
   } catch {}
 }
 
 // Action stack for undo per day
-export type LogAction = { mealId: string; calories: number; protein: number; carbs: number; fat: number };
+export type LogAction = {
+  mealId: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
 export type LogStacks = Record<string, LogAction[]>; // by date
 
 export function loadLogStacks(): LogStacks {

@@ -242,12 +242,24 @@ export default function Planner() {
                         key={m.id}
                         className="flex items-center justify-between rounded-md border px-3 py-2 gap-3"
                       >
-                        <span className="truncate mr-3 flex-1 min-w-0">{m.name}</span>
+                        <span className="truncate mr-3 flex-1 min-w-0">
+                          {m.name}
+                        </span>
                         <span className="text-foreground/60 whitespace-nowrap">
                           {m.calories} kcal
                         </span>
                         <button
-                          onClick={() => plan && setPlan(swapMeal(plan, plan.days.indexOf(d), mi, profile.preference))}
+                          onClick={() =>
+                            plan &&
+                            setPlan(
+                              swapMeal(
+                                plan,
+                                plan.days.indexOf(d),
+                                mi,
+                                profile.preference,
+                              ),
+                            )
+                          }
                           className="rounded-md border px-2 py-1 hover:bg-secondary"
                           title="Swap meal"
                         >
@@ -258,7 +270,16 @@ export default function Planner() {
                   </ul>
                   <div className="mt-3 flex justify-end">
                     <button
-                      onClick={() => plan && setPlan(regenerateDay(plan, plan.days.indexOf(d), profile.preference))}
+                      onClick={() =>
+                        plan &&
+                        setPlan(
+                          regenerateDay(
+                            plan,
+                            plan.days.indexOf(d),
+                            profile.preference,
+                          ),
+                        )
+                      }
                       className="rounded-md border px-3 py-1 text-xs hover:bg-secondary"
                     >
                       Regenerate Day

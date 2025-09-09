@@ -1,6 +1,12 @@
 import { RequestHandler } from "express";
 
-type StoredLog = { date: string; calories: number; protein: number; carbs: number; fat: number };
+type StoredLog = {
+  date: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+};
 
 const store: Record<string, StoredLog> = {};
 

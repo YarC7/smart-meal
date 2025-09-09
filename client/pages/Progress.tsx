@@ -54,7 +54,13 @@ export default function Progress() {
       carbs: today.carbs + m.carbs,
       fat: today.fat + m.fat,
     };
-    pushLogAction(todayKey(), { mealId, calories: m.calories, protein: m.protein, carbs: m.carbs, fat: m.fat });
+    pushLogAction(todayKey(), {
+      mealId,
+      calories: m.calories,
+      protein: m.protein,
+      carbs: m.carbs,
+      fat: m.fat,
+    });
     setLogs({ ...logs, [todayKey()]: updated });
   };
 
@@ -139,7 +145,13 @@ export default function Progress() {
           <div className="pt-2 border-t">
             <div className="flex items-center justify-between mb-2">
               <label className="text-sm">Quick add from meals</label>
-              <button onClick={undo} className="rounded-md border px-2 py-1 text-xs hover:bg-secondary" title="Undo last">Undo</button>
+              <button
+                onClick={undo}
+                className="rounded-md border px-2 py-1 text-xs hover:bg-secondary"
+                title="Undo last"
+              >
+                Undo
+              </button>
             </div>
             <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
               {MEALS.map((m) => (
