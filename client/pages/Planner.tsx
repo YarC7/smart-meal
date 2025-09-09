@@ -235,18 +235,33 @@ export default function Planner() {
                     <h3 className="font-semibold">{d.day}</h3>
                   </div>
                   <ul className="mt-3 space-y-2 text-sm">
-                    {d.meals.map((m) => (
+                    {d.meals.map((m, mi) => (
                       <li
                         key={m.id}
-                        className="flex items-center justify-between rounded-md border px-3 py-2"
+                        className="flex items-center justify-between rounded-md border px-3 py-2 gap-3"
                       >
-                        <span className="truncate mr-3">{m.name}</span>
+                        <span className="truncate mr-3 flex-1 min-w-0">{m.name}</span>
                         <span className="text-foreground/60 whitespace-nowrap">
                           {m.calories} kcal
                         </span>
+                        <button
+                          onClick={() => plan && setPlan(swapMeal(plan, plan.days.indexOf(d), mi, profile.preference))}
+                          className="rounded-md border px-2 py-1 hover:bg-secondary"
+                          title="Swap meal"
+                        >
+                          Swap
+                        </button>
                       </li>
                     ))}
                   </ul>
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      onClick={() => plan && setPlan(regenerateDay(plan, plan.days.indexOf(d), profile.preference))}
+                      className="rounded-md border px-3 py-1 text-xs hover:bg-secondary"
+                    >
+                      Regenerate Day
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
