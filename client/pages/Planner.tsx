@@ -9,6 +9,8 @@ import {
   loadProfile,
   savePlan,
   saveProfile,
+  swapMeal,
+  regenerateDay,
 } from "@/lib/planner";
 import { cn } from "@/lib/utils";
 
