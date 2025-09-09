@@ -1,0 +1,1459 @@
+[
+  {
+    "id": "vn_banh_mi_thit",
+    "name": "Bánh mì thịt",
+    "calories": 450,
+    "protein": 20,
+    "carbs": 60,
+    "fat": 15,
+    "tags": [
+      "vietnamese",
+      "breakfast",
+      "bread",
+      "pork"
+    ],
+    "ingredients": [
+      {
+        "name": "Bánh mì",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Thịt nguội",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.03
+      },
+      {
+        "name": "Dưa leo",
+        "unit": "g",
+        "qty": 40,
+        "costPerUnit": 0.01
+      }
+    ],
+    "category": "Breakfast"
+  },
+  {
+    "id": "vn_banh_uot",
+    "name": "Bánh ướt thịt nướng",
+    "calories": 420,
+    "protein": 22,
+    "carbs": 55,
+    "fat": 14,
+    "tags": [
+      "vietnamese",
+      "breakfast",
+      "rice",
+      "pork"
+    ],
+    "ingredients": [
+      {
+        "name": "Bánh ướt",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Thịt nướng",
+        "unit": "g",
+        "qty": 60,
+        "costPerUnit": 0.025
+      }
+    ],
+    "category": "Breakfast"
+  },
+  {
+    "id": "vn_bun_mam",
+    "name": "Bún mắm",
+    "calories": 600,
+    "protein": 30,
+    "carbs": 70,
+    "fat": 22,
+    "tags": [
+      "vietnamese",
+      "noodle",
+      "fish",
+      "soup"
+    ],
+    "ingredients": [
+      {
+        "name": "Bún",
+        "unit": "g",
+        "qty": 120,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Cá",
+        "unit": "g",
+        "qty": 80,
+        "costPerUnit": 0.025
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "vn_com_chien",
+    "name": "Cơm chiên trứng tôm",
+    "calories": 550,
+    "protein": 26,
+    "carbs": 75,
+    "fat": 18,
+    "tags": [
+      "vietnamese",
+      "rice",
+      "shrimp",
+      "egg"
+    ],
+    "ingredients": [
+      {
+        "name": "Cơm",
+        "unit": "g",
+        "qty": 150,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Trứng",
+        "unit": "piece",
+        "qty": 1,
+        "costPerUnit": 0.25
+      },
+      {
+        "name": "Tôm",
+        "unit": "g",
+        "qty": 60,
+        "costPerUnit": 0.03
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "vn_goi_ga",
+    "name": "Gỏi gà",
+    "calories": 350,
+    "protein": 28,
+    "carbs": 15,
+    "fat": 16,
+    "tags": [
+      "vietnamese",
+      "salad",
+      "chicken"
+    ],
+    "ingredients": [
+      {
+        "name": "Thịt gà",
+        "unit": "g",
+        "qty": 80,
+        "costPerUnit": 0.015
+      },
+      {
+        "name": "Bắp cải",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.01
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "vn_banh_xeo",
+    "name": "Bánh xèo",
+    "calories": 450,
+    "protein": 20,
+    "carbs": 55,
+    "fat": 18,
+    "tags": [
+      "vietnamese",
+      "streetfood",
+      "shrimp",
+      "pork"
+    ],
+    "ingredients": [
+      {
+        "name": "Bột gạo",
+        "unit": "g",
+        "qty": 80,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Tôm",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.03
+      },
+      {
+        "name": "Thịt ba chỉ",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.025
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "vn_mi_quang",
+    "name": "Mì Quảng",
+    "calories": 520,
+    "protein": 28,
+    "carbs": 65,
+    "fat": 16,
+    "tags": [
+      "vietnamese",
+      "noodle",
+      "chicken"
+    ],
+    "ingredients": [
+      {
+        "name": "Mì Quảng",
+        "unit": "g",
+        "qty": 120,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Thịt gà",
+        "unit": "g",
+        "qty": 70,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "ws_spaghetti_bolognese",
+    "name": "Spaghetti Bolognese",
+    "calories": 650,
+    "protein": 32,
+    "carbs": 80,
+    "fat": 20,
+    "tags": [
+      "western",
+      "pasta",
+      "beef"
+    ],
+    "ingredients": [
+      {
+        "name": "Spaghetti",
+        "unit": "g",
+        "qty": 120,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Thịt bò bằm",
+        "unit": "g",
+        "qty": 90,
+        "costPerUnit": 0.03
+      },
+      {
+        "name": "Cà chua",
+        "unit": "g",
+        "qty": 80,
+        "costPerUnit": 0.01
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "ws_chicken_salad",
+    "name": "Chicken Salad",
+    "calories": 350,
+    "protein": 30,
+    "carbs": 25,
+    "fat": 12,
+    "tags": [
+      "western",
+      "salad",
+      "chicken"
+    ],
+    "ingredients": [
+      {
+        "name": "Ức gà",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Rau xà lách",
+        "unit": "g",
+        "qty": 80,
+        "costPerUnit": 0.01
+      },
+      {
+        "name": "Cà chua",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.01
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "ws_omelette",
+    "name": "Omelette",
+    "calories": 300,
+    "protein": 20,
+    "carbs": 8,
+    "fat": 22,
+    "tags": [
+      "western",
+      "breakfast",
+      "egg"
+    ],
+    "ingredients": [
+      {
+        "name": "Trứng gà",
+        "unit": "piece",
+        "qty": 3,
+        "costPerUnit": 0.25
+      },
+      {
+        "name": "Phô mai",
+        "unit": "g",
+        "qty": 20,
+        "costPerUnit": 0.04
+      }
+    ],
+    "category": "Breakfast"
+  },
+  {
+    "id": "ws_grilled_chicken_rice",
+    "name": "Grilled Chicken with Rice",
+    "calories": 500,
+    "protein": 35,
+    "carbs": 60,
+    "fat": 15,
+    "tags": [
+      "fusion",
+      "rice",
+      "chicken"
+    ],
+    "ingredients": [
+      {
+        "name": "Cơm",
+        "unit": "g",
+        "qty": 150,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Ức gà nướng",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "ws_beef_burger",
+    "name": "Beef Burger",
+    "calories": 600,
+    "protein": 30,
+    "carbs": 65,
+    "fat": 25,
+    "tags": [
+      "western",
+      "fastfood",
+      "beef"
+    ],
+    "ingredients": [
+      {
+        "name": "Bánh burger",
+        "unit": "piece",
+        "qty": 1,
+        "costPerUnit": 0.3
+      },
+      {
+        "name": "Thịt bò xay",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.03
+      },
+      {
+        "name": "Rau xà lách",
+        "unit": "g",
+        "qty": 30,
+        "costPerUnit": 0.01
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_0",
+    "name": "Món ăn đa dạng 0",
+    "calories": 400,
+    "protein": 20,
+    "carbs": 50,
+    "fat": 15,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_1",
+    "name": "Món ăn đa dạng 1",
+    "calories": 401,
+    "protein": 21,
+    "carbs": 51,
+    "fat": 16,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_2",
+    "name": "Món ăn đa dạng 2",
+    "calories": 402,
+    "protein": 22,
+    "carbs": 52,
+    "fat": 17,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_3",
+    "name": "Món ăn đa dạng 3",
+    "calories": 403,
+    "protein": 23,
+    "carbs": 53,
+    "fat": 18,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_4",
+    "name": "Món ăn đa dạng 4",
+    "calories": 404,
+    "protein": 24,
+    "carbs": 54,
+    "fat": 19,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_5",
+    "name": "Món ăn đa dạng 5",
+    "calories": 405,
+    "protein": 25,
+    "carbs": 55,
+    "fat": 15,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_6",
+    "name": "Món ăn đa dạng 6",
+    "calories": 406,
+    "protein": 26,
+    "carbs": 56,
+    "fat": 16,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_7",
+    "name": "Món ăn đa dạng 7",
+    "calories": 407,
+    "protein": 27,
+    "carbs": 57,
+    "fat": 17,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_8",
+    "name": "Món ăn đa dạng 8",
+    "calories": 408,
+    "protein": 28,
+    "carbs": 58,
+    "fat": 18,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_9",
+    "name": "Món ăn đa dạng 9",
+    "calories": 409,
+    "protein": 29,
+    "carbs": 59,
+    "fat": 19,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_10",
+    "name": "Món ăn đa dạng 10",
+    "calories": 410,
+    "protein": 20,
+    "carbs": 60,
+    "fat": 15,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_11",
+    "name": "Món ăn đa dạng 11",
+    "calories": 411,
+    "protein": 21,
+    "carbs": 61,
+    "fat": 16,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_12",
+    "name": "Món ăn đa dạng 12",
+    "calories": 412,
+    "protein": 22,
+    "carbs": 62,
+    "fat": 17,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_13",
+    "name": "Món ăn đa dạng 13",
+    "calories": 413,
+    "protein": 23,
+    "carbs": 63,
+    "fat": 18,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_14",
+    "name": "Món ăn đa dạng 14",
+    "calories": 414,
+    "protein": 24,
+    "carbs": 64,
+    "fat": 19,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_15",
+    "name": "Món ăn đa dạng 15",
+    "calories": 415,
+    "protein": 25,
+    "carbs": 65,
+    "fat": 15,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_16",
+    "name": "Món ăn đa dạng 16",
+    "calories": 416,
+    "protein": 26,
+    "carbs": 66,
+    "fat": 16,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_17",
+    "name": "Món ăn đa dạng 17",
+    "calories": 417,
+    "protein": 27,
+    "carbs": 67,
+    "fat": 17,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_18",
+    "name": "Món ăn đa dạng 18",
+    "calories": 418,
+    "protein": 28,
+    "carbs": 68,
+    "fat": 18,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_19",
+    "name": "Món ăn đa dạng 19",
+    "calories": 419,
+    "protein": 29,
+    "carbs": 69,
+    "fat": 19,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_20",
+    "name": "Món ăn đa dạng 20",
+    "calories": 420,
+    "protein": 20,
+    "carbs": 50,
+    "fat": 15,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_21",
+    "name": "Món ăn đa dạng 21",
+    "calories": 421,
+    "protein": 21,
+    "carbs": 51,
+    "fat": 16,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_22",
+    "name": "Món ăn đa dạng 22",
+    "calories": 422,
+    "protein": 22,
+    "carbs": 52,
+    "fat": 17,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_23",
+    "name": "Món ăn đa dạng 23",
+    "calories": 423,
+    "protein": 23,
+    "carbs": 53,
+    "fat": 18,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_24",
+    "name": "Món ăn đa dạng 24",
+    "calories": 424,
+    "protein": 24,
+    "carbs": 54,
+    "fat": 19,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_25",
+    "name": "Món ăn đa dạng 25",
+    "calories": 425,
+    "protein": 25,
+    "carbs": 55,
+    "fat": 15,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_26",
+    "name": "Món ăn đa dạng 26",
+    "calories": 426,
+    "protein": 26,
+    "carbs": 56,
+    "fat": 16,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_27",
+    "name": "Món ăn đa dạng 27",
+    "calories": 427,
+    "protein": 27,
+    "carbs": 57,
+    "fat": 17,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_28",
+    "name": "Món ăn đa dạng 28",
+    "calories": 428,
+    "protein": 28,
+    "carbs": 58,
+    "fat": 18,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_29",
+    "name": "Món ăn đa dạng 29",
+    "calories": 429,
+    "protein": 29,
+    "carbs": 59,
+    "fat": 19,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_30",
+    "name": "Món ăn đa dạng 30",
+    "calories": 430,
+    "protein": 20,
+    "carbs": 60,
+    "fat": 15,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_31",
+    "name": "Món ăn đa dạng 31",
+    "calories": 431,
+    "protein": 21,
+    "carbs": 61,
+    "fat": 16,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_32",
+    "name": "Món ăn đa dạng 32",
+    "calories": 432,
+    "protein": 22,
+    "carbs": 62,
+    "fat": 17,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_33",
+    "name": "Món ăn đa dạng 33",
+    "calories": 433,
+    "protein": 23,
+    "carbs": 63,
+    "fat": 18,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_34",
+    "name": "Món ăn đa dạng 34",
+    "calories": 434,
+    "protein": 24,
+    "carbs": 64,
+    "fat": 19,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_35",
+    "name": "Món ăn đa dạng 35",
+    "calories": 435,
+    "protein": 25,
+    "carbs": 65,
+    "fat": 15,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_36",
+    "name": "Món ăn đa dạng 36",
+    "calories": 436,
+    "protein": 26,
+    "carbs": 66,
+    "fat": 16,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_37",
+    "name": "Món ăn đa dạng 37",
+    "calories": 437,
+    "protein": 27,
+    "carbs": 67,
+    "fat": 17,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_38",
+    "name": "Món ăn đa dạng 38",
+    "calories": 438,
+    "protein": 28,
+    "carbs": 68,
+    "fat": 18,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  },
+  {
+    "id": "mix_meal_39",
+    "name": "Món ăn đa dạng 39",
+    "calories": 439,
+    "protein": 29,
+    "carbs": 69,
+    "fat": 19,
+    "tags": [
+      "mixed",
+      "demo"
+    ],
+    "ingredients": [
+      {
+        "name": "Nguyên liệu A",
+        "unit": "g",
+        "qty": 100,
+        "costPerUnit": 0.02
+      },
+      {
+        "name": "Nguyên liệu B",
+        "unit": "g",
+        "qty": 50,
+        "costPerUnit": 0.015
+      }
+    ],
+    "category": "Lunch/Dinner"
+  }
+]
