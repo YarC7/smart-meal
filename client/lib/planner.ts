@@ -251,6 +251,30 @@ export function formatQty(qty: number) {
   return qty.toFixed(2).replace(/\.00$/, "");
 }
 
+export type GroceryCategory = "Protein" | "Carbs" | "Vegetables" | "Condiments" | "Fruits" | "Dairy" | "Other";
+
+export function categorize(name: string): GroceryCategory {
+  const n = name.toLowerCase();
+  if (/gà|bò|heo|trứng|tôm|cá|thịt|cua|lạp xưởng/.test(n)) return "Protein";
+  if (/gạo|cơm|bánh mì|bún|miến|mì|bánh phở|bánh đa|gạo nếp|khoai|couscous|pasta/.test(n)) return "Carbs";
+  if (/rau|dưa|cà chua|dưa leo|hành|tỏi|giá|bí|cải|đậu hà lan|thơm|cà rốt|hẹ/.test(n)) return "Vegetables";
+  if (/nước mắm|nước tương|muối|tiêu|đường|mắm|xì dầu|dầu|dầu ăn|sữa chua|sữa tươi/.test(n)) return "Condiments";
+  if (/chuối|xoài|cam|thơm|dứa/.test(n)) return "Fruits";
+  if (/sữa|sữa chua|yogurt|phô mai/.test(n)) return "Dairy";
+  return "Other";
+}
+
+export function groupGroceries(items: GroceryItem[]) {
+  const groups = new Map<GroceryCategory, GroceryItem[]>();
+  for (const it of items) {
+    const cat = categorize(it.name);
+    const arr = groups.get(cat) || [];
+    arr.push(it);
+    groups.set(cat, arr);
+  }
+  return Array.from(groups.entries()).map(([category, list]) => ({ category, list }));
+}
+
 // Persistence
 const KEY = "smartmeal.profile.v1";
 const PLAN_KEY = "smartmeal.plan.v1";
