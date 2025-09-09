@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import MacroDonut from "@/components/smartmeal/MacroDonut";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   ProfileInput,
   WeekPlan,
