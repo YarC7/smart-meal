@@ -1,0 +1,126 @@
+# SmartMeal — Technical Overview
+
+This document describes the implemented features, workflows, data types, and PWA architecture.
+
+## Summary
+- Responsive SPA with pages: Home, Planner, Grocery, Progress.
+- Science‑backed rule engine (BMR × activity ± goal) for daily macro targets and 7‑day plan generation.
+- Grocery aggregation with budget awareness, cost sorting, copy/print.
+- Progress logging with quick‑add from meals, macro donut, 7‑day calories chart.
+- Starbucks‑grade PWA via vite-plugin-pwa (injectManifest) + custom Workbox SW: app‑shell precache, offline fallbacks, image/assets caching, background sync queues, install prompt, iOS support. SW disabled during dev to keep HMR stable; fully enabled in production.
+
+## App Structure
+- client/components/layout/
+  - SiteHeader.tsx (nav + install button + route prefetch)
+  - Layout.tsx (header/main/footer shell)
+  - SiteFooter.tsx
+- client/pages/
+  - Index.tsx (marketing hero, features, demo widgets)
+  - Planner.tsx (profile form, targets donut, 7‑day plan)
+  - Grocery.tsx (aggregated list + budget overview)
+  - Progress.tsx (quick logging + charts)
+- client/data/meals.ts (curated meal library)
+- client/lib/planner.ts (planner engine, persistence, aggregation)
+- client/components/smartmeal/MacroDonut.tsx (reusable donut chart)
+- client/hooks/
+  - useLocalStorage.ts (generic storage hook)
+  - useInstallPrompt.ts (install prompt management)
+- client/sw.ts (custom Workbox service worker)
+- client/pwa.ts (PWA register via virtual:pwa-register; disabled in dev)
+- index.html (PWA meta, theme, iOS web app tags)
+- tailwind.config.ts + client/global.css (brand theme, animations)
+- vite.config.ts (VitePWA configuration + Express dev integration)
+
+## Core Types
+From client/data/meals.ts:
+```ts
+export type Ingredient = { name: string; unit: string; qty: number; costPerUnit?: number };
+export type Meal = {
+  id: string; name: string; calories: number; protein: number; carbs: number; fat: number;
+  tags: string[]; ingredients: Ingredient[];
+};
+```
+From client/lib/planner.ts:
+```ts
+export type Sex = 'male' | 'female';
+export type Activity = 'sedentary' | 'light' | 'moderate' | 'very' | 'extra';
+export type Goal = 'lose' | 'maintain' | 'gain';
+export type Preference = 'omnivore' | 'vegetarian' | 'vegan' | 'low_carb' | 'high_protein';
+export interface ProfileInput {
+  age: number; sex: Sex; heightCm: number; weightKg: number; activity: Activity; goal: Goal;
+  preference: Preference; budgetPerWeek: number;
+}
+export interface MacroTargets { calories: number; protein: number; carbs: number; fat: number }
+export interface DayPlan { day: string; meals: Meal[] }
+export interface WeekPlan { days: DayPlan[]; targets: MacroTargets }
+export type GroceryItem = { name: string; unit: string; qty: number; cost?: number };
+export type DayLog = { date: string; calories: number; protein: number; carbs: number; fat: number };
+export type Logs = Record<string, DayLog>;
+```
+
+## Planner Engine
+- Form inputs captured into `ProfileInput` (age, sex, height, weight, activity, goal, preference, budget).
+- BMR (Mifflin-St Jeor) → TDEE = BMR × activityFactor → goal adjustment (−20% lose, +15% gain).
+- Macro split by preference:
+  - default: P 30%, C 45%, F 25%
+  - low_carb: P 30%, C 25%, F 45%
+  - high_protein: P 35%, C 40%, F 25%
+- `buildWeekPlan(input)`: selects breakfast and two mains per day from filtered meal library; returns 7 DayPlan entries.
+- Persistence: `saveProfile/loadProfile`, `savePlan/loadPlan` (localStorage).
+
+## Grocery Aggregation
+- `aggregateGroceries(plan)`: merges all `Meal.ingredients` by (name|unit), sums quantities, estimates total cost from `costPerUnit`, sorts by cost desc; returns `{ items, totalCost }`.
+- UI: copy to clipboard, print, budget vs. estimated total indicator.
+
+## Progress & Logging
+- `Logs` persisted in localStorage under `smartmeal.logs.v1`.
+- Today key: ISO date (YYYY-MM-DD). Quick add buttons add full meal macros into today’s log.
+- Charts: Recharts (BarChart for weekly calories, MacroDonut for daily split).
+
+## PWA Architecture
+- Plugin: `vite-plugin-pwa` with `strategies: 'injectManifest'`.
+- Service Worker: `client/sw.ts` (Workbox) with:
+  - App‑shell precache: `precacheAndRoute(self.__WB_MANIFEST)`.
+  - SPA routing: `NavigationRoute(createHandlerBoundToURL('/index.html'), denylist: [/^\/api\//])`.
+  - Caching strategies:
+    - Images: `StaleWhileRevalidate` + expiration (120 entries, 7 days).
+    - Static assets (style/script/font): `StaleWhileRevalidate`.
+    - API `/api/*`: `NetworkFirst` with 5s timeout.
+  - Offline fallbacks: image fallback to `/placeholder.svg` if fetch fails.
+  - Background Sync: queues for `/api/logs` and `/api/grocery` (POST/PUT/PATCH) using `BackgroundSyncPlugin` (replays when back online).
+  - Navigation preload enabled on activate.
+- Registration: `client/pwa.ts` using `virtual:pwa-register` (autoUpdate). Disabled in dev to keep HMR reliable (unregisters any SW in dev).
+- Manifest (generated by VitePWA): name, short_name, display=standalone, theme_color, background_color, maskable icons, shortcuts to `/planner` and `/grocery`.
+- Install prompt: `useInstallPrompt()` captures `beforeinstallprompt`; header shows “Install App” button when available.
+- iOS support: `apple-mobile-web-app-capable`, status bar style, apple title in `index.html`.
+
+## Route Prefetch & Code Splitting
+- Pages `Planner`, `Grocery`, `Progress` are lazy‑loaded with `React.lazy` + `Suspense` fallback.
+- Hover prefetch in `SiteHeader` triggers dynamic `import()` of page modules.
+
+## Theming & UI
+- TailwindCSS brand tokens in HSL (global.css) with emerald primary; dark mode supported.
+- `fontFamily.sans` extended; glow animation for brand dot.
+
+## Dev vs Production Behavior
+- Dev: SW disabled (`devOptions.enabled=false`, unregister in pwa.ts) to avoid HMR issues.
+- Prod: SW enabled with autoUpdate; background sync and caching active.
+
+## Build & Run
+- Dev: `pnpm dev`
+- Build: `pnpm build`
+- Start: `pnpm start`
+- Test: `pnpm test`
+
+## Testing PWA
+1. Open the app (production or local build over HTTPS).
+2. Install prompt appears or use browser menu to Install/Add to Home Screen.
+3. Visit `/`, `/planner`, `/grocery`, `/progress`; then go offline and revisit—shell and cached assets load.
+4. Try image requests offline—fallback placeholder is served.
+
+## Integration & Next Steps
+- Push Notifications: requires VAPID keys + server endpoints to send notifications. We can add subscription flow and server push handler (`/api/notify`).
+- USDA/FDC integration for food DB + barcode scanning (ZXing) with local caching to meet <2s latency.
+- Authentication (OAuth2 + PKCE) and encrypted-at-rest storage for sensitive data.
+- Real API endpoints for `/api/logs` and `/api/grocery` to leverage Background Sync queues.
+- Deployment: Connect Netlify or Vercel via MCP for production hosting and CI.
