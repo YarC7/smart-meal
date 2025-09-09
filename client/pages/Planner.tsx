@@ -324,6 +324,22 @@ export default function Planner() {
           )}
         </section>
       </div>
+      <Dialog open={!!swapState?.open} onOpenChange={(o) => setSwapState(o ? swapState : null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Chọn món thay thế</DialogTitle>
+          </DialogHeader>
+          <div className="max-h-80 overflow-y-auto grid gap-2">
+            {filterMeals(profile.preference).map((alt) => (
+              <button key={alt.id} className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary"
+                onClick={() => { if (!plan || !swapState) return; const updated = swapMealWith(plan, swapState.dayIndex, swapState.mealIndex, alt); setPlan(updated); setSwapState(null); toast({ title: "Đã thay", description: `Đổi sang: ${alt.name}` }); }}>
+                <span className="truncate mr-3">{alt.name}</span>
+                <span className="text-foreground/60 whitespace-nowrap">{alt.calories} kcal</span>
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
