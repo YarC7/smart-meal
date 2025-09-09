@@ -31,13 +31,19 @@ export default function Grocery() {
     return (
       <section className="container mx-auto py-24 text-center">
         <h1 className="text-2xl font-bold">No plan found</h1>
-        <p className="mt-2 text-foreground/70">Generate a plan first.</p>
-        <div className="mt-6">
+        <p className="mt-2 text-foreground/70">Create your 7‑day plan to generate a smart grocery list optimized for your budget.</p>
+        <div className="mt-6 flex items-center justify-center gap-3">
           <Link
             to="/planner"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90"
           >
-            Go to Planner
+            Generate plan
+          </Link>
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary"
+          >
+            Learn more
           </Link>
         </div>
       </section>
@@ -55,6 +61,12 @@ export default function Grocery() {
           </span>
         </div>
       </div>
+
+      {overUnder < 0 && (
+        <div className="mt-4 rounded-lg border border-red-300 bg-red-50 text-red-800 px-4 py-3">
+          You are over your weekly budget by {Math.abs(overUnder).toFixed(2)}. Consider swapping high‑cost items (e.g., salmon, avocado) for cheaper alternatives.
+        </div>
+      )}
 
       <div className="mt-6 grid lg:grid-cols-3 gap-8">
         <section className="lg:col-span-2 rounded-xl border bg-card p-6">
