@@ -11,6 +11,7 @@ import {
   pushLogAction,
   popLastLogAction,
 } from "@/lib/planner";
+import { toast } from "@/hooks/use-toast";
 import { MEALS } from "@/data/meals";
 import {
   Bar,
@@ -62,7 +63,8 @@ export default function Progress() {
       fat: m.fat,
     });
     setLogs({ ...logs, [todayKey()]: updated });
-    try { const n = m?.name || "Meal"; (await import("@/hooks/use-toast")).toast({ title: "Logged", description: `${n} added to today.` }); } catch {}
+    const n = m?.name || "Meal";
+    toast({ title: "Logged", description: `${n} added to today.` });
   };
 
   const undo = () => {
@@ -76,7 +78,7 @@ export default function Progress() {
       fat: Math.max(0, today.fat - last.fat),
     };
     setLogs({ ...logs, [todayKey()]: updated });
-    try { (await import("@/hooks/use-toast")).toast({ title: "Undone", description: "Reverted last log." }); } catch {}
+    toast({ title: "Undone", description: "Reverted last log." });
   };
 
   const last7 = useMemo(() => {
