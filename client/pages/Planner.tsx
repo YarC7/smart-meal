@@ -34,6 +34,7 @@ export default function Planner() {
     () => loadProfile() || defaultProfile,
   );
   const [plan, setPlan] = useState<WeekPlan | null>(() => loadPlan());
+  const [swapState, setSwapState] = useState<{ open: boolean; dayIndex: number; mealIndex: number } | null>(null);
 
   const targets = useMemo(() => computeTargets(profile), [profile]);
 
