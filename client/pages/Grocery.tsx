@@ -17,6 +17,13 @@ export default function Grocery() {
 
   const overUnder = profile ? Math.round(profile.budgetPerWeek - totalCost) : 0;
 
+  useEffect(() => {
+    if (items.length === 0) return;
+    try {
+      fetch('/api/grocery', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ items }), keepalive: true }).catch(() => {});
+    } catch {}
+  }, [items]);
+
   const copy = async () => {
     const text = items
       .map((i) => `• ${i.name} — ${formatQty(i.qty)} ${i.unit}`)
