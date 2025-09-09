@@ -225,13 +225,22 @@ export default function Planner() {
 
         {/* Plan preview */}
         <section className="lg:col-span-2">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-start justify-between gap-4">
             <h2 className="text-xl font-bold">Your 7‑day plan</h2>
-            {plan && (
-              <span className="text-xs rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 ring-1 ring-emerald-300">
-                Budget target: {profile.budgetPerWeek}
-              </span>
-            )}
+            <div className="hidden md:block rounded-xl border bg-card p-3">
+              <h3 className="text-xs font-semibold">Daily targets</h3>
+              <div className="mt-2 grid grid-cols-2 gap-2 items-center">
+                <div className="h-24 w-24">
+                  <MacroDonut protein={targets.protein} carbs={targets.carbs} fat={targets.fat} />
+                </div>
+                <ul className="text-xs space-y-1">
+                  <li>Cals: <span className="font-semibold">{targets.calories}</span></li>
+                  <li>P: <span className="font-semibold">{targets.protein} g</span></li>
+                  <li>C: <span className="font-semibold">{targets.carbs} g</span></li>
+                  <li>F: <span className="font-semibold">{targets.fat} g</span></li>
+                </ul>
+              </div>
+            </div>
           </div>
           {plan ? (
             <div className="mt-4 grid md:grid-cols-2 gap-6">
