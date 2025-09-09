@@ -23,7 +23,9 @@ export default function useInstallPrompt() {
 
     // iOS standalone check
     // @ts-ignore
-    const isStandalone = window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
+    const isStandalone =
+      window.navigator.standalone ||
+      window.matchMedia("(display-mode: standalone)").matches;
     if (isStandalone) setInstalled(true);
 
     return () => {
@@ -40,5 +42,9 @@ export default function useInstallPrompt() {
     return res.outcome === "accepted";
   };
 
-  return { canInstall: !!deferred && !installed, installed, showPrompt } as const;
+  return {
+    canInstall: !!deferred && !installed,
+    installed,
+    showPrompt,
+  } as const;
 }

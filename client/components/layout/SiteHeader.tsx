@@ -30,13 +30,25 @@ export function SiteHeader() {
           <NavLink to="/" className={navLinkClass} end>
             Home
           </NavLink>
-          <NavLink to="/planner" className={navLinkClass} onMouseEnter={() => prefetch("/planner") }>
+          <NavLink
+            to="/planner"
+            className={navLinkClass}
+            onMouseEnter={() => prefetch("/planner")}
+          >
             Planner
           </NavLink>
-          <NavLink to="/grocery" className={navLinkClass} onMouseEnter={() => prefetch("/grocery") }>
+          <NavLink
+            to="/grocery"
+            className={navLinkClass}
+            onMouseEnter={() => prefetch("/grocery")}
+          >
             Grocery
           </NavLink>
-          <NavLink to="/progress" className={navLinkClass} onMouseEnter={() => prefetch("/progress") }>
+          <NavLink
+            to="/progress"
+            className={navLinkClass}
+            onMouseEnter={() => prefetch("/progress")}
+          >
             Progress
           </NavLink>
         </nav>
