@@ -21,32 +21,13 @@ export default defineConfig(({ mode }) => ({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      strategies: "injectManifest",
+      srcDir: "client",
+      filename: "sw.ts",
+      injectRegister: null,
       includeAssets: ["placeholder.svg", "robots.txt"],
       workbox: {
         navigateFallback: "/index.html",
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        runtimeCaching: [
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "api-cache",
-              networkTimeoutSeconds: 5,
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            urlPattern: ({ request }) => request.destination === "image",
-            handler: "StaleWhileRevalidate",
-            options: { cacheName: "images-cache" },
-          },
-          {
-            urlPattern: ({ request }) =>
-              ["style", "script", "font"].includes(request.destination),
-            handler: "StaleWhileRevalidate",
-            options: { cacheName: "assets-cache" },
-          },
-        ],
       },
       devOptions: {
         enabled: false,
