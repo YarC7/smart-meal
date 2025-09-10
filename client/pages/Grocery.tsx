@@ -109,7 +109,21 @@ export default function Grocery() {
                 {list.map((i) => (
                   <li
                     key={`${category}-${i.name}-${i.unit}`}
-                    className="flex items-center justify-between rounded-md border px-3 py-2 text-sm"
+                    className="flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary"
+                    onClick={() => {
+                      const peers = list
+                        .filter((p) => p.name !== i.name)
+                        .filter((p) => (p.cost ?? Infinity) < (i.cost ?? Infinity))
+                        .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))
+                        .slice(0, 3);
+                      if (peers.length === 0) {
+                        toast({ title: "No cheaper alternative", description: `No cheaper ${category.toLowerCase()} found.` });
+                      } else {
+                        const msg = peers.map((p) => `${p.name} (${(p.cost ?? 0).toFixed(2)})`).join(", ");
+                        toast({ title: "Cheaper alternatives", description: msg });
+                      }
+                    }}
+                    title="Click to see cheaper alternatives"
                   >
                     <span className="truncate mr-3">{i.name}</span>
                     <div className="flex items-center gap-4">
