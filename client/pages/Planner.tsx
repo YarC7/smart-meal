@@ -206,7 +206,7 @@ export default function Planner() {
               onClick={generate}
               className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90"
             >
-              Generate 7��day plan
+              Generate 7‑day plan
             </button>
           </div>
 
@@ -342,33 +342,72 @@ export default function Planner() {
           <DialogHeader>
             <DialogTitle>Chọn món thay thế</DialogTitle>
           </DialogHeader>
+          <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
+            <div className="inline-flex gap-1 rounded border p-1">
+              {["all","breakfast","mains","snack"].map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setFilterCat(c as any)}
+                  className={cn("px-2 py-1 rounded", filterCat === c ? "bg-primary text-primary-foreground" : "hover:bg-secondary")}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+            <div className="inline-flex gap-1">
+              {["low_cost","high_protein","vegan"].map((t) => (
+                <button
+                  key={t}
+                  onClick={() =>
+                    setQuickTags((prev) => prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t])
+                  }
+                  className={cn("px-2 py-1 rounded border", quickTags.includes(t) ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300" : "hover:bg-secondary")}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="max-h-80 overflow-y-auto grid gap-2">
-            {filterMeals(profile.preference).map((alt) => (
-              <button
-                key={alt.id}
-                className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary"
-                onClick={() => {
-                  if (!plan || !swapState) return;
-                  const updated = swapMealWith(
-                    plan,
-                    swapState.dayIndex,
-                    swapState.mealIndex,
-                    alt,
-                  );
-                  setPlan(updated);
-                  setSwapState(null);
-                  toast({
-                    title: "Đã thay",
-                    description: `Đổi sang: ${alt.name}`,
-                  });
-                }}
-              >
-                <span className="truncate mr-3">{alt.name}</span>
-                <span className="text-foreground/60 whitespace-nowrap">
-                  {alt.calories} kcal
-                </span>
-              </button>
-            ))}
+            {filterMeals(profile.preference)
+              .filter((m) => {
+                if (filterCat === "breakfast") return m.tags.includes("breakfast");
+                if (filterCat === "snack") return m.tags.includes("snack");
+                if (filterCat === "mains") return m.tags.includes("lunch") || m.tags.includes("dinner");
+                return true;
+              })
+              .filter((m) => {
+                const isLowCost = m.ingredients.reduce((s, i) => s + (i.costPerUnit ? i.costPerUnit * i.qty : 0), 0) <= 2.5;
+                return quickTags.every((t) =>
+                  t === "low_cost" ? isLowCost : m.tags.includes(t)
+                );
+              })
+              .map((alt) => (
+                <button
+                  key={alt.id}
+                  className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary"
+                  onClick={() => {
+                    if (!plan || !swapState) return;
+                    const updated = swapMealWith(
+                      plan,
+                      swapState.dayIndex,
+                      swapState.mealIndex,
+                      alt,
+                    );
+                    setPlan(updated);
+                    setSwapState(null);
+                    toast({
+                      title: "Đã thay",
+                      description: `Đổi sang: ${alt.name}`,
+                    });
+                  }}
+                >
+                  <span className="truncate mr-3">{alt.name}</span>
+                  <span className="text-foreground/60 whitespace-nowrap">
+                    {alt.calories} kcal
+                  </span>
+                </button>
+              ))}
           </div>
         </DialogContent>
       </Dialog>
