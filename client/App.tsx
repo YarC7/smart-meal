@@ -14,6 +14,9 @@ import { lazy, Suspense } from "react";
 const Planner = lazy(() => import("@/pages/Planner"));
 const Grocery = lazy(() => import("@/pages/Grocery"));
 const Progress = lazy(() => import("@/pages/Progress"));
+const Recipes = lazy(() => import("@/pages/Recipes"));
+const RecipePage = lazy(() => import("@/pages/RecipePage"));
+const Cook = lazy(() => import("@/pages/Cook"));
 
 const queryClient = new QueryClient();
 
@@ -30,6 +33,9 @@ const App = () => (
               <Route path="/planner" element={<Planner />} />
               <Route path="/grocery" element={<Grocery />} />
               <Route path="/progress" element={<Progress />} />
+              <Route path="/recipes" element={<Recipes />} />
+              <Route path="/recipes/:id" element={<RecipePage />} />
+              <Route path="/cook/:id" element={<Cook />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

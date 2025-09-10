@@ -284,7 +284,7 @@ export function categorize(name: string): GroceryCategory {
     return "Condiments";
   // Treat fruits and dairy as Snacks for simplified grouping UI
   if (
-    /chuối|xoài|cam|thơm|dứa|sữa|sữa chua|yogurt|phô mai|hạt|đậu phộng|bim bim|bánh quy/.test(
+    /chuối|xoài|cam|thơm|dứa|sữa|sữa chua|yogurt|phô mai|hạt|đ���u phộng|bim bim|bánh quy/.test(
       n,
     )
   )
@@ -364,11 +364,11 @@ export type LogAction = {
 export type LogStacks = Record<string, LogAction[]>; // by date
 
 export function loadLogStacks(): LogStacks {
-  const v = localStorage.getItem(LOG_STACK_KEY);
+  const v = sessionStorage.getItem(LOG_STACK_KEY);
   return v ? (JSON.parse(v) as LogStacks) : {};
 }
 export function saveLogStacks(stacks: LogStacks) {
-  localStorage.setItem(LOG_STACK_KEY, JSON.stringify(stacks));
+  sessionStorage.setItem(LOG_STACK_KEY, JSON.stringify(stacks));
 }
 
 export function pushLogAction(date: string, action: LogAction) {

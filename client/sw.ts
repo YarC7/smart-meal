@@ -98,6 +98,14 @@ registerRoute(
   "POST",
 );
 
+// Debug: observe Background Sync events to verify replay
+self.addEventListener("sync", (event: any) => {
+  // @ts-ignore
+  const tag = event?.tag || "";
+  // eslint-disable-next-line no-console
+  console.log("[sw] sync event:", tag);
+});
+
 // Offline fallback for images
 self.addEventListener("fetch", (event: FetchEvent) => {
   const req = event.request;
