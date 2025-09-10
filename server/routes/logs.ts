@@ -19,5 +19,6 @@ export const postLogs: RequestHandler = (req, res) => {
   for (const l of logs) {
     store[l.date] = l;
   }
+  console.log(`[api] /api/logs <- ${logs.length} items`);
   res.json({ ok: true, count: logs.length });
 };
