@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import MacroDonut from "@/components/smartmeal/MacroDonut";
-import { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
