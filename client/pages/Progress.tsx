@@ -141,14 +141,26 @@ export default function Progress() {
     <div className="container mx-auto py-10">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-extrabold tracking-tight">Progress</h1>
-        <div className="text-sm flex items-center gap-4">
+        <div className="text-sm flex items-center gap-2 sm:gap-4">
           <span className="rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 ring-1 ring-emerald-300">
             🔥 Streak: {streak} days
           </span>
+          <span className="rounded-full bg-amber-100 text-amber-700 px-3 py-1 ring-1 ring-amber-300">
+            🥇 Keep it up
+          </span>
+          <span className="rounded-full bg-fuchsia-100 text-fuchsia-700 px-3 py-1 ring-1 ring-fuchsia-300">
+            💯 You got this
+          </span>
           {compliance !== null && (
-            <span className="rounded-full bg-blue-100 text-blue-700 px-3 py-1 ring-1 ring-blue-300">
-              ✅ Compliance: {compliance}%
-            </span>
+            (() => {
+              const label = compliance >= 90 ? "Excellent" : compliance >= 70 ? "Good" : "Needs work";
+              const cls = compliance >= 90 ? "bg-emerald-100 text-emerald-700 ring-emerald-300" : compliance >= 70 ? "bg-amber-100 text-amber-700 ring-amber-300" : "bg-red-100 text-red-700 ring-red-300";
+              return (
+                <span className={`rounded-full px-3 py-1 ring-1 ${cls}`}>
+                  {label}: {compliance}%
+                </span>
+              );
+            })()
           )}
         </div>
       </div>
