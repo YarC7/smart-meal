@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { Pie, PieChart, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Link } from "react-router-dom";
+import { useMemo } from "react";
+import { MEALS } from "@/data/meals";
 
 const macroData = [
   { name: "Protein", value: 30, color: "#10b981" },
@@ -9,11 +11,11 @@ const macroData = [
 ];
 
 const groceries = [
-  { name: "Chicken breast", qty: "1.2 kg" },
-  { name: "Quinoa", qty: "800 g" },
-  { name: "Spinach", qty: "2 bunches" },
-  { name: "Greek yogurt", qty: "4 cups" },
-  { name: "Avocado", qty: "4" },
+  { name: "Gạo (rice)", qty: "3 kg" },
+  { name: "Thịt gà", qty: "1.2 kg" },
+  { name: "Cá", qty: "1 kg" },
+  { name: "Rau xanh hỗn hợp", qty: "1.5 kg" },
+  { name: "Nước mắm", qty: "250 ml" },
 ];
 
 export default function Index() {
@@ -121,6 +123,20 @@ export default function Index() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Popular in Vietnam */}
+      <section className="container mx-auto py-12">
+        <h2 className="text-2xl font-extrabold tracking-tight">Popular meals in Vietnam this week</h2>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {MEALS.filter((m) => (m.tags || []).includes("vietnamese")).slice(0, 4).map((m) => (
+            <div key={m.id} className="rounded-xl border bg-card p-4">
+              <div className="text-xs text-emerald-700 bg-emerald-100 inline-flex px-2 py-0.5 rounded-full ring-1 ring-emerald-200">Vietnam</div>
+              <div className="mt-2 font-semibold truncate" title={m.name}>{m.name}</div>
+              <div className="mt-1 text-sm text-foreground/60">{m.calories} kcal • P{m.protein} C{m.carbs} F{m.fat}</div>
+            </div>
+          ))}
         </div>
       </section>
 
