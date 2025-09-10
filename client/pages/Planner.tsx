@@ -22,6 +22,7 @@ import {
 } from "@/lib/planner";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const defaultProfile: ProfileInput = {
   age: 28,
