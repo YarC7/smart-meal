@@ -369,6 +369,17 @@ export default function Planner() {
                 </button>
               ))}
             </div>
+            <div className="inline-flex gap-1 rounded border p-1">
+              {["all","vietnamese","western","fusion"].map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setCuisine(c as any)}
+                  className={cn("px-2 py-1 rounded", cuisine === c ? "bg-primary text-primary-foreground" : "hover:bg-secondary")}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="max-h-80 overflow-y-auto grid gap-2">
             {filterMeals(profile.preference)
