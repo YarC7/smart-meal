@@ -46,6 +46,12 @@ export default function Progress() {
 
   useEffect(() => saveLogs(logs), [logs]);
 
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 350);
+    return () => clearTimeout(t);
+  }, []);
+
   const [addingId, setAddingId] = useState<string | null>(null);
   const [undoing, setUndoing] = useState(false);
 
