@@ -11,5 +11,6 @@ export const getGrocery: RequestHandler = (_req, res) => {
 export const postGrocery: RequestHandler = (req, res) => {
   const items = (req.body?.items as GroceryItem[]) || [];
   lastList = items;
+  console.log(`[api] /api/grocery <- ${items.length} items`);
   res.json({ ok: true, count: items.length });
 };
