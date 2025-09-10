@@ -56,9 +56,13 @@ export default function Planner() {
   }, [profile]);
 
   const generate = () => {
-    const p = buildWeekPlan(profile);
-    setPlan(p);
-    savePlan(p);
+    setGenerating(true);
+    setTimeout(() => {
+      const p = buildWeekPlan(profile);
+      setPlan(p);
+      savePlan(p);
+      setGenerating(false);
+    }, 400);
   };
 
   return (
