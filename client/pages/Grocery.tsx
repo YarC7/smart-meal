@@ -19,6 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Grocery() {
   const plan = loadPlan();
@@ -31,6 +32,12 @@ export default function Grocery() {
   const [copying, setCopying] = useState(false);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<{ name: string; suggestions: string[] } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 350);
+    return () => clearTimeout(t);
+  }, []);
 
   const overUnder = profile ? Math.round(profile.budgetPerWeek - totalCost) : 0;
 
@@ -114,61 +121,79 @@ export default function Grocery() {
 
       <div className="mt-6 grid lg:grid-cols-3 gap-6 lg:gap-8">
         <section className="lg:col-span-2 rounded-xl border bg-card p-4 sm:p-6">
-          <Accordion type="multiple" defaultValue={groupGroceries(items).map((g) => g.category)}>
-            {groupGroceries(items).map(({ category, list }) => (
-              <AccordionItem key={category} value={category} className="border rounded-md mb-3">
-                <AccordionTrigger className="px-3 text-sm font-semibold">
-                  <div className="flex items-center justify-between w-full">
-                    <span>{category}</span>
-                    <span className="text-xs text-foreground/60">{list.length} items</span>
+          {loading ? (
+            <div className="space-y-3">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="border rounded-md p-3">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-14" />
                   </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <ul className="mt-1 space-y-2">
-                    {list.map((i) => (
-                      <li
-                        key={`${category}-${i.name}-${i.unit}`}
-                        className="flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary"
-                        onClick={() => {
-                          if (overUnder < 0) {
-                            const s = findSubs(i.name);
-                            if (s && s.length) {
-                              setSelected({ name: i.name, suggestions: s });
-                              setOpen(true);
-                              console.log("analytics:grocery_over_budget", i.name);
-                              return;
-                            }
-                          }
-                          const peers = list
-                            .filter((p) => p.name !== i.name)
-                            .filter((p) => (p.cost ?? Infinity) < (i.cost ?? Infinity))
-                            .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))
-                            .slice(0, 3);
-                          if (peers.length === 0) {
-                            toast({ title: "No cheaper alternative", description: `No cheaper ${category.toLowerCase()} found.` });
-                          } else {
-                            const msg = peers.map((p) => `${p.name} (${(p.cost ?? 0).toFixed(2)})`).join(", ");
-                            toast({ title: "Cheaper alternatives", description: msg });
-                          }
-                        }}
-                        title="Click to see cheaper alternatives"
-                      >
-                        <span className="truncate mr-3">{i.name}</span>
-                        <div className="flex items-center gap-4">
-                          <span className="text-foreground/70">
-                            {formatQty(i.qty)} {i.unit}
-                          </span>
-                          {i.cost !== undefined && (
-                            <span className="text-foreground/60">{i.cost.toFixed(2)}</span>
-                          )}
-                        </div>
-                      </li>
+                  <div className="mt-3 space-y-2">
+                    {[0, 1, 2, 3].map((j) => (
+                      <Skeleton key={j} className="h-8 w-full" />
                     ))}
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Accordion type="multiple" defaultValue={groupGroceries(items).map((g) => g.category)}>
+              {groupGroceries(items).map(({ category, list }) => (
+                <AccordionItem key={category} value={category} className="border rounded-md mb-3">
+                  <AccordionTrigger className="px-3 text-sm font-semibold">
+                    <div className="flex items-center justify-between w-full">
+                      <span>{category}</span>
+                      <span className="text-xs text-foreground/60">{list.length} items</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="mt-1 space-y-2">
+                      {list.map((i) => (
+                        <li
+                          key={`${category}-${i.name}-${i.unit}`}
+                          className="flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary"
+                          onClick={() => {
+                            if (overUnder < 0) {
+                              const s = findSubs(i.name);
+                              if (s && s.length) {
+                                setSelected({ name: i.name, suggestions: s });
+                                setOpen(true);
+                                console.log("analytics:grocery_over_budget", i.name);
+                                return;
+                              }
+                            }
+                            const peers = list
+                              .filter((p) => p.name !== i.name)
+                              .filter((p) => (p.cost ?? Infinity) < (i.cost ?? Infinity))
+                              .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))
+                              .slice(0, 3);
+                            if (peers.length === 0) {
+                              toast({ title: "No cheaper alternative", description: `No cheaper ${category.toLowerCase()} found.` });
+                            } else {
+                              const msg = peers.map((p) => `${p.name} (${(p.cost ?? 0).toFixed(2)})`).join(", ");
+                              toast({ title: "Cheaper alternatives", description: msg });
+                            }
+                          }}
+                          title="Click to see cheaper alternatives"
+                        >
+                          <span className="truncate mr-3">{i.name}</span>
+                          <div className="flex items-center gap-4">
+                            <span className="text-foreground/70">
+                              {formatQty(i.qty)} {i.unit}
+                            </span>
+                            {i.cost !== undefined && (
+                              <span className="text-foreground/60">{i.cost.toFixed(2)}</span>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
 
           <div className="mt-6 flex gap-3">
             <button
@@ -191,24 +216,38 @@ export default function Grocery() {
         </section>
         <aside className="rounded-xl border bg-card p-4 sm:p-6">
           <h2 className="text-sm font-semibold">Budget overview</h2>
-          <div className="mt-4 text-sm space-y-2">
-            <div className="flex items-center justify-between">
-              <span>Estimated total</span>
-              <span className="font-semibold">{totalCost.toFixed(2)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Remaining vs budget</span>
-              <span className={overUnder >= 0 ? "text-emerald-600" : "text-red-600"}>
-                {overUnder >= 0 ? "+" : ""}
-                {overUnder.toFixed(2)}
-              </span>
-            </div>
-            {profile && (
-              <div className="mt-2">
-                <BudgetProgressBar total={totalCost} budget={profile.budgetPerWeek} />
+          {loading ? (
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-4 w-16" />
               </div>
-            )}
-          </div>
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-4 w-36" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+              <Skeleton className="h-2 w-full" />
+            </div>
+          ) : (
+            <div className="mt-4 text-sm space-y-2">
+              <div className="flex items-center justify-between">
+                <span>Estimated total</span>
+                <span className="font-semibold">{totalCost.toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Remaining vs budget</span>
+                <span className={overUnder >= 0 ? "text-emerald-600" : "text-red-600"}>
+                  {overUnder >= 0 ? "+" : ""}
+                  {overUnder.toFixed(2)}
+                </span>
+              </div>
+              {profile && (
+                <div className="mt-2">
+                  <BudgetProgressBar total={totalCost} budget={profile.budgetPerWeek} />
+                </div>
+              )}
+            </div>
+          )}
           <p className="mt-4 text-xs text-foreground/60">Ingredients grouped by category to simplify shopping.</p>
         </aside>
       </div>
