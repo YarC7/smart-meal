@@ -14,6 +14,7 @@ export type Meal = {
   fat: number;
   tags: string[]; // breakfast | lunch | dinner | snack | vegetarian | vegan | low_carb | high_protein
   ingredients: Ingredient[];
+  recipeId?: string;
 };
 
 // Import mixed dataset and normalize to Meal[]
