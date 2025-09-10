@@ -210,35 +210,6 @@ export default function Planner() {
             </button>
           </div>
 
-          <div className="rounded-xl border bg-card p-6">
-            <h2 className="text-sm font-semibold">Daily targets</h2>
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              <div>
-                <MacroDonut
-                  protein={targets.protein}
-                  carbs={targets.carbs}
-                  fat={targets.fat}
-                />
-              </div>
-              <ul className="text-sm space-y-2">
-                <li>
-                  Calories:{" "}
-                  <span className="font-semibold">{targets.calories} kcal</span>
-                </li>
-                <li>
-                  Protein:{" "}
-                  <span className="font-semibold">{targets.protein} g</span>
-                </li>
-                <li>
-                  Carbs:{" "}
-                  <span className="font-semibold">{targets.carbs} g</span>
-                </li>
-                <li>
-                  Fat: <span className="font-semibold">{targets.fat} g</span>
-                </li>
-              </ul>
-            </div>
-          </div>
         </section>
 
         {/* Plan preview */}
