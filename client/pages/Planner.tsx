@@ -265,20 +265,9 @@ export default function Planner() {
                           {m.calories} kcal
                         </span>
                         <button
-                          onClick={() => {
-                            if (!plan) return;
-                            const updated = swapMeal(
-                              plan,
-                              plan.days.indexOf(d),
-                              mi,
-                              profile.preference,
-                            );
-                            setPlan(updated);
-                            toast({
-                              title: "Meal swapped",
-                              description: `${m.name} replaced.`,
-                            });
-                          }}
+                          onClick={() =>
+                            setSwapState({ open: true, dayIndex: plan.days.indexOf(d), mealIndex: mi })
+                          }
                           className="rounded-md border px-2 py-1 hover:bg-secondary"
                           title="Swap meal"
                         >
