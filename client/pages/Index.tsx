@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { Pie, PieChart, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Link } from "react-router-dom";
-import { useMemo } from "react";
 import { MEALS } from "@/data/meals";
 
 const macroData = [

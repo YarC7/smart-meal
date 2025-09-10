@@ -8,7 +8,6 @@ import {
   groupGroceries,
 } from "@/lib/planner";
 import { Link } from "react-router-dom";
-import { useEffect, useMemo } from "react";
 
 export default function Grocery() {
   const plan = loadPlan();
