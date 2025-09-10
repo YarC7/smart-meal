@@ -238,66 +238,80 @@ export default function Progress() {
 
         <aside className="rounded-xl border bg-card p-4 sm:p-6 space-y-4">
           <h2 className="text-sm font-semibold">Today's macros</h2>
-          <MacroDonut
-            protein={today.protein}
-            carbs={today.carbs}
-            fat={today.fat}
-          />
-          <ul className="text-sm space-y-1">
-            <li>
-              Calories:{" "}
-              <span className="font-semibold">
-                {today.calories}/{targets.calories}
-              </span>
-            </li>
-            <li>
-              Protein:{" "}
-              <span className="font-semibold">
-                {today.protein}/{targets.protein} g
-              </span>
-            </li>
-            <li>
-              Carbs:{" "}
-              <span className="font-semibold">
-                {today.carbs}/{targets.carbs} g
-              </span>
-            </li>
-            <li>
-              Fat:{" "}
-              <span className="font-semibold">
-                {today.fat}/{targets.fat} g
-              </span>
-            </li>
-          </ul>
+          {loading ? (
+            <div className="space-y-3">
+              <Skeleton className="h-40 w-full rounded-full" />
+              <div className="grid grid-cols-2 gap-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+              </div>
+              <div className="pt-2 border-t">
+                <div className="flex items-center justify-between mb-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-6 w-16" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <MacroDonut
+                protein={today.protein}
+                carbs={today.carbs}
+                fat={today.fat}
+              />
+              <ul className="text-sm space-y-1">
+                <li>
+                  Calories: <span className="font-semibold">{today.calories}/{targets.calories}</span>
+                </li>
+                <li>
+                  Protein: <span className="font-semibold">{today.protein}/{targets.protein} g</span>
+                </li>
+                <li>
+                  Carbs: <span className="font-semibold">{today.carbs}/{targets.carbs} g</span>
+                </li>
+                <li>
+                  Fat: <span className="font-semibold">{today.fat}/{targets.fat} g</span>
+                </li>
+              </ul>
 
-          <div className="pt-2 border-t">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm">Quick add from meals</label>
-              <button
-                onClick={undo}
-                disabled={undoing}
-                className="rounded-md border px-2 py-1 text-xs hover:bg-secondary disabled:opacity-50"
-                title="Undo last"
-                aria-busy={undoing}
-              >
-                {undoing ? "Undoing…" : "Undo"}
-              </button>
-            </div>
-            <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
-              {MEALS.map((m) => (
-                <button
-                  key={m.id}
-                  onClick={() => addMeal(m.id)}
-                  className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary"
-                >
-                  <span className="truncate mr-3">{m.name}</span>
-                  <span className="text-foreground/60 whitespace-nowrap">
-                    {m.calories} kcal
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+              <div className="pt-2 border-t">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm">Quick add from meals</label>
+                  <button
+                    onClick={undo}
+                    disabled={undoing}
+                    className="rounded-md border px-2 py-1 text-xs hover:bg-secondary disabled:opacity-50"
+                    title="Undo last"
+                    aria-busy={undoing}
+                  >
+                    {undoing ? "Undoing…" : "Undo"}
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
+                  {MEALS.map((m) => (
+                    <button
+                      key={m.id}
+                      onClick={() => addMeal(m.id)}
+                      disabled={addingId === m.id}
+                      className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary disabled:opacity-50"
+                      aria-busy={addingId === m.id}
+                    >
+                      <span className="truncate mr-3">{m.name}</span>
+                      <span className="text-foreground/60 whitespace-nowrap">
+                        {addingId === m.id ? "Adding…" : `${m.calories} kcal`}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </aside>
       </div>
 
