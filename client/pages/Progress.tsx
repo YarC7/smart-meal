@@ -218,16 +218,22 @@ export default function Progress() {
             </div>
           )}
           <h2 className="text-sm font-semibold">Weekly calories</h2>
-          <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={last7}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <Tooltip />
-                <Bar dataKey="calories" fill="#10b981" radius={6} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          {loading ? (
+            <div className="h-56">
+              <Skeleton className="h-full w-full" />
+            </div>
+          ) : (
+            <div className="h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={last7}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <Tooltip />
+                  <Bar dataKey="calories" fill="#10b981" radius={6} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </section>
 
         <aside className="rounded-xl border bg-card p-4 sm:p-6 space-y-4">
