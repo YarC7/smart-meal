@@ -254,38 +254,21 @@ export function formatQty(qty: number) {
 }
 
 export type GroceryCategory =
-  | "Protein"
+  | "Proteins"
   | "Carbs"
   | "Vegetables"
   | "Condiments"
-  | "Fruits"
-  | "Dairy"
-  | "Other";
+  | "Snacks";
 
 export function categorize(name: string): GroceryCategory {
   const n = name.toLowerCase();
-  if (/gà|bò|heo|trứng|tôm|cá|thịt|cua|lạp xưởng/.test(n)) return "Protein";
-  if (
-    /gạo|cơm|bánh mì|bún|miến|mì|bánh phở|bánh đa|gạo nếp|khoai|couscous|pasta/.test(
-      n,
-    )
-  )
-    return "Carbs";
-  if (
-    /rau|dưa|cà chua|dưa leo|hành|tỏi|giá|bí|cải|đậu hà lan|thơm|cà rốt|hẹ/.test(
-      n,
-    )
-  )
-    return "Vegetables";
-  if (
-    /nước mắm|nước tương|muối|tiêu|đường|mắm|xì dầu|dầu|dầu ăn|sữa chua|sữa tươi/.test(
-      n,
-    )
-  )
-    return "Condiments";
-  if (/chuối|xoài|cam|thơm|dứa/.test(n)) return "Fruits";
-  if (/sữa|sữa chua|yogurt|phô mai/.test(n)) return "Dairy";
-  return "Other";
+  if (/gà|bò|heo|trứng|tôm|cá|thịt|cua|lạp xưởng|đậu hũ|đậu phụ/.test(n)) return "Proteins";
+  if (/gạo|cơm|bánh mì|bún|miến|mì|bánh phở|bánh đa|gạo nếp|khoai|bánh tráng|bánh canh|spaghetti|pasta|couscous/.test(n)) return "Carbs";
+  if (/rau|dưa|cà chua|dưa leo|hành|tỏi|giá|bí|cải|đậu hà lan|thơm|dứa|cà rốt|hẹ|xà lách|bắp cải/.test(n)) return "Vegetables";
+  if (/nước mắm|nước tương|muối|tiêu|đường|mắm|xì dầu|dầu|dầu ăn|giấm|tương ớt|mayonnaise/.test(n)) return "Condiments";
+  // Treat fruits and dairy as Snacks for simplified grouping UI
+  if (/chuối|xoài|cam|thơm|dứa|sữa|sữa chua|yogurt|phô mai|hạt|đậu phộng|bim bim|bánh quy/.test(n)) return "Snacks";
+  return "Snacks";
 }
 
 export function groupGroceries(items: GroceryItem[]) {
