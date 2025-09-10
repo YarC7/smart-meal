@@ -48,6 +48,7 @@ export default function Planner() {
   const [generating, setGenerating] = useState(false);
   const [filterCat, setFilterCat] = useState<"all" | "breakfast" | "mains" | "snack">("all");
   const [quickTags, setQuickTags] = useState<string[]>([]);
+  const [cuisine, setCuisine] = useState<"all" | "vietnamese" | "western" | "fusion">("all");
 
   const targets = useMemo(() => computeTargets(profile), [profile]);
 
