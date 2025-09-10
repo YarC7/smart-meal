@@ -8,6 +8,7 @@ import { VitePWA } from "vite-plugin-pwa";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
+    allowedHosts: ["localhost", "127.0.0.1", "4a94e373af0e.ngrok-free.app"],
     port: 8080,
     fs: {
       allow: [
