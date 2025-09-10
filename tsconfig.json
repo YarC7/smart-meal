@@ -6,7 +6,6 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
-    
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
@@ -18,7 +17,6 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
 
-    
     "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -26,7 +24,6 @@
     "noFallthroughCasesInSwitch": false,
     "strictNullChecks": false,
 
-    
     "baseUrl": ".",
     "paths": {
       "@/*": ["./client/*"],

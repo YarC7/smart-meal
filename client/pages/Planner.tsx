@@ -46,9 +46,13 @@ export default function Planner() {
     mealIndex: number;
   } | null>(null);
   const [generating, setGenerating] = useState(false);
-  const [filterCat, setFilterCat] = useState<"all" | "breakfast" | "mains" | "snack">("all");
+  const [filterCat, setFilterCat] = useState<
+    "all" | "breakfast" | "mains" | "snack"
+  >("all");
   const [quickTags, setQuickTags] = useState<string[]>([]);
-  const [cuisine, setCuisine] = useState<"all" | "vietnamese" | "western" | "fusion">("all");
+  const [cuisine, setCuisine] = useState<
+    "all" | "vietnamese" | "western" | "fusion"
+  >("all");
 
   const targets = useMemo(() => computeTargets(profile), [profile]);
 
@@ -211,7 +215,6 @@ export default function Planner() {
               {generating ? "Generating…" : "Generate 7‑day plan"}
             </button>
           </div>
-
         </section>
 
         {/* Plan preview */}
@@ -268,7 +271,11 @@ export default function Planner() {
                         </span>
                         <button
                           onClick={() =>
-                            setSwapState({ open: true, dayIndex: plan.days.indexOf(d), mealIndex: mi })
+                            setSwapState({
+                              open: true,
+                              dayIndex: plan.days.indexOf(d),
+                              mealIndex: mi,
+                            })
                           }
                           className="rounded-md border px-2 py-1 hover:bg-secondary"
                           title="Swap meal"
@@ -304,7 +311,10 @@ export default function Planner() {
           ) : (
             <div className="mt-4 grid md:grid-cols-2 gap-6">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="rounded-xl border bg-card p-4 space-y-3">
+                <div
+                  key={i}
+                  className="rounded-xl border bg-card p-4 space-y-3"
+                >
                   <Skeleton className="h-4 w-24" />
                   <div className="space-y-2">
                     <Skeleton className="h-8 w-full" />
@@ -346,35 +356,54 @@ export default function Planner() {
           </DialogHeader>
           <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
             <div className="inline-flex gap-1 rounded border p-1">
-              {["all","breakfast","mains","snack"].map((c) => (
+              {["all", "breakfast", "mains", "snack"].map((c) => (
                 <button
                   key={c}
                   onClick={() => setFilterCat(c as any)}
-                  className={cn("px-2 py-1 rounded", filterCat === c ? "bg-primary text-primary-foreground" : "hover:bg-secondary")}
+                  className={cn(
+                    "px-2 py-1 rounded",
+                    filterCat === c
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-secondary",
+                  )}
                 >
                   {c}
                 </button>
               ))}
             </div>
             <div className="inline-flex gap-1">
-              {["low_cost","high_protein","vegan"].map((t) => (
+              {["low_cost", "high_protein", "vegan"].map((t) => (
                 <button
                   key={t}
                   onClick={() =>
-                    setQuickTags((prev) => prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t])
+                    setQuickTags((prev) =>
+                      prev.includes(t)
+                        ? prev.filter((x) => x !== t)
+                        : [...prev, t],
+                    )
                   }
-                  className={cn("px-2 py-1 rounded border", quickTags.includes(t) ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300" : "hover:bg-secondary")}
+                  className={cn(
+                    "px-2 py-1 rounded border",
+                    quickTags.includes(t)
+                      ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300"
+                      : "hover:bg-secondary",
+                  )}
                 >
                   {t}
                 </button>
               ))}
             </div>
             <div className="inline-flex gap-1 rounded border p-1">
-              {["all","vietnamese","western","fusion"].map((c) => (
+              {["all", "vietnamese", "western", "fusion"].map((c) => (
                 <button
                   key={c}
                   onClick={() => setCuisine(c as any)}
-                  className={cn("px-2 py-1 rounded", cuisine === c ? "bg-primary text-primary-foreground" : "hover:bg-secondary")}
+                  className={cn(
+                    "px-2 py-1 rounded",
+                    cuisine === c
+                      ? "bg-primary text-primary-foreground"
+                      : "hover:bg-secondary",
+                  )}
                 >
                   {c}
                 </button>
@@ -384,18 +413,31 @@ export default function Planner() {
           <div className="max-h-80 overflow-y-auto grid gap-2">
             {filterMeals(profile.preference)
               .filter((m) => {
-                if (filterCat === "breakfast") return m.tags.includes("breakfast");
+                if (filterCat === "breakfast")
+                  return m.tags.includes("breakfast");
                 if (filterCat === "snack") return m.tags.includes("snack");
-                if (filterCat === "mains") return m.tags.includes("lunch") || m.tags.includes("dinner");
+                if (filterCat === "mains")
+                  return m.tags.includes("lunch") || m.tags.includes("dinner");
                 return true;
               })
-              .filter((m) => cuisine === "all" ? true : m.tags.includes(cuisine))
+              .filter((m) =>
+                cuisine === "all" ? true : m.tags.includes(cuisine),
+              )
               .filter((m) => {
-                const isLowCost = m.ingredients.reduce((s, i) => s + (i.costPerUnit ? i.costPerUnit * i.qty : 0), 0) <= 2.5;
-                const isHighProtein = m.protein >= 30 || m.tags.includes("high_protein");
+                const isLowCost =
+                  m.ingredients.reduce(
+                    (s, i) => s + (i.costPerUnit ? i.costPerUnit * i.qty : 0),
+                    0,
+                  ) <= 2.5;
+                const isHighProtein =
+                  m.protein >= 30 || m.tags.includes("high_protein");
                 const isVegan = m.tags.includes("vegan");
                 return quickTags.every((t) =>
-                  t === "low_cost" ? isLowCost : t === "high_protein" ? isHighProtein : isVegan
+                  t === "low_cost"
+                    ? isLowCost
+                    : t === "high_protein"
+                      ? isHighProtein
+                      : isVegan,
                 );
               })
               .map((alt) => (

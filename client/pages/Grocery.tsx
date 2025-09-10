@@ -113,14 +113,24 @@ export default function Grocery() {
                     onClick={() => {
                       const peers = list
                         .filter((p) => p.name !== i.name)
-                        .filter((p) => (p.cost ?? Infinity) < (i.cost ?? Infinity))
+                        .filter(
+                          (p) => (p.cost ?? Infinity) < (i.cost ?? Infinity),
+                        )
                         .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))
                         .slice(0, 3);
                       if (peers.length === 0) {
-                        toast({ title: "No cheaper alternative", description: `No cheaper ${category.toLowerCase()} found.` });
+                        toast({
+                          title: "No cheaper alternative",
+                          description: `No cheaper ${category.toLowerCase()} found.`,
+                        });
                       } else {
-                        const msg = peers.map((p) => `${p.name} (${(p.cost ?? 0).toFixed(2)})`).join(", ");
-                        toast({ title: "Cheaper alternatives", description: msg });
+                        const msg = peers
+                          .map((p) => `${p.name} (${(p.cost ?? 0).toFixed(2)})`)
+                          .join(", ");
+                        toast({
+                          title: "Cheaper alternatives",
+                          description: msg,
+                        });
                       }
                     }}
                     title="Click to see cheaper alternatives"

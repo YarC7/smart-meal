@@ -151,17 +151,26 @@ export default function Progress() {
           <span className="rounded-full bg-fuchsia-100 text-fuchsia-700 px-3 py-1 ring-1 ring-fuchsia-300">
             💯 You got this
           </span>
-          {compliance !== null && (
+          {compliance !== null &&
             (() => {
-              const label = compliance >= 90 ? "Excellent" : compliance >= 70 ? "Good" : "Needs work";
-              const cls = compliance >= 90 ? "bg-emerald-100 text-emerald-700 ring-emerald-300" : compliance >= 70 ? "bg-amber-100 text-amber-700 ring-amber-300" : "bg-red-100 text-red-700 ring-red-300";
+              const label =
+                compliance >= 90
+                  ? "Excellent"
+                  : compliance >= 70
+                    ? "Good"
+                    : "Needs work";
+              const cls =
+                compliance >= 90
+                  ? "bg-emerald-100 text-emerald-700 ring-emerald-300"
+                  : compliance >= 70
+                    ? "bg-amber-100 text-amber-700 ring-amber-300"
+                    : "bg-red-100 text-red-700 ring-red-300";
               return (
                 <span className={`rounded-full px-3 py-1 ring-1 ${cls}`}>
                   {label}: {compliance}%
                 </span>
               );
-            })()
-          )}
+            })()}
         </div>
       </div>
 
