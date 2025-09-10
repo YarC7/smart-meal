@@ -45,6 +45,9 @@ export default function Planner() {
     dayIndex: number;
     mealIndex: number;
   } | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [filterCat, setFilterCat] = useState<"all" | "breakfast" | "mains" | "snack">("all");
+  const [quickTags, setQuickTags] = useState<string[]>([]);
 
   const targets = useMemo(() => computeTargets(profile), [profile]);
 
