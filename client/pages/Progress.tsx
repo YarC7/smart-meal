@@ -45,6 +45,9 @@ export default function Progress() {
 
   useEffect(() => saveLogs(logs), [logs]);
 
+  const [addingId, setAddingId] = useState<string | null>(null);
+  const [undoing, setUndoing] = useState(false);
+
   const addMeal = (mealId: string) => {
     const m = MEALS.find((x) => x.id === mealId);
     if (!m) return;
@@ -63,13 +66,19 @@ export default function Progress() {
       fat: m.fat,
     });
     setLogs({ ...logs, [todayKey()]: updated });
+    console.log("analytics:quick_add", mealId);
     const n = m?.name || "Meal";
     toast({ title: "Logged", description: `${n} added to today.` });
+    setTimeout(() => setAddingId(null), 300);
   };
 
   const undo = () => {
+    setUndoing(true);
     const last = popLastLogAction(todayKey());
-    if (!last) return;
+    if (!last) {
+      setUndoing(false);
+      return;
+    }
     const updated: DayLog = {
       date: todayKey(),
       calories: Math.max(0, today.calories - last.calories),
@@ -78,7 +87,9 @@ export default function Progress() {
       fat: Math.max(0, today.fat - last.fat),
     };
     setLogs({ ...logs, [todayKey()]: updated });
+    console.log("analytics:undo");
     toast({ title: "Undone", description: "Reverted last log." });
+    setTimeout(() => setUndoing(false), 250);
   };
 
   const last7 = useMemo(() => {
@@ -138,10 +149,10 @@ export default function Progress() {
   }, [logs, plan]);
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto py-8 sm:py-10">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <h1 className="text-2xl font-extrabold tracking-tight">Progress</h1>
-        <div className="text-sm flex items-center gap-2 sm:gap-4">
+        <div className="text-sm flex items-center gap-2 sm:gap-3 flex-wrap">
           <span className="rounded-full bg-emerald-100 text-emerald-700 px-3 py-1 ring-1 ring-emerald-300">
             🔥 Streak: {streak} days
           </span>
@@ -174,8 +185,8 @@ export default function Progress() {
         </div>
       </div>
 
-      <div className="mt-6 grid lg:grid-cols-3 gap-8">
-        <section className="rounded-xl border bg-card p-6 space-y-4 lg:col-span-2">
+      <div className="mt-6 grid lg:grid-cols-3 gap-6 lg:gap-8">
+        <section className="rounded-xl border bg-card p-4 sm:p-6 space-y-4 lg:col-span-2">
           {plan && (
             <div className="rounded-lg border p-4">
               <h3 className="text-sm font-semibold mb-2">
@@ -186,11 +197,13 @@ export default function Progress() {
                   <button
                     key={pm.id}
                     onClick={() => addMeal(pm.id)}
-                    className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary"
+                    disabled={addingId === pm.id}
+                    className="flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-secondary disabled:opacity-50"
+                    aria-busy={addingId === pm.id}
                   >
                     <span className="truncate mr-3">{pm.name}</span>
                     <span className="text-foreground/60 whitespace-nowrap">
-                      {pm.calories} kcal
+                      {addingId === pm.id ? "Adding…" : `${pm.calories} kcal`}
                     </span>
                   </button>
                 ))}
@@ -210,7 +223,7 @@ export default function Progress() {
           </div>
         </section>
 
-        <aside className="rounded-xl border bg-card p-6 space-y-4">
+        <aside className="rounded-xl border bg-card p-4 sm:p-6 space-y-4">
           <h2 className="text-sm font-semibold">Today's macros</h2>
           <MacroDonut
             protein={today.protein}
@@ -249,10 +262,12 @@ export default function Progress() {
               <label className="text-sm">Quick add from meals</label>
               <button
                 onClick={undo}
-                className="rounded-md border px-2 py-1 text-xs hover:bg-secondary"
+                disabled={undoing}
+                className="rounded-md border px-2 py-1 text-xs hover:bg-secondary disabled:opacity-50"
                 title="Undo last"
+                aria-busy={undoing}
               >
-                Undo
+                {undoing ? "Undoing…" : "Undo"}
               </button>
             </div>
             <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
