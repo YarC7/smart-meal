@@ -267,16 +267,28 @@ export default function Progress() {
               />
               <ul className="text-sm space-y-1">
                 <li>
-                  Calories: <span className="font-semibold">{today.calories}/{targets.calories}</span>
+                  Calories:{" "}
+                  <span className="font-semibold">
+                    {today.calories}/{targets.calories}
+                  </span>
                 </li>
                 <li>
-                  Protein: <span className="font-semibold">{today.protein}/{targets.protein} g</span>
+                  Protein:{" "}
+                  <span className="font-semibold">
+                    {today.protein}/{targets.protein} g
+                  </span>
                 </li>
                 <li>
-                  Carbs: <span className="font-semibold">{today.carbs}/{targets.carbs} g</span>
+                  Carbs:{" "}
+                  <span className="font-semibold">
+                    {today.carbs}/{targets.carbs} g
+                  </span>
                 </li>
                 <li>
-                  Fat: <span className="font-semibold">{today.fat}/{targets.fat} g</span>
+                  Fat:{" "}
+                  <span className="font-semibold">
+                    {today.fat}/{targets.fat} g
+                  </span>
                 </li>
               </ul>
 

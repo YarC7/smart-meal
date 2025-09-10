@@ -32,7 +32,9 @@ export default function IngredientPill({ name, qty, unit }: Props) {
       title="Add to Grocery"
     >
       <span className="truncate max-w-[10rem]">{name}</span>
-      <span className="text-foreground/60">{qty} {unit}</span>
+      <span className="text-foreground/60">
+        {qty} {unit}
+      </span>
     </button>
   );
 }

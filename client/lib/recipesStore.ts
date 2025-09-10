@@ -15,7 +15,12 @@ export function getRecipe(id: string): Recipe | undefined {
   return loadRecipes().find((r) => r.id === id);
 }
 
-export type ExtraGroceryItem = { name: string; unit: string; qty: number; cost?: number };
+export type ExtraGroceryItem = {
+  name: string;
+  unit: string;
+  qty: number;
+  cost?: number;
+};
 
 export function loadExtraGroceries(): ExtraGroceryItem[] {
   const v = localStorage.getItem(EXTRA_GROCERY_KEY);

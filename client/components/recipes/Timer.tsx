@@ -33,8 +33,12 @@ export default function Timer({ seconds, autoStart, onComplete }: TimerProps) {
     };
   }, [running, onComplete]);
 
-  const minutes = Math.floor(remaining / 60).toString().padStart(2, "0");
-  const secs = Math.floor(remaining % 60).toString().padStart(2, "0");
+  const minutes = Math.floor(remaining / 60)
+    .toString()
+    .padStart(2, "0");
+  const secs = Math.floor(remaining % 60)
+    .toString()
+    .padStart(2, "0");
 
   return (
     <div className="flex items-center gap-2">

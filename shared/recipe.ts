@@ -16,7 +16,12 @@ export interface Recipe {
   image?: string;
   videoUrl?: string;
   tags?: string[];
-  ingredients?: { name: string; qty: number; unit: string; optional?: boolean }[];
+  ingredients?: {
+    name: string;
+    qty: number;
+    unit: string;
+    optional?: boolean;
+  }[];
   title_vi?: string;
   title_en?: string;
 }

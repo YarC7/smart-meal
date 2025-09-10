@@ -8,7 +8,12 @@ import {
   groupGroceries,
 } from "@/lib/planner";
 import { Link } from "react-router-dom";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import BudgetProgressBar from "@/components/smartmeal/BudgetProgressBar";
 import subs from "@/data/substitutions.json";
 import {
@@ -46,7 +51,10 @@ export default function Grocery() {
 
   const [copying, setCopying] = useState(false);
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<{ name: string; suggestions: string[] } | null>(null);
+  const [selected, setSelected] = useState<{
+    name: string;
+    suggestions: string[];
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -75,9 +83,15 @@ export default function Grocery() {
     try {
       setCopying(true);
       await navigator.clipboard.writeText(text);
-      toast({ title: "Copied", description: "Grocery list copied to clipboard." });
+      toast({
+        title: "Copied",
+        description: "Grocery list copied to clipboard.",
+      });
     } catch {
-      toast({ title: "Copy failed", description: "Could not copy to clipboard." });
+      toast({
+        title: "Copy failed",
+        description: "Could not copy to clipboard.",
+      });
     } finally {
       setCopying(false);
     }
@@ -86,7 +100,8 @@ export default function Grocery() {
   function findSubs(name: string): string[] | null {
     const n = name.toLowerCase();
     for (const key of Object.keys(subs)) {
-      if (n.includes(key.toLowerCase())) return (subs as Record<string, string[]>)[key];
+      if (n.includes(key.toLowerCase()))
+        return (subs as Record<string, string[]>)[key];
     }
     return null;
   }
@@ -122,7 +137,10 @@ export default function Grocery() {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <h1 className="text-2xl font-extrabold tracking-tight">Grocery List</h1>
         <div className="text-sm text-foreground/70">
-          Weekly budget: <span className="font-semibold">{profile.budgetPerWeek.toFixed(0)}</span>
+          Weekly budget:{" "}
+          <span className="font-semibold">
+            {profile.budgetPerWeek.toFixed(0)}
+          </span>
         </div>
       </div>
 
@@ -153,13 +171,22 @@ export default function Grocery() {
               ))}
             </div>
           ) : (
-            <Accordion type="multiple" defaultValue={groupGroceries(items).map((g) => g.category)}>
+            <Accordion
+              type="multiple"
+              defaultValue={groupGroceries(items).map((g) => g.category)}
+            >
               {groupGroceries(items).map(({ category, list }) => (
-                <AccordionItem key={category} value={category} className="border rounded-md mb-3">
+                <AccordionItem
+                  key={category}
+                  value={category}
+                  className="border rounded-md mb-3"
+                >
                   <AccordionTrigger className="px-3 text-sm font-semibold">
                     <div className="flex items-center justify-between w-full">
                       <span>{category}</span>
-                      <span className="text-xs text-foreground/60">{list.length} items</span>
+                      <span className="text-xs text-foreground/60">
+                        {list.length} items
+                      </span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
@@ -174,20 +201,37 @@ export default function Grocery() {
                               if (s && s.length) {
                                 setSelected({ name: i.name, suggestions: s });
                                 setOpen(true);
-                                console.log("analytics:grocery_over_budget", i.name);
+                                console.log(
+                                  "analytics:grocery_over_budget",
+                                  i.name,
+                                );
                                 return;
                               }
                             }
                             const peers = list
                               .filter((p) => p.name !== i.name)
-                              .filter((p) => (p.cost ?? Infinity) < (i.cost ?? Infinity))
+                              .filter(
+                                (p) =>
+                                  (p.cost ?? Infinity) < (i.cost ?? Infinity),
+                              )
                               .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))
                               .slice(0, 3);
                             if (peers.length === 0) {
-                              toast({ title: "No cheaper alternative", description: `No cheaper ${category.toLowerCase()} found.` });
+                              toast({
+                                title: "No cheaper alternative",
+                                description: `No cheaper ${category.toLowerCase()} found.`,
+                              });
                             } else {
-                              const msg = peers.map((p) => `${p.name} (${(p.cost ?? 0).toFixed(2)})`).join(", ");
-                              toast({ title: "Cheaper alternatives", description: msg });
+                              const msg = peers
+                                .map(
+                                  (p) =>
+                                    `${p.name} (${(p.cost ?? 0).toFixed(2)})`,
+                                )
+                                .join(", ");
+                              toast({
+                                title: "Cheaper alternatives",
+                                description: msg,
+                              });
                             }
                           }}
                           title="Click to see cheaper alternatives"
@@ -198,7 +242,9 @@ export default function Grocery() {
                               {formatQty(i.qty)} {i.unit}
                             </span>
                             {i.cost !== undefined && (
-                              <span className="text-foreground/60">{i.cost.toFixed(2)}</span>
+                              <span className="text-foreground/60">
+                                {i.cost.toFixed(2)}
+                              </span>
                             )}
                           </div>
                         </li>
@@ -251,19 +297,28 @@ export default function Grocery() {
               </div>
               <div className="flex items-center justify-between">
                 <span>Remaining vs budget</span>
-                <span className={overUnder >= 0 ? "text-emerald-600" : "text-red-600"}>
+                <span
+                  className={
+                    overUnder >= 0 ? "text-emerald-600" : "text-red-600"
+                  }
+                >
                   {overUnder >= 0 ? "+" : ""}
                   {overUnder.toFixed(2)}
                 </span>
               </div>
               {profile && (
                 <div className="mt-2">
-                  <BudgetProgressBar total={totalCost} budget={profile.budgetPerWeek} />
+                  <BudgetProgressBar
+                    total={totalCost}
+                    budget={profile.budgetPerWeek}
+                  />
                 </div>
               )}
             </div>
           )}
-          <p className="mt-4 text-xs text-foreground/60">Ingredients grouped by category to simplify shopping.</p>
+          <p className="mt-4 text-xs text-foreground/60">
+            Ingredients grouped by category to simplify shopping.
+          </p>
         </aside>
       </div>
 
@@ -272,18 +327,25 @@ export default function Grocery() {
           <DialogHeader>
             <DialogTitle>Cheaper substitutions</DialogTitle>
             <DialogDescription>
-              Consider swapping <span className="font-semibold">{selected?.name}</span> for one of these affordable alternatives:
+              Consider swapping{" "}
+              <span className="font-semibold">{selected?.name}</span> for one of
+              these affordable alternatives:
             </DialogDescription>
           </DialogHeader>
           <ul className="mt-2 space-y-2">
             {selected?.suggestions.map((s) => (
-              <li key={s} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+              <li
+                key={s}
+                className="flex items-center justify-between rounded-md border px-3 py-2 text-sm"
+              >
                 <span className="truncate">{s}</span>
                 <span className="text-foreground/60">Similar role</span>
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-xs text-foreground/60">Tip: Tap any item to see cheaper peers in the same category.</p>
+          <p className="mt-3 text-xs text-foreground/60">
+            Tip: Tap any item to see cheaper peers in the same category.
+          </p>
         </DialogContent>
       </Dialog>
     </div>

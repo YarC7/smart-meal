@@ -16,9 +16,10 @@ export default function Recipes() {
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return recipes;
-    return recipes.filter((r) =>
-      (r.title_vi || r.title_en || "").toLowerCase().includes(s) ||
-      (r.tags || []).some((t) => t.toLowerCase().includes(s)),
+    return recipes.filter(
+      (r) =>
+        (r.title_vi || r.title_en || "").toLowerCase().includes(s) ||
+        (r.tags || []).some((t) => t.toLowerCase().includes(s)),
     );
   }, [recipes, q]);
 
