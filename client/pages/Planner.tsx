@@ -204,9 +204,10 @@ export default function Planner() {
 
             <button
               onClick={generate}
-              className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90"
+              disabled={generating}
+              className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90 disabled:opacity-60"
             >
-              Generate 7‑day plan
+              {generating ? "Generating…" : "Generate 7‑day plan"}
             </button>
           </div>
 
