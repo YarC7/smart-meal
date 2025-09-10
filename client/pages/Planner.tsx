@@ -206,7 +206,7 @@ export default function Planner() {
               onClick={generate}
               className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90"
             >
-              Generate 7‑day plan
+              Generate 7��day plan
             </button>
           </div>
 
@@ -300,9 +300,21 @@ export default function Planner() {
               ))}
             </div>
           ) : (
-            <p className="mt-4 text-foreground/70">
-              Fill the form and generate a plan. It will be saved automatically.
-            </p>
+            <div className="mt-4 grid md:grid-cols-2 gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-xl border bg-card p-4 space-y-3">
+                  <Skeleton className="h-4 w-24" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-2/3" />
+                  </div>
+                  <div className="flex justify-end">
+                    <Skeleton className="h-6 w-28" />
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
           {plan && (
             <div className="mt-6 flex flex-wrap items-center gap-3">
