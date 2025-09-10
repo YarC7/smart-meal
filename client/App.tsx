@@ -14,6 +14,9 @@ import { lazy, Suspense } from "react";
 const Planner = lazy(() => import("@/pages/Planner"));
 const Grocery = lazy(() => import("@/pages/Grocery"));
 const Progress = lazy(() => import("@/pages/Progress"));
+const Recipes = lazy(() => import("@/pages/Recipes"));
+const RecipePage = lazy(() => import("@/pages/RecipePage"));
+const Cook = lazy(() => import("@/pages/Cook"));
 
 const queryClient = new QueryClient();
 
