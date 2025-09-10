@@ -21,6 +21,7 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function todayKey() {
   const d = new Date();
