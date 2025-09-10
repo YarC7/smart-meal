@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import {
   aggregateGroceries,
@@ -8,6 +8,17 @@ import {
   groupGroceries,
 } from "@/lib/planner";
 import { Link } from "react-router-dom";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import BudgetProgressBar from "@/components/smartmeal/BudgetProgressBar";
+import subs from "@/data/substitutions.json";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function Grocery() {
   const plan = loadPlan();
@@ -16,6 +27,10 @@ export default function Grocery() {
   const { items, totalCost } = useMemo(() => {
     return plan ? aggregateGroceries(plan) : { items: [], totalCost: 0 };
   }, [plan]);
+
+  const [copying, setCopying] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<{ name: string; suggestions: string[] } | null>(null);
 
   const overUnder = profile ? Math.round(profile.budgetPerWeek - totalCost) : 0;
 
@@ -36,18 +51,23 @@ export default function Grocery() {
       .map((i) => `• ${i.name} — ${formatQty(i.qty)} ${i.unit}`)
       .join("\n");
     try {
+      setCopying(true);
       await navigator.clipboard.writeText(text);
-      toast({
-        title: "Copied",
-        description: "Grocery list copied to clipboard.",
-      });
+      toast({ title: "Copied", description: "Grocery list copied to clipboard." });
     } catch {
-      toast({
-        title: "Copy failed",
-        description: "Could not copy to clipboard.",
-      });
+      toast({ title: "Copy failed", description: "Could not copy to clipboard." });
+    } finally {
+      setCopying(false);
     }
   };
+
+  function findSubs(name: string): string[] | null {
+    const n = name.toLowerCase();
+    for (const key of Object.keys(subs)) {
+      if (n.includes(key.toLowerCase())) return (subs as Record<string, string[]>)[key];
+    }
+    return null;
+  }
 
   if (!plan || !profile) {
     return (
@@ -76,14 +96,11 @@ export default function Grocery() {
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto py-8 sm:py-10">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <h1 className="text-2xl font-extrabold tracking-tight">Grocery List</h1>
         <div className="text-sm text-foreground/70">
-          Weekly budget:{" "}
-          <span className="font-semibold">
-            {profile.budgetPerWeek.toFixed(0)}
-          </span>
+          Weekly budget: <span className="font-semibold">{profile.budgetPerWeek.toFixed(0)}</span>
         </div>
       </div>
 
@@ -95,82 +112,84 @@ export default function Grocery() {
         </div>
       )}
 
-      <div className="mt-6 grid lg:grid-cols-3 gap-8">
-        <section className="lg:col-span-2 rounded-xl border bg-card p-6">
-          {groupGroceries(items).map(({ category, list }) => (
-            <details key={category} className="group mb-4" open>
-              <summary className="flex items-center justify-between cursor-pointer select-none">
-                <h3 className="text-sm font-semibold">{category}</h3>
-                <span className="text-xs text-foreground/60">
-                  {list.length} items
-                </span>
-              </summary>
-              <ul className="mt-2 space-y-2">
-                {list.map((i) => (
-                  <li
-                    key={`${category}-${i.name}-${i.unit}`}
-                    className="flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary"
-                    onClick={() => {
-                      const peers = list
-                        .filter((p) => p.name !== i.name)
-                        .filter(
-                          (p) => (p.cost ?? Infinity) < (i.cost ?? Infinity),
-                        )
-                        .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))
-                        .slice(0, 3);
-                      if (peers.length === 0) {
-                        toast({
-                          title: "No cheaper alternative",
-                          description: `No cheaper ${category.toLowerCase()} found.`,
-                        });
-                      } else {
-                        const msg = peers
-                          .map((p) => `${p.name} (${(p.cost ?? 0).toFixed(2)})`)
-                          .join(", ");
-                        toast({
-                          title: "Cheaper alternatives",
-                          description: msg,
-                        });
-                      }
-                    }}
-                    title="Click to see cheaper alternatives"
-                  >
-                    <span className="truncate mr-3">{i.name}</span>
-                    <div className="flex items-center gap-4">
-                      <span className="text-foreground/70">
-                        {formatQty(i.qty)} {i.unit}
-                      </span>
-                      {i.cost !== undefined && (
-                        <span className="text-foreground/60">
-                          {i.cost.toFixed(2)}
-                        </span>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          ))}
+      <div className="mt-6 grid lg:grid-cols-3 gap-6 lg:gap-8">
+        <section className="lg:col-span-2 rounded-xl border bg-card p-4 sm:p-6">
+          <Accordion type="multiple" defaultValue={groupGroceries(items).map((g) => g.category)}>
+            {groupGroceries(items).map(({ category, list }) => (
+              <AccordionItem key={category} value={category} className="border rounded-md mb-3">
+                <AccordionTrigger className="px-3 text-sm font-semibold">
+                  <div className="flex items-center justify-between w-full">
+                    <span>{category}</span>
+                    <span className="text-xs text-foreground/60">{list.length} items</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul className="mt-1 space-y-2">
+                    {list.map((i) => (
+                      <li
+                        key={`${category}-${i.name}-${i.unit}`}
+                        className="flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary"
+                        onClick={() => {
+                          if (overUnder < 0) {
+                            const s = findSubs(i.name);
+                            if (s && s.length) {
+                              setSelected({ name: i.name, suggestions: s });
+                              setOpen(true);
+                              console.log("analytics:grocery_over_budget", i.name);
+                              return;
+                            }
+                          }
+                          const peers = list
+                            .filter((p) => p.name !== i.name)
+                            .filter((p) => (p.cost ?? Infinity) < (i.cost ?? Infinity))
+                            .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))
+                            .slice(0, 3);
+                          if (peers.length === 0) {
+                            toast({ title: "No cheaper alternative", description: `No cheaper ${category.toLowerCase()} found.` });
+                          } else {
+                            const msg = peers.map((p) => `${p.name} (${(p.cost ?? 0).toFixed(2)})`).join(", ");
+                            toast({ title: "Cheaper alternatives", description: msg });
+                          }
+                        }}
+                        title="Click to see cheaper alternatives"
+                      >
+                        <span className="truncate mr-3">{i.name}</span>
+                        <div className="flex items-center gap-4">
+                          <span className="text-foreground/70">
+                            {formatQty(i.qty)} {i.unit}
+                          </span>
+                          {i.cost !== undefined && (
+                            <span className="text-foreground/60">{i.cost.toFixed(2)}</span>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
 
           <div className="mt-6 flex gap-3">
             <button
               onClick={copy}
-              className="rounded-md bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80"
+              disabled={copying}
+              className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary disabled:opacity-50"
             >
-              Copy list
+              {copying ? "Copying…" : "Copy list"}
             </button>
             <button
               onClick={() => {
                 window.print();
                 toast({ title: "Print", description: "Print dialog opened." });
               }}
-              className="rounded-md bg-secondary px-4 py-2 text-sm font-medium hover:bg-secondary/80"
+              className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary"
             >
               Print
             </button>
           </div>
         </section>
-        <aside className="rounded-xl border bg-card p-6">
+        <aside className="rounded-xl border bg-card p-4 sm:p-6">
           <h2 className="text-sm font-semibold">Budget overview</h2>
           <div className="mt-4 text-sm space-y-2">
             <div className="flex items-center justify-between">
@@ -179,50 +198,40 @@ export default function Grocery() {
             </div>
             <div className="flex items-center justify-between">
               <span>Remaining vs budget</span>
-              <span
-                className={overUnder >= 0 ? "text-emerald-600" : "text-red-600"}
-              >
+              <span className={overUnder >= 0 ? "text-emerald-600" : "text-red-600"}>
                 {overUnder >= 0 ? "+" : ""}
                 {overUnder.toFixed(2)}
               </span>
             </div>
             {profile && (
               <div className="mt-2">
-                {(() => {
-                  const pct = Math.min(
-                    150,
-                    Math.round(
-                      (totalCost / Math.max(1, profile.budgetPerWeek)) * 100,
-                    ),
-                  );
-                  const color =
-                    pct < 80
-                      ? "bg-emerald-500"
-                      : pct <= 100
-                        ? "bg-amber-500"
-                        : "bg-red-500";
-                  return (
-                    <div>
-                      <div className="h-2 rounded bg-muted overflow-hidden">
-                        <div
-                          className={`h-2 ${color}`}
-                          style={{ width: `${Math.min(100, pct)}%` }}
-                        />
-                      </div>
-                      <div className="mt-1 text-xs text-foreground/60">
-                        {pct}% of budget
-                      </div>
-                    </div>
-                  );
-                })()}
+                <BudgetProgressBar total={totalCost} budget={profile.budgetPerWeek} />
               </div>
             )}
           </div>
-          <p className="mt-4 text-xs text-foreground/60">
-            Ingredients grouped by category to simplify shopping.
-          </p>
+          <p className="mt-4 text-xs text-foreground/60">Ingredients grouped by category to simplify shopping.</p>
         </aside>
       </div>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cheaper substitutions</DialogTitle>
+            <DialogDescription>
+              Consider swapping <span className="font-semibold">{selected?.name}</span> for one of these affordable alternatives:
+            </DialogDescription>
+          </DialogHeader>
+          <ul className="mt-2 space-y-2">
+            {selected?.suggestions.map((s) => (
+              <li key={s} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+                <span className="truncate">{s}</span>
+                <span className="text-foreground/60">Similar role</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs text-foreground/60">Tip: Tap any item to see cheaper peers in the same category.</p>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
