@@ -389,10 +389,13 @@ export default function Planner() {
                 if (filterCat === "mains") return m.tags.includes("lunch") || m.tags.includes("dinner");
                 return true;
               })
+              .filter((m) => cuisine === "all" ? true : m.tags.includes(cuisine))
               .filter((m) => {
                 const isLowCost = m.ingredients.reduce((s, i) => s + (i.costPerUnit ? i.costPerUnit * i.qty : 0), 0) <= 2.5;
+                const isHighProtein = m.protein >= 30 || m.tags.includes("high_protein");
+                const isVegan = m.tags.includes("vegan");
                 return quickTags.every((t) =>
-                  t === "low_cost" ? isLowCost : m.tags.includes(t)
+                  t === "low_cost" ? isLowCost : t === "high_protein" ? isHighProtein : isVegan
                 );
               })
               .map((alt) => (
