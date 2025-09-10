@@ -26,7 +26,22 @@ export default function Grocery() {
   const profile = loadProfile();
 
   const { items, totalCost } = useMemo(() => {
-    return plan ? aggregateGroceries(plan) : { items: [], totalCost: 0 };
+    const base = plan ? aggregateGroceries(plan) : { items: [], totalCost: 0 };
+    try {
+      const extraRaw = localStorage.getItem("smartmeal.grocery.extra.v1");
+      const extra = extraRaw ? (JSON.parse(extraRaw) as typeof base.items) : [];
+      const map = new Map<string, (typeof base.items)[number]>();
+      for (const it of [...base.items, ...extra]) {
+        const key = `${it.name}|${it.unit}`;
+        const prev = map.get(key);
+        map.set(key, prev ? { ...it, qty: prev.qty + it.qty } : it);
+      }
+      const merged = Array.from(map.values());
+      const total = merged.reduce((s, i) => s + (i.cost || 0), 0);
+      return { items: merged, totalCost: total || base.totalCost };
+    } catch {
+      return base;
+    }
   }, [plan]);
 
   const [copying, setCopying] = useState(false);
