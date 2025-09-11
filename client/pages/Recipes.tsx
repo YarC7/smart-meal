@@ -5,7 +5,7 @@ import RecipeCard from "@/components/recipes/RecipeCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { RecipeCategory } from "@shared/recipe";
 
-const ALL_TAGS: RecipeTag[] = [
+const ALL_TAGS: string[] = [
   "low_cost",
   "high_protein",
   "vegan",
