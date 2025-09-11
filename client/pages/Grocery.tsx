@@ -137,7 +137,7 @@ export default function Grocery() {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <h1 className="text-2xl font-extrabold tracking-tight">Grocery List</h1>
         <div className="text-sm text-foreground/70">
-          Weekly budget:{" "}
+          Weekly budget: {" "}
           <span className="font-semibold">
             {profile.budgetPerWeek.toFixed(0)}
           </span>
@@ -237,13 +237,21 @@ export default function Grocery() {
                           title="Click to see cheaper alternatives"
                         >
                           <span className="truncate mr-3">{i.name}</span>
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-3">
+                            <Link
+                              to={`/recipes?q=${encodeURIComponent(i.name)}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="rounded border px-2 py-0.5 text-xs hover:bg-background"
+                              title="Find recipes that use this ingredient"
+                            >
+                              Recipes
+                            </Link>
                             <span className="text-foreground/70">
                               {formatQty(i.qty)} {i.unit}
                             </span>
                             {i.cost !== undefined && (
                               <span className="text-foreground/60">
-                                {i.cost.toFixed(2)}
+                                {(i.cost ?? 0).toFixed(2)}
                               </span>
                             )}
                           </div>
@@ -327,7 +335,7 @@ export default function Grocery() {
           <DialogHeader>
             <DialogTitle>Cheaper substitutions</DialogTitle>
             <DialogDescription>
-              Consider swapping{" "}
+              Consider swapping {" "}
               <span className="font-semibold">{selected?.name}</span> for one of
               these affordable alternatives:
             </DialogDescription>
