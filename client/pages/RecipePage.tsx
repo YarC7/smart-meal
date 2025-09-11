@@ -9,6 +9,9 @@ import { toast } from "@/hooks/use-toast";
 import { pushLogAction, loadLogs, saveLogs, DayLog } from "@/lib/planner";
 import subs from "@/data/substitutions.json";
 import { track } from "@/lib/analytics";
+import { useEffect as ReactUseEffect, useState as ReactUseState } from "react";
+import { isFavorite, toggleFavorite } from "@/lib/favorites";
+import { getRating, setRating } from "@/lib/ratings";
 
 function todayKey() {
   const d = new Date();
