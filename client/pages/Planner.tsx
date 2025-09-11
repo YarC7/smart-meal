@@ -23,6 +23,8 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "react-router-dom";
+import { getRecipeByMealId } from "@/data/recipes";
 
 const defaultProfile: ProfileInput = {
   age: 28,
@@ -233,11 +235,11 @@ export default function Planner() {
                 </div>
                 <ul className="text-xs space-y-1">
                   <li>
-                    Cals:{" "}
+                    Cals: {""}
                     <span className="font-semibold">{targets.calories}</span>
                   </li>
                   <li>
-                    P:{" "}
+                    P: {""}
                     <span className="font-semibold">{targets.protein} g</span>
                   </li>
                   <li>
@@ -258,32 +260,44 @@ export default function Planner() {
                     <h3 className="font-semibold">{d.day}</h3>
                   </div>
                   <ul className="mt-3 space-y-2 text-sm">
-                    {d.meals.map((m, mi) => (
-                      <li
-                        key={m.id}
-                        className="flex items-center justify-between rounded-md border px-3 py-2 gap-3"
-                      >
-                        <span className="truncate mr-3 flex-1 min-w-0">
-                          {m.name}
-                        </span>
-                        <span className="text-foreground/60 whitespace-nowrap">
-                          {m.calories} kcal
-                        </span>
-                        <button
-                          onClick={() =>
-                            setSwapState({
-                              open: true,
-                              dayIndex: plan.days.indexOf(d),
-                              mealIndex: mi,
-                            })
-                          }
-                          className="rounded-md border px-2 py-1 hover:bg-secondary"
-                          title="Swap meal"
+                    {d.meals.map((m, mi) => {
+                      const rec = getRecipeByMealId(m.id);
+                      return (
+                        <li
+                          key={m.id}
+                          className="flex items-center justify-between rounded-md border px-3 py-2 gap-3"
                         >
-                          Swap
-                        </button>
-                      </li>
-                    ))}
+                          <span className="truncate mr-3 flex-1 min-w-0">
+                            {m.name}
+                          </span>
+                          <span className="text-foreground/60 whitespace-nowrap">
+                            {m.calories} kcal
+                          </span>
+                          {rec && (
+                            <Link
+                              to={`/recipes/${rec.id}`}
+                              className="rounded-md border px-2 py-1 hover:bg-secondary"
+                              title="Open recipe"
+                            >
+                              Recipe
+                            </Link>
+                          )}
+                          <button
+                            onClick={() =>
+                              setSwapState({
+                                open: true,
+                                dayIndex: plan.days.indexOf(d),
+                                mealIndex: mi,
+                              })
+                            }
+                            className="rounded-md border px-2 py-1 hover:bg-secondary"
+                            title="Swap meal"
+                          >
+                            Swap
+                          </button>
+                        </li>
+                      );
+                    })}
                   </ul>
                   <div className="mt-3 flex justify-end">
                     <button
