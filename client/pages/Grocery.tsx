@@ -122,6 +122,7 @@ export default function Grocery() {
 
   const copy = async () => {
     const text = items
+      .filter((i) => !purchased[`${i.name}|${i.unit}`])
       .map((i) => `• ${i.name} — ${formatQty(i.qty)} ${i.unit}`)
       .join("\n");
     try {
