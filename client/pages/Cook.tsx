@@ -70,7 +70,9 @@ export default function Cook() {
     rec.onerror = () => {};
     recogRef.current = rec;
     return () => {
-      try { rec.abort(); } catch {}
+      try {
+        rec.abort();
+      } catch {}
     };
   }, [index]);
 
@@ -121,13 +123,17 @@ export default function Cook() {
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-semibold mr-3">{step.text}</h1>
             {step.type && (
-              <span className={`text-xs px-2 py-0.5 rounded-full border ${
-                step.type === "prep"
-                  ? "bg-amber-100 text-amber-800"
-                  : step.type === "cook"
-                  ? "bg-emerald-100 text-emerald-800"
-                  : "bg-sky-100 text-sky-800"
-              }`}>{step.type}</span>
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full border ${
+                  step.type === "prep"
+                    ? "bg-amber-100 text-amber-800"
+                    : step.type === "cook"
+                      ? "bg-emerald-100 text-emerald-800"
+                      : "bg-sky-100 text-sky-800"
+                }`}
+              >
+                {step.type}
+              </span>
             )}
           </div>
           <div className="flex items-center justify-between gap-3">
@@ -174,7 +180,9 @@ export default function Cook() {
                   <Timer seconds={t} label={`Extra ${i + 1}`} />
                   <button
                     className="rounded border px-2 py-1 text-xs hover:bg-secondary"
-                    onClick={() => setTimers((arr) => arr.filter((_, j) => j !== i))}
+                    onClick={() =>
+                      setTimers((arr) => arr.filter((_, j) => j !== i))
+                    }
                     aria-label={`Remove timer ${i + 1}`}
                   >
                     ✕

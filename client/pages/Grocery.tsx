@@ -25,7 +25,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { loadCategories, loadPantryStaples, loadSubs, getCategoryFor, getSubsFor, loadUserPantry, saveUserPantry } from "@/lib/catalog";
+import {
+  loadCategories,
+  loadPantryStaples,
+  loadSubs,
+  getCategoryFor,
+  getSubsFor,
+  loadUserPantry,
+  saveUserPantry,
+} from "@/lib/catalog";
 import { track } from "@/lib/analytics";
 import { replanUnderBudget, estimateMealCost } from "@/lib/replan";
 
@@ -55,7 +63,8 @@ export default function Grocery() {
   const [cats, setCats] = useState<Record<string, string>>({});
   const [remoteSubs, setRemoteSubs] = useState<Record<string, string[]>>({});
   const [pantryList, setPantryList] = useState<string[]>([]);
-  const [userPantry, setUserPantry] = useState<Record<string, boolean>>(loadUserPantry());
+  const [userPantry, setUserPantry] =
+    useState<Record<string, boolean>>(loadUserPantry());
 
   useEffect(() => {
     loadCategories().then(setCats);
@@ -155,7 +164,7 @@ export default function Grocery() {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <h1 className="text-2xl font-extrabold tracking-tight">Grocery List</h1>
         <div className="text-sm text-foreground/70">
-          Weekly budget: {" "}
+          Weekly budget:{" "}
           <span className="font-semibold">
             {profile.budgetPerWeek.toFixed(0)}
           </span>
@@ -194,7 +203,7 @@ export default function Grocery() {
               defaultValue={groupGroceries(items).map((g) => g.category)}
             >
               {groupGroceries(
-                items.filter((it) => !userPantry[it.name?.toLowerCase?.()] )
+                items.filter((it) => !userPantry[it.name?.toLowerCase?.()]),
               ).map(({ category, list }) => (
                 <AccordionItem
                   key={category}
@@ -217,7 +226,9 @@ export default function Grocery() {
                           className="flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary"
                           onClick={() => {
                             if (overUnder < 0) {
-                              const s = getSubsFor(i.name, remoteSubs) || findSubs(i.name);
+                              const s =
+                                getSubsFor(i.name, remoteSubs) ||
+                                findSubs(i.name);
                               if (s && s.length) {
                                 setSelected({ name: i.name, suggestions: s });
                                 setOpen(true);
@@ -344,11 +355,22 @@ export default function Grocery() {
                     onClick={() => {
                       if (!plan || !profile) return;
                       const { plan: np, changed } = replanUnderBudget(
-                        { ...plan, days: [...plan.days.map((d) => ({ ...d, meals: [...d.meals] }))] },
+                        {
+                          ...plan,
+                          days: [
+                            ...plan.days.map((d) => ({
+                              ...d,
+                              meals: [...d.meals],
+                            })),
+                          ],
+                        },
                         profile.budgetPerWeek,
                       );
                       track("budget_replan", { changed });
-                      localStorage.setItem("smartmeal.plan.v1", JSON.stringify(np));
+                      localStorage.setItem(
+                        "smartmeal.plan.v1",
+                        JSON.stringify(np),
+                      );
                       window.location.reload();
                     }}
                     className="mt-3 w-full rounded-md border px-3 py-2 text-sm hover:bg-secondary"
@@ -362,7 +384,9 @@ export default function Grocery() {
 
           <div>
             <h2 className="text-sm font-semibold">Pantry</h2>
-            <p className="text-xs text-foreground/60">Exclude items you already own.</p>
+            <p className="text-xs text-foreground/60">
+              Exclude items you already own.
+            </p>
             <div className="mt-2 grid gap-2 max-h-48 overflow-auto">
               {pantryList.map((p) => (
                 <label key={p} className="flex items-center gap-2 text-sm">
@@ -370,7 +394,10 @@ export default function Grocery() {
                     type="checkbox"
                     checked={!!userPantry[p.toLowerCase()]}
                     onChange={(e) =>
-                      setUserPantry((prev) => ({ ...prev, [p.toLowerCase()]: e.target.checked }))
+                      setUserPantry((prev) => ({
+                        ...prev,
+                        [p.toLowerCase()]: e.target.checked,
+                      }))
                     }
                   />
                   <span className="truncate">{p}</span>
@@ -381,17 +408,29 @@ export default function Grocery() {
 
           <div>
             <h2 className="text-sm font-semibold">Protein value</h2>
-            <p className="text-xs text-foreground/60">Cost per gram of protein (lower is better).</p>
+            <p className="text-xs text-foreground/60">
+              Cost per gram of protein (lower is better).
+            </p>
             <ul className="mt-2 space-y-1 text-sm">
               {groupGroceries(items)
                 .flatMap((g) => g.list)
-                .filter((i) => (cats[i.name.toLowerCase()] || "").toLowerCase() === "proteins")
+                .filter(
+                  (i) =>
+                    (cats[i.name.toLowerCase()] || "").toLowerCase() ===
+                    "proteins",
+                )
                 .slice(0, 6)
                 .map((i) => (
-                  <li key={`${i.name}-${i.unit}`} className="flex items-center justify-between">
+                  <li
+                    key={`${i.name}-${i.unit}`}
+                    className="flex items-center justify-between"
+                  >
                     <span className="truncate mr-3">{i.name}</span>
                     <span className="text-foreground/60">
-                      {i.cost && i.qty ? (i.cost / Math.max(1, i.qty)).toFixed(2) : "—"}/g
+                      {i.cost && i.qty
+                        ? (i.cost / Math.max(1, i.qty)).toFixed(2)
+                        : "—"}
+                      /g
                     </span>
                   </li>
                 ))}
@@ -409,7 +448,7 @@ export default function Grocery() {
           <DialogHeader>
             <DialogTitle>Cheaper substitutions</DialogTitle>
             <DialogDescription>
-              Consider swapping {" "}
+              Consider swapping{" "}
               <span className="font-semibold">{selected?.name}</span> for one of
               these affordable alternatives:
             </DialogDescription>

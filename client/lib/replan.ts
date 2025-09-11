@@ -2,7 +2,10 @@ import { WeekPlan, filterMeals } from "@/lib/planner";
 import { MEALS, Meal } from "@/data/meals";
 
 export function mealCost(meal: Meal): number {
-  return meal.ingredients.reduce((s, i) => s + (i.costPerUnit ? i.costPerUnit * i.qty : 0), 0);
+  return meal.ingredients.reduce(
+    (s, i) => s + (i.costPerUnit ? i.costPerUnit * i.qty : 0),
+    0,
+  );
 }
 
 export function estimateMealCost(mealId: string): number {
@@ -24,11 +27,21 @@ function similarMacros(base: Meal, cand: Meal): boolean {
   );
 }
 
-export function replanUnderBudget(plan: WeekPlan, budget: number): { plan: WeekPlan; changed: number } {
+export function replanUnderBudget(
+  plan: WeekPlan,
+  budget: number,
+): { plan: WeekPlan; changed: number } {
   // Attempt to replace highest-cost meals first with cheaper similar macro meals
-  const flat: { dayIndex: number; mealIndex: number; meal: Meal; cost: number }[] = [];
+  const flat: {
+    dayIndex: number;
+    mealIndex: number;
+    meal: Meal;
+    cost: number;
+  }[] = [];
   plan.days.forEach((d, di) =>
-    d.meals.forEach((m, mi) => flat.push({ dayIndex: di, mealIndex: mi, meal: m, cost: mealCost(m) })),
+    d.meals.forEach((m, mi) =>
+      flat.push({ dayIndex: di, mealIndex: mi, meal: m, cost: mealCost(m) }),
+    ),
   );
   let total = flat.reduce((s, x) => s + x.cost, 0);
   let changed = 0;

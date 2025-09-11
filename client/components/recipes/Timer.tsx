@@ -10,7 +10,8 @@ interface TimerProps {
 
 function beepAndVibrate() {
   try {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const ctx = new (window.AudioContext ||
+      (window as any).webkitAudioContext)();
     const o = ctx.createOscillator();
     const g = ctx.createGain();
     o.type = "sine";
@@ -25,7 +26,12 @@ function beepAndVibrate() {
   if (navigator.vibrate) navigator.vibrate(200);
 }
 
-export default function Timer({ seconds, autoStart, onComplete, label }: TimerProps) {
+export default function Timer({
+  seconds,
+  autoStart,
+  onComplete,
+  label,
+}: TimerProps) {
   const [remaining, setRemaining] = useState(seconds);
   const [running, setRunning] = useState(!!autoStart);
   const intervalRef = useRef<number | null>(null);
@@ -59,7 +65,12 @@ export default function Timer({ seconds, autoStart, onComplete, label }: TimerPr
     .padStart(2, "0");
 
   return (
-    <div className="flex items-center gap-2" role="timer" aria-live="polite" aria-label={label || "timer"}>
+    <div
+      className="flex items-center gap-2"
+      role="timer"
+      aria-live="polite"
+      aria-label={label || "timer"}
+    >
       <div className="font-mono text-lg tabular-nums">
         {minutes}:{secs}
       </div>

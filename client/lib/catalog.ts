@@ -1,6 +1,9 @@
-const CATEGORIES_URL = "https://cdn.builder.io/o/assets%2Fdc872da47f1c45cbb319472163d66df4%2F8cb5b86e3c7347eb8036f7ad6e42af53?alt=media&token=d9581519-9b16-4e59-a9d7-baa3b5d4c8db&apiKey=dc872da47f1c45cbb319472163d66df4";
-const SUBS_URL = "https://cdn.builder.io/o/assets%2Fdc872da47f1c45cbb319472163d66df4%2F9b1bbabb5ea047c796fa87f2b15cbb0a?alt=media&token=10839162-22d1-4faf-9355-e810ea25c4ac&apiKey=dc872da47f1c45cbb319472163d66df4";
-const PANTRY_URL = "https://cdn.builder.io/o/assets%2Fdc872da47f1c45cbb319472163d66df4%2Fdd9dc6b7ddb94008ad44afdd9334b50d?alt=media&token=0465ca55-9ae6-43ba-9e9e-2a44060504ee&apiKey=dc872da47f1c45cbb319472163d66df4";
+const CATEGORIES_URL =
+  "https://cdn.builder.io/o/assets%2Fdc872da47f1c45cbb319472163d66df4%2F8cb5b86e3c7347eb8036f7ad6e42af53?alt=media&token=d9581519-9b16-4e59-a9d7-baa3b5d4c8db&apiKey=dc872da47f1c45cbb319472163d66df4";
+const SUBS_URL =
+  "https://cdn.builder.io/o/assets%2Fdc872da47f1c45cbb319472163d66df4%2F9b1bbabb5ea047c796fa87f2b15cbb0a?alt=media&token=10839162-22d1-4faf-9355-e810ea25c4ac&apiKey=dc872da47f1c45cbb319472163d66df4";
+const PANTRY_URL =
+  "https://cdn.builder.io/o/assets%2Fdc872da47f1c45cbb319472163d66df4%2Fdd9dc6b7ddb94008ad44afdd9334b50d?alt=media&token=0465ca55-9ae6-43ba-9e9e-2a44060504ee&apiKey=dc872da47f1c45cbb319472163d66df4";
 
 const KEY_CATS = "smartmeal.categories.v1";
 const KEY_SUBS = "smartmeal.substitutions.remote.v1";
@@ -52,7 +55,10 @@ export async function loadPantryStaples(): Promise<PantryStaples> {
   }
 }
 
-export function getCategoryFor(name: string, cats: CategoriesMap): string | null {
+export function getCategoryFor(
+  name: string,
+  cats: CategoriesMap,
+): string | null {
   const n = name.toLowerCase().trim();
   return cats[n] || null;
 }

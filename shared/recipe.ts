@@ -38,6 +38,11 @@ export interface Recipe {
   tags?: RecipeTag[];
   // ingredients and nutrition
   ingredients?: RecipeIngredient[];
-  macrosPerServing?: { kcal: number; protein: number; carbs: number; fat: number };
+  macrosPerServing?: {
+    kcal: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
   costPerServing?: number;
 }

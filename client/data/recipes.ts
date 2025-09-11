@@ -24,9 +24,16 @@ export const RECIPES: Recipe[] = [
       { name: "Rau thơm", qty: 50, unit: "g" },
     ],
     steps: [
-      { order: 1, text: "Nướng hành gừng cho thơm; ninh với xương/nước để làm nước dùng.", time: 1200 },
+      {
+        order: 1,
+        text: "Nướng hành gừng cho thơm; ninh với xương/nước để làm nước dùng.",
+        time: 1200,
+      },
       { order: 2, text: "Chần bánh phở; thái lát thịt bò mỏng.", time: 300 },
-      { order: 3, text: "Chan nước dùng sôi vào tô, thêm rau thơm và nêm nếm." },
+      {
+        order: 3,
+        text: "Chan nước dùng sôi vào tô, thêm rau thơm và nêm nếm.",
+      },
     ],
     tips: ["Dùng quế hồi vừa đủ để hương không quá gắt."],
   },
@@ -49,7 +56,11 @@ export const RECIPES: Recipe[] = [
       { name: "Dưa chua", qty: 80, unit: "g", optional: true },
     ],
     steps: [
-      { order: 1, text: "Ướp sườn với nước mắm, đường, tỏi; nướng/áp chảo.", time: 900 },
+      {
+        order: 1,
+        text: "Ướp sườn với nước mắm, đường, tỏi; nướng/áp chảo.",
+        time: 900,
+      },
       { order: 2, text: "Nấu cơm; dọn cùng đồ chua và mỡ hành." },
     ],
   },
@@ -75,8 +86,16 @@ export const RECIPES: Recipe[] = [
       { name: "Rau sống", qty: 60, unit: "g" },
     ],
     steps: [
-      { order: 1, text: "Trộn thịt băm với tỏi, đường, nước mắm; vo viên.", time: 600 },
-      { order: 2, text: "Ướp ba chỉ; nướng cả viên và ba chỉ đến xém cạnh.", time: 720 },
+      {
+        order: 1,
+        text: "Trộn thịt băm với tỏi, đường, nước mắm; vo viên.",
+        time: 600,
+      },
+      {
+        order: 2,
+        text: "Ướp ba chỉ; nướng cả viên và ba chỉ đến xém cạnh.",
+        time: 720,
+      },
       { order: 3, text: "Pha nước chấm chua ngọt; luộc bún; dọn cùng rau." },
     ],
     tips: ["Nướng lửa vừa để thịt chín đều, không khô."],
@@ -123,7 +142,11 @@ export const RECIPES: Recipe[] = [
       { name: "Bạc hà, giá", qty: 200, unit: "g" },
     ],
     steps: [
-      { order: 1, text: "Nấu sôi nước; cho cà chua, thơm vào; nêm nếm.", time: 300 },
+      {
+        order: 1,
+        text: "Nấu sôi nước; cho cà chua, thơm vào; nêm nếm.",
+        time: 300,
+      },
       { order: 2, text: "Thả cá vào; chín tới thì thêm rau; tắt bếp." },
     ],
   },
@@ -313,7 +336,11 @@ export const RECIPES: Recipe[] = [
       { name: "Phô mai", qty: 20, unit: "g", optional: true },
     ],
     steps: [
-      { order: 1, text: "Đánh trứng; xào sơ rau; đổ trứng vào chảo.", time: 300 },
+      {
+        order: 1,
+        text: "Đánh trứng; xào sơ rau; đổ trứng vào chảo.",
+        time: 300,
+      },
       { order: 2, text: "Gập đôi; chín vừa thì tắt bếp." },
     ],
   },
@@ -402,7 +429,11 @@ export const RECIPES: Recipe[] = [
       { name: "Cà chua hộp", qty: 200, unit: "g" },
     ],
     steps: [
-      { order: 1, text: "Xào sơ rau củ; thêm nước và đậu; nấu mềm.", time: 1200 },
+      {
+        order: 1,
+        text: "Xào sơ rau củ; thêm nước và đậu; nấu mềm.",
+        time: 1200,
+      },
       { order: 2, text: "Nêm nếm; ăn nóng." },
     ],
   },
@@ -467,9 +498,7 @@ export const RECIPES: Recipe[] = [
       { name: "Trái cây", qty: 200, unit: "g" },
       { name: "Mật ong", qty: 1, unit: "tbsp" },
     ],
-    steps: [
-      { order: 1, text: "Xếp lớp sữa chua, trái cây, rưới mật ong." },
-    ],
+    steps: [{ order: 1, text: "Xếp lớp sữa chua, trái cây, rưới mật ong." }],
   },
   // Existing simple seeds (ensuring compatibility)
   {
@@ -511,7 +540,11 @@ export const RECIPES: Recipe[] = [
     tags: ["western", "pasta"],
     steps: [
       { order: 1, text: "Luộc mì al dente theo gợi ý trên bao bì.", time: 600 },
-      { order: 2, text: "Xào thơm hành tỏi, cho thịt bò bằm đảo săn.", time: 300 },
+      {
+        order: 2,
+        text: "Xào thơm hành tỏi, cho thịt bò bằm đảo săn.",
+        time: 300,
+      },
       { order: 3, text: "Thêm cà chua, nêm nếm; đun liu riu.", time: 600 },
       { order: 4, text: "Trộn sốt với mì, rắc phô mai (tuỳ chọn)." },
     ],

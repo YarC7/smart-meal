@@ -55,9 +55,7 @@ export default function Recipes() {
         .map((i) => i.name)
         .join(" ")
         .toLowerCase();
-      return (
-        title.includes(s) || tagsStr.includes(s) || ings.includes(s)
-      );
+      return title.includes(s) || tagsStr.includes(s) || ings.includes(s);
     });
   }, [recipes, q, selectedTags, category]);
 
@@ -87,7 +85,9 @@ export default function Recipes() {
               key={c}
               onClick={() => setCategory(c)}
               className={`px-2 py-1 rounded text-xs ${
-                category === c ? "bg-primary text-primary-foreground" : "hover:bg-secondary"
+                category === c
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-secondary"
               }`}
             >
               {c}
@@ -102,7 +102,9 @@ export default function Recipes() {
                 key={t}
                 onClick={() =>
                   setSelectedTags((prev) =>
-                    prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t],
+                    prev.includes(t)
+                      ? prev.filter((x) => x !== t)
+                      : [...prev, t],
                   )
                 }
                 className={`px-2 py-1 rounded border text-xs ${

@@ -18,7 +18,8 @@ function todayKey() {
 function findSubs(name: string): string[] | null {
   const n = name.toLowerCase();
   for (const key of Object.keys(subs)) {
-    if (n.includes(key.toLowerCase())) return (subs as Record<string, string[]>)[key];
+    if (n.includes(key.toLowerCase()))
+      return (subs as Record<string, string[]>)[key];
   }
   return null;
 }
@@ -164,7 +165,9 @@ export default function RecipePage() {
                 </p>
                 {substitutions.length > 0 && (
                   <div className="mt-3 rounded-md border p-3 bg-secondary/30">
-                    <div className="text-xs font-semibold mb-1">Substitutions</div>
+                    <div className="text-xs font-semibold mb-1">
+                      Substitutions
+                    </div>
                     <ul className="text-xs space-y-1">
                       {substitutions.map((s) => (
                         <li key={s.name}>
@@ -189,7 +192,11 @@ export default function RecipePage() {
                       className="space-y-2"
                       ref={(el) => {
                         if (!el) return;
-                        if (s.order - 1 === stepParam) el.scrollIntoView({ behavior: "smooth", block: "center" });
+                        if (s.order - 1 === stepParam)
+                          el.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                          });
                       }}
                     >
                       <div className="flex items-start justify-between gap-3">
