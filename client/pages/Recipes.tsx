@@ -23,7 +23,7 @@ export default function Recipes() {
   const [sp, setSp] = useSearchParams();
   const [q, setQ] = useState(sp.get("q") || "");
   const [loading, setLoading] = useState(true);
-  const [selectedTags, setSelectedTags] = useState<RecipeTag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [category, setCategory] = useState<"All" | RecipeCategory>("All");
   const recipes = loadRecipes();
 
