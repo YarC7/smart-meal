@@ -36,6 +36,7 @@ import {
 } from "@/lib/catalog";
 import { track } from "@/lib/analytics";
 import { replanUnderBudget, estimateMealCost } from "@/lib/replan";
+import { getProteinPer100g } from "@/lib/nutrition";
 
 export default function Grocery() {
   const plan = loadPlan();
