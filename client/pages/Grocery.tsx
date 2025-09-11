@@ -453,7 +453,6 @@ export default function Grocery() {
                 )
                 .map((i) => {
                   // compute using nutrition table when unit is in grams
-                  const { getProteinPer100g } = require("@/lib/nutrition");
                   const per100 = getProteinPer100g(i.name);
                   const unit = i.unit.toLowerCase();
                   if (!per100 || i.cost == null) return null;
