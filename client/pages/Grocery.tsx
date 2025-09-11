@@ -52,6 +52,21 @@ export default function Grocery() {
     }
   }, [plan]);
 
+  const [cats, setCats] = useState<Record<string, string>>({});
+  const [remoteSubs, setRemoteSubs] = useState<Record<string, string[]>>({});
+  const [pantryList, setPantryList] = useState<string[]>([]);
+  const [userPantry, setUserPantry] = useState<Record<string, boolean>>(loadUserPantry());
+
+  useEffect(() => {
+    loadCategories().then(setCats);
+    loadSubs().then(setRemoteSubs);
+    loadPantryStaples().then(setPantryList);
+  }, []);
+
+  useEffect(() => {
+    saveUserPantry(userPantry);
+  }, [userPantry]);
+
   const [copying, setCopying] = useState(false);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<{
