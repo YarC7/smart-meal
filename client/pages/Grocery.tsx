@@ -25,6 +25,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { loadCategories, loadPantryStaples, loadSubs, getCategoryFor, getSubsFor, loadUserPantry, saveUserPantry } from "@/lib/catalog";
+import { track } from "@/lib/analytics";
+import { replanUnderBudget, estimateMealCost } from "@/lib/replan";
 
 export default function Grocery() {
   const plan = loadPlan();
