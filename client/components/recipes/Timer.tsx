@@ -1,12 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 
 interface TimerProps {
   seconds: number;
   autoStart?: boolean;
   onComplete?: () => void;
+  label?: string;
 }
 
-export default function Timer({ seconds, autoStart, onComplete }: TimerProps) {
+function beepAndVibrate() {
+  try {
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "sine";
+    o.frequency.value = 880;
+    o.connect(g);
+    g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.01);
+    o.start();
+    o.stop(ctx.currentTime + 0.2);
+  } catch {}
+  if (navigator.vibrate) navigator.vibrate(200);
+}
+
+export default function Timer({ seconds, autoStart, onComplete, label }: TimerProps) {
   const [remaining, setRemaining] = useState(seconds);
   const [running, setRunning] = useState(!!autoStart);
   const intervalRef = useRef<number | null>(null);
@@ -19,9 +38,8 @@ export default function Timer({ seconds, autoStart, onComplete }: TimerProps) {
           window.clearInterval(intervalRef.current!);
           intervalRef.current = null;
           setRunning(false);
-          try {
-            new AudioContext();
-          } catch {}
+          beepAndVibrate();
+          track("timer_complete", { label, seconds });
           if (onComplete) onComplete();
           return 0;
         }
@@ -31,7 +49,7 @@ export default function Timer({ seconds, autoStart, onComplete }: TimerProps) {
     return () => {
       if (intervalRef.current) window.clearInterval(intervalRef.current);
     };
-  }, [running, onComplete]);
+  }, [running, onComplete, label, seconds]);
 
   const minutes = Math.floor(remaining / 60)
     .toString()
@@ -41,8 +59,8 @@ export default function Timer({ seconds, autoStart, onComplete }: TimerProps) {
     .padStart(2, "0");
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="font-mono text-lg tabular-nums" aria-live="polite">
+    <div className="flex items-center gap-2" role="timer" aria-live="polite" aria-label={label || "timer"}>
+      <div className="font-mono text-lg tabular-nums">
         {minutes}:{secs}
       </div>
       <div className="flex gap-2">
