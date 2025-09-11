@@ -193,7 +193,9 @@ export default function Grocery() {
               type="multiple"
               defaultValue={groupGroceries(items).map((g) => g.category)}
             >
-              {groupGroceries(items).map(({ category, list }) => (
+              {groupGroceries(
+                items.filter((it) => !userPantry[it.name?.toLowerCase?.()] )
+              ).map(({ category, list }) => (
                 <AccordionItem
                   key={category}
                   value={category}
