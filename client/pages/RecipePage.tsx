@@ -7,10 +7,19 @@ import VoiceControl from "@/components/recipes/VoiceControl";
 import { MEALS } from "@/data/meals";
 import { toast } from "@/hooks/use-toast";
 import { pushLogAction, loadLogs, saveLogs, DayLog } from "@/lib/planner";
+import subs from "@/data/substitutions.json";
 
 function todayKey() {
   const d = new Date();
   return d.toISOString().slice(0, 10);
+}
+
+function findSubs(name: string): string[] | null {
+  const n = name.toLowerCase();
+  for (const key of Object.keys(subs)) {
+    if (n.includes(key.toLowerCase())) return (subs as Record<string, string[]>)[key];
+  }
+  return null;
 }
 
 export default function RecipePage() {
@@ -63,6 +72,13 @@ export default function RecipePage() {
     toast({ title: "Logged", description: "Meal added to today's progress." });
   };
 
+  const substitutions = (recipe.ingredients || [])
+    .map((i) => ({ name: i.name, suggestions: findSubs(i.name) }))
+    .filter((x) => x.suggestions && x.suggestions.length) as {
+    name: string;
+    suggestions: string[];
+  }[];
+
   return (
     <div className="container mx-auto py-8 sm:py-10">
       <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
@@ -80,11 +96,22 @@ export default function RecipePage() {
                 {title}
               </h1>
               <div className="text-xs text-foreground/60 flex gap-3">
+                {recipe.category && <span>{recipe.category}</span>}
                 <span>{recipe.difficulty}</span>
                 <span>⏱ {recipe.prepTime + recipe.cookTime} min</span>
                 <span>👥 {servings}</span>
               </div>
             </div>
+
+            {recipe.tags && recipe.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 text-[10px] text-foreground/70">
+                {recipe.tags.map((t) => (
+                  <span key={t} className="rounded-full border px-2 py-0.5">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <div className="flex items-center gap-3">
               <label className="text-sm">Servings</label>
@@ -127,6 +154,19 @@ export default function RecipePage() {
                 <p className="mt-2 text-xs text-foreground/60">
                   Tap an ingredient to add it to Grocery.
                 </p>
+                {substitutions.length > 0 && (
+                  <div className="mt-3 rounded-md border p-3 bg-secondary/30">
+                    <div className="text-xs font-semibold mb-1">Substitutions</div>
+                    <ul className="text-xs space-y-1">
+                      {substitutions.map((s) => (
+                        <li key={s.name}>
+                          <span className="font-medium">{s.name}:</span>{" "}
+                          {s.suggestions.join(", ")}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
 
