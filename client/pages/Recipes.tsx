@@ -88,6 +88,10 @@ export default function Recipes() {
       </div>
 
       <div className="mt-3 flex items-center gap-3 flex-wrap">
+        <label className="flex items-center gap-2 text-xs border rounded-md px-2 py-1 cursor-pointer">
+          <input type="checkbox" checked={favOnly} onChange={(e) => setFavOnly(e.target.checked)} />
+          Favorites only
+        </label>
         <div className="inline-flex gap-1 rounded-md border p-1">
           {CATEGORIES.map((c) => (
             <button
