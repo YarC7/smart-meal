@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   useParams,
   useSearchParams,
@@ -8,6 +8,7 @@ import {
 import { getRecipe } from "@/lib/recipesStore";
 import Timer from "@/components/recipes/Timer";
 import VoiceControl from "@/components/recipes/VoiceControl";
+import { track } from "@/lib/analytics";
 
 export default function Cook() {
   const { id } = useParams<{ id: string }>();
@@ -15,12 +16,63 @@ export default function Cook() {
   const navigate = useNavigate();
   const recipe = id ? getRecipe(id) : undefined;
   const index = Math.max(0, parseInt(sp.get("step") || "0", 10));
+  const [timers, setTimers] = useState<number[]>([]);
+  const wakeRef = useRef<any>(null);
+  const recogRef = useRef<any>(null);
 
   const steps = useMemo(
     () => (recipe ? [...recipe.steps].sort((a, b) => a.order - b.order) : []),
     [recipe],
   );
   const step = steps[index];
+
+  useEffect(() => {
+    if (!recipe || !step) return;
+    track("start_cook", { recipeId: recipe.id, step: index });
+    // Preload next media if image
+    const next = steps[index + 1];
+    if (next?.media && /\.(png|jpe?g|webp|gif|svg)$/i.test(next.media)) {
+      const img = new Image();
+      img.src = next.media;
+    }
+    // Wake lock
+    const req = async () => {
+      try {
+        // @ts-ignore
+        wakeRef.current = await navigator.wakeLock?.request?.("screen");
+      } catch {}
+    };
+    req();
+    return () => {
+      try {
+        wakeRef.current?.release?.();
+        wakeRef.current = null;
+      } catch {}
+    };
+  }, [recipe, step, index, steps]);
+
+  useEffect(() => {
+    // Voice navigation (Vietnamese commands)
+    const rec: any = (window as any).webkitSpeechRecognition
+      ? new (window as any).webkitSpeechRecognition()
+      : null;
+    if (!rec) return;
+    rec.lang = "vi-VN";
+    rec.continuous = true;
+    rec.interimResults = false;
+    rec.onresult = (e: any) => {
+      const t = Array.from(e.results)
+        .map((r: any) => r[0]?.transcript?.toLowerCase?.() || "")
+        .join(" ");
+      if (t.includes("tiếp theo")) go(index + 1);
+      if (t.includes("quay lại")) go(index - 1);
+    };
+    rec.onerror = () => {};
+    recogRef.current = rec;
+    return () => {
+      try { rec.abort(); } catch {}
+    };
+  }, [index]);
 
   if (!recipe || !step) {
     return (
@@ -38,10 +90,16 @@ export default function Cook() {
 
   const go = (i: number) => {
     const next = Math.min(Math.max(i, 0), steps.length - 1);
+    if (next !== index) track("step_next", { recipeId: recipe.id, to: next });
     navigate(
       { pathname: `/cook/${id}`, search: `?step=${next}` },
       { replace: true },
     );
+  };
+
+  const addTimer = () => {
+    const base = step.time || 60;
+    setTimers((t) => [...t, base]);
   };
 
   return (
@@ -60,15 +118,72 @@ export default function Cook() {
         </div>
 
         <div className="rounded-xl border p-4 sm:p-6 space-y-4">
-          <h1 className="text-lg font-semibold">{step.text}</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-semibold mr-3">{step.text}</h1>
+            {step.type && (
+              <span className={`text-xs px-2 py-0.5 rounded-full border ${
+                step.type === "prep"
+                  ? "bg-amber-100 text-amber-800"
+                  : step.type === "cook"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : "bg-sky-100 text-sky-800"
+              }`}>{step.type}</span>
+            )}
+          </div>
           <div className="flex items-center justify-between gap-3">
             {step.time ? (
-              <Timer seconds={step.time} />
+              <Timer seconds={step.time} label={`Step ${index + 1}`} />
             ) : (
               <div className="text-sm text-foreground/60">No timer</div>
             )}
-            <VoiceControl text={step.text} />
+            <div className="flex items-center gap-2">
+              <VoiceControl text={step.text} />
+              {recogRef.current ? (
+                <button
+                  className="rounded border px-2 py-1 text-xs hover:bg-secondary"
+                  onClick={() => {
+                    try {
+                      if ((recogRef.current as any)._listening) {
+                        (recogRef.current as any).abort();
+                        (recogRef.current as any)._listening = false;
+                      } else {
+                        (recogRef.current as any).start();
+                        (recogRef.current as any)._listening = true;
+                      }
+                    } catch {}
+                  }}
+                >
+                  Voice nav
+                </button>
+              ) : null}
+            </div>
           </div>
+
+          <div className="pt-2 border-t">
+            <div className="flex items-center gap-2 mb-2">
+              <button
+                className="rounded border px-2 py-1 text-xs hover:bg-secondary"
+                onClick={addTimer}
+              >
+                Add timer
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {timers.map((t, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <Timer seconds={t} label={`Extra ${i + 1}`} />
+                  <button
+                    className="rounded border px-2 py-1 text-xs hover:bg-secondary"
+                    onClick={() => setTimers((arr) => arr.filter((_, j) => j !== i))}
+                    aria-label={`Remove timer ${i + 1}`}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="flex items-center justify-between gap-3 pt-2 border-t">
             <button
               onClick={() => go(index - 1)}
