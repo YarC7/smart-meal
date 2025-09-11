@@ -573,7 +573,7 @@ export const RECIPES: Recipe[] = [
   },
 ];
 
-const STORAGE_KEY = "recipes.v1";
+const STORAGE_KEY = "recipes.v2";
 
 export function loadRecipes(): Recipe[] {
   const v = localStorage.getItem(STORAGE_KEY);
