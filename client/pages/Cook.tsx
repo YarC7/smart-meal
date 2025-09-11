@@ -32,11 +32,12 @@ export default function Cook() {
     // Preload next media if image
     const next = steps[index + 1];
     if (next?.media && /\.(png|jpe?g|webp|gif|svg)$/i.test(next.media)) {
-      try {
-        // dynamic import to keep SWC tree-shaking friendly
-        const { preloadImage } = await import("@/lib/media");
-        preloadImage(next.media);
-      } catch {}
+      (async () => {
+        try {
+          const { preloadImage } = await import("@/lib/media");
+          preloadImage(next.media!);
+        } catch {}
+      })();
     }
     // Wake lock
     const req = async () => {
