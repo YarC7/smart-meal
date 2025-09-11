@@ -338,6 +338,12 @@ export default function Grocery() {
             >
               Print
             </button>
+            <button
+              onClick={() => setPurchased({})}
+              className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary"
+            >
+              Clear purchased
+            </button>
           </div>
         </section>
         <aside className="rounded-xl border bg-card p-4 sm:p-6 space-y-4">
