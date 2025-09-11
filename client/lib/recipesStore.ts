@@ -1,7 +1,7 @@
 import { Recipe } from "@shared/recipe";
 import { RECIPES } from "@/data/recipes";
 
-const RECIPES_KEY = "recipes.v1";
+const RECIPES_KEY = "recipes.v2";
 const EXTRA_GROCERY_KEY = "smartmeal.grocery.extra.v1";
 
 export function loadRecipes(): Recipe[] {
