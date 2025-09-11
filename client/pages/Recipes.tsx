@@ -27,6 +27,13 @@ export default function Recipes() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [category, setCategory] = useState<"All" | RecipeCategory>("All");
   const recipes = loadRecipes();
+  const [favOnly, setFavOnly] = useState(false);
+  const [favIds, setFavIds] = useState<Set<string>>(() => loadFavorites());
+  useEffect(() => {
+    const on = () => setFavIds(loadFavorites());
+    window.addEventListener("storage", on);
+    return () => window.removeEventListener("storage", on);
+  }, []);
 
   useEffect(() => {
     setQ(sp.get("q") || "");
