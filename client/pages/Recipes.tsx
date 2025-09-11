@@ -67,7 +67,14 @@ export default function Recipes() {
         <h1 className="text-2xl font-extrabold tracking-tight">Recipes</h1>
         <input
           value={q}
-          onChange={(e) => setQ(e.target.value)}
+          onChange={(e) => {
+            const v = e.target.value;
+            setQ(v);
+            const next = new URLSearchParams(sp);
+            if (v) next.set("q", v);
+            else next.delete("q");
+            setSp(next, { replace: true });
+          }}
           placeholder="Search by name, ingredient, or tag"
           className="w-full sm:w-72 rounded-md border px-3 py-2 text-sm"
         />
