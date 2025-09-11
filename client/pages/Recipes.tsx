@@ -47,6 +47,7 @@ export default function Recipes() {
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     return recipes.filter((r) => {
+      if (favOnly && !favIds.has(r.id)) return false;
       // category
       if (category !== "All" && r.category !== category) return false;
       // tags (AND)
