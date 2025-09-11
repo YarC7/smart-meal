@@ -217,14 +217,10 @@ export default function Grocery() {
                           className="flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary"
                           onClick={() => {
                             if (overUnder < 0) {
-                              const s = findSubs(i.name);
+                              const s = getSubsFor(i.name, remoteSubs) || findSubs(i.name);
                               if (s && s.length) {
                                 setSelected({ name: i.name, suggestions: s });
                                 setOpen(true);
-                                console.log(
-                                  "analytics:grocery_over_budget",
-                                  i.name,
-                                );
                                 return;
                               }
                             }
