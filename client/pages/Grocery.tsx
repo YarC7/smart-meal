@@ -241,7 +241,7 @@ export default function Grocery() {
                       {list.map((i) => (
                         <li
                           key={`${category}-${i.name}-${i.unit}`}
-                          className="flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary"
+                          className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary ${purchased[`${i.name}|${i.unit}`] ? "opacity-60 line-through" : ""}`}
                           onClick={() => {
                             if (overUnder < 0) {
                               const s =
