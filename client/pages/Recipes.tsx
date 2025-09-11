@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { loadRecipes } from "@/lib/recipesStore";
 import RecipeCard from "@/components/recipes/RecipeCard";
 import { Skeleton } from "@/components/ui/skeleton";
