@@ -6,12 +6,8 @@ export interface RecipeStep {
 }
 
 export type RecipeCategory = "Breakfast" | "Lunch/Dinner" | "Snack/Dessert";
-export type RecipeTag =
-  | "low_cost"
-  | "high_protein"
-  | "vegan"
-  | "vietnamese"
-  | "western";
+// Tags are free-form labels (e.g., "low_cost", "high_protein", "vegan", "vietnamese", "western", "salad", ...)
+export type RecipeTag = string;
 
 export interface RecipeIngredient {
   name: string;
