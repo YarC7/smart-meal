@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { loadRecipes } from "@/lib/recipesStore";
 import RecipeCard from "@/components/recipes/RecipeCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { RecipeTag, RecipeCategory } from "@shared/recipe";
+import type { RecipeCategory } from "@shared/recipe";
 
 const ALL_TAGS: RecipeTag[] = [
   "low_cost",
