@@ -3,6 +3,7 @@ export interface RecipeStep {
   text: string;
   time?: number; // seconds
   media?: string; // optional media per step
+  type?: "prep" | "cook" | "rest";
 }
 
 export type RecipeCategory = "Breakfast" | "Lunch/Dinner" | "Snack/Dessert";
