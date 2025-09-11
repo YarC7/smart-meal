@@ -104,7 +104,11 @@ export default function RecipePage() {
               <h1 className="text-xl font-semibold truncate" title={title}>
                 {title}
               </h1>
-              <div className="text-xs text-foreground/60 flex gap-3">
+              <div className="flex items-center gap-2 ml-auto">
+                <FavButton id={recipe.id} />
+                <Rating id={recipe.id} />
+              </div>
+              <div className="text-xs text-foreground/60 flex gap-3 w-full">
                 {recipe.category && <span>{recipe.category}</span>}
                 <span>{recipe.difficulty}</span>
                 <span>⏱ {recipe.prepTime + recipe.cookTime} min</span>
