@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { getRecipe } from "@/lib/recipesStore";
 import IngredientPill from "@/components/recipes/IngredientPill";
 import Timer from "@/components/recipes/Timer";
