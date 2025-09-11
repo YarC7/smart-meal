@@ -78,6 +78,22 @@ export default function Grocery() {
   }, [userPantry]);
 
   const [copying, setCopying] = useState(false);
+  const [purchased, setPurchased] = useState<Record<string, boolean>>(() => {
+    try {
+      const v = localStorage.getItem("smartmeal.grocery.purchased.v1");
+      return v ? (JSON.parse(v) as Record<string, boolean>) : {};
+    } catch {
+      return {};
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "smartmeal.grocery.purchased.v1",
+        JSON.stringify(purchased),
+      );
+    } catch {}
+  }, [purchased]);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<{
     name: string;
