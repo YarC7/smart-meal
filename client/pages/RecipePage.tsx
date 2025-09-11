@@ -8,6 +8,7 @@ import { MEALS } from "@/data/meals";
 import { toast } from "@/hooks/use-toast";
 import { pushLogAction, loadLogs, saveLogs, DayLog } from "@/lib/planner";
 import subs from "@/data/substitutions.json";
+import { track } from "@/lib/analytics";
 
 function todayKey() {
   const d = new Date();
@@ -24,12 +25,18 @@ function findSubs(name: string): string[] | null {
 
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>();
+  const [sp] = useSearchParams();
   const recipe = id ? getRecipe(id) : undefined;
   const meal = useMemo(
     () => MEALS.find((m) => m.id === recipe?.mealId),
     [recipe],
   );
   const [servings, setServings] = useState<number>(recipe?.servings || 2);
+  const stepParam = Math.max(0, parseInt(sp.get("step") || "0", 10));
+
+  useEffect(() => {
+    if (recipe) track("view_recipe", { recipeId: recipe.id });
+  }, [recipe]);
 
   if (!recipe)
     return (
@@ -42,6 +49,7 @@ export default function RecipePage() {
   const scale = servings / Math.max(1, recipe.servings || 1);
 
   const quickAdd = () => {
+    track("quick_add_from_recipe", { recipeId: recipe.id, servings });
     if (!meal) return;
     const logs = loadLogs();
     const today =
@@ -131,7 +139,7 @@ export default function RecipePage() {
                 Quick-Add to Today
               </button>
               <Link
-                to={`/cook/${recipe.id}`}
+                to={`/cook/${recipe.id}?step=${stepParam}`}
                 className="rounded-md border px-3 py-1 text-xs hover:bg-secondary"
               >
                 Start Cooking
