@@ -351,32 +351,63 @@ export default function Grocery() {
                   </div>
                 )}
                 {overUnder < 0 && (
-                  <button
-                    onClick={() => {
-                      if (!plan || !profile) return;
-                      const { plan: np, changed } = replanUnderBudget(
-                        {
-                          ...plan,
-                          days: [
-                            ...plan.days.map((d) => ({
-                              ...d,
-                              meals: [...d.meals],
-                            })),
-                          ],
-                        },
-                        profile.budgetPerWeek,
-                      );
-                      track("budget_replan", { changed });
-                      localStorage.setItem(
-                        "smartmeal.plan.v1",
-                        JSON.stringify(np),
-                      );
-                      window.location.reload();
-                    }}
-                    className="mt-3 w-full rounded-md border px-3 py-2 text-sm hover:bg-secondary"
-                  >
-                    Replan under budget
-                  </button>
+                  <>
+                    <div className="mt-3 rounded-md border p-3 bg-red-50/50">
+                      <div className="text-xs font-semibold mb-1">
+                        Top cheaper swaps
+                      </div>
+                      <ul className="text-xs space-y-1">
+                        {groupGroceries(items)
+                          .flatMap((g) => g.list)
+                          .filter((i) => i.cost != null)
+                          .sort((a, b) => (b.cost ?? 0) - (a.cost ?? 0))
+                          .slice(0, 5)
+                          .map((i) => {
+                            const peers = items
+                              .filter((p) => p.name !== i.name)
+                              .filter((p) => (p.cost ?? Infinity) < (i.cost ?? Infinity))
+                              .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))
+                              .slice(0, 3);
+                            return (
+                              <li key={`${i.name}-${i.unit}`}>
+                                <span className="font-medium">{i.name}:</span>{" "}
+                                {peers.length
+                                  ? peers
+                                      .map((p) => `${p.name} (${(p.cost ?? 0).toFixed(2)})`)
+                                      .join(", ")
+                                  : "No cheaper peers"}
+                              </li>
+                            );
+                          })}
+                      </ul>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (!plan || !profile) return;
+                        const { plan: np, changed } = replanUnderBudget(
+                          {
+                            ...plan,
+                            days: [
+                              ...plan.days.map((d) => ({
+                                ...d,
+                                meals: [...d.meals],
+                              })),
+                            ],
+                          },
+                          profile.budgetPerWeek,
+                        );
+                        track("budget_replan", { changed });
+                        localStorage.setItem(
+                          "smartmeal.plan.v1",
+                          JSON.stringify(np),
+                        );
+                        window.location.reload();
+                      }}
+                      className="mt-3 w-full rounded-md border px-3 py-2 text-sm hover:bg-secondary"
+                    >
+                      Replan under budget
+                    </button>
+                  </>
                 )}
               </div>
             )}
@@ -419,18 +450,30 @@ export default function Grocery() {
                     (cats[i.name.toLowerCase()] || "").toLowerCase() ===
                     "proteins",
                 )
+                .map((i) => {
+                  // compute using nutrition table when unit is in grams
+                  const { getProteinPer100g } = require("@/lib/nutrition");
+                  const per100 = getProteinPer100g(i.name);
+                  const unit = i.unit.toLowerCase();
+                  if (!per100 || i.cost == null) return null;
+                  const grams = unit === "g" ? i.qty : 0;
+                  if (!grams) return null;
+                  const proteinGrams = (per100 / 100) * grams;
+                  if (!proteinGrams) return null;
+                  const value = i.cost / proteinGrams; // cost per gram protein
+                  return { name: i.name, unit: i.unit, value };
+                })
+                .filter(Boolean)
+                .sort((a: any, b: any) => a.value - b.value)
                 .slice(0, 6)
-                .map((i) => (
+                .map((row: any) => (
                   <li
-                    key={`${i.name}-${i.unit}`}
+                    key={`${row.name}-${row.unit}`}
                     className="flex items-center justify-between"
                   >
-                    <span className="truncate mr-3">{i.name}</span>
+                    <span className="truncate mr-3">{row.name}</span>
                     <span className="text-foreground/60">
-                      {i.cost && i.qty
-                        ? (i.cost / Math.max(1, i.qty)).toFixed(2)
-                        : "—"}
-                      /g
+                      {row.value.toFixed(3)}/g protein
                     </span>
                   </li>
                 ))}
