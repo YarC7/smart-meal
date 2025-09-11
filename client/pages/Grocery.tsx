@@ -25,6 +25,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  loadCategories,
+  loadPantryStaples,
+  loadSubs,
+  getCategoryFor,
+  getSubsFor,
+  loadUserPantry,
+  saveUserPantry,
+} from "@/lib/catalog";
+import { track } from "@/lib/analytics";
+import { replanUnderBudget, estimateMealCost } from "@/lib/replan";
 
 export default function Grocery() {
   const plan = loadPlan();
@@ -48,6 +59,22 @@ export default function Grocery() {
       return base;
     }
   }, [plan]);
+
+  const [cats, setCats] = useState<Record<string, string>>({});
+  const [remoteSubs, setRemoteSubs] = useState<Record<string, string[]>>({});
+  const [pantryList, setPantryList] = useState<string[]>([]);
+  const [userPantry, setUserPantry] =
+    useState<Record<string, boolean>>(loadUserPantry());
+
+  useEffect(() => {
+    loadCategories().then(setCats);
+    loadSubs().then(setRemoteSubs);
+    loadPantryStaples().then(setPantryList);
+  }, []);
+
+  useEffect(() => {
+    saveUserPantry(userPantry);
+  }, [userPantry]);
 
   const [copying, setCopying] = useState(false);
   const [open, setOpen] = useState(false);
@@ -175,7 +202,9 @@ export default function Grocery() {
               type="multiple"
               defaultValue={groupGroceries(items).map((g) => g.category)}
             >
-              {groupGroceries(items).map(({ category, list }) => (
+              {groupGroceries(
+                items.filter((it) => !userPantry[it.name?.toLowerCase?.()]),
+              ).map(({ category, list }) => (
                 <AccordionItem
                   key={category}
                   value={category}
@@ -197,14 +226,12 @@ export default function Grocery() {
                           className="flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary"
                           onClick={() => {
                             if (overUnder < 0) {
-                              const s = findSubs(i.name);
+                              const s =
+                                getSubsFor(i.name, remoteSubs) ||
+                                findSubs(i.name);
                               if (s && s.length) {
                                 setSelected({ name: i.name, suggestions: s });
                                 setOpen(true);
-                                console.log(
-                                  "analytics:grocery_over_budget",
-                                  i.name,
-                                );
                                 return;
                               }
                             }
@@ -237,13 +264,21 @@ export default function Grocery() {
                           title="Click to see cheaper alternatives"
                         >
                           <span className="truncate mr-3">{i.name}</span>
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-3">
+                            <Link
+                              to={`/recipes?q=${encodeURIComponent(i.name)}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="rounded border px-2 py-0.5 text-xs hover:bg-background"
+                              title="Find recipes that use this ingredient"
+                            >
+                              Recipes
+                            </Link>
                             <span className="text-foreground/70">
                               {formatQty(i.qty)} {i.unit}
                             </span>
                             {i.cost !== undefined && (
                               <span className="text-foreground/60">
-                                {i.cost.toFixed(2)}
+                                {(i.cost ?? 0).toFixed(2)}
                               </span>
                             )}
                           </div>
@@ -275,48 +310,134 @@ export default function Grocery() {
             </button>
           </div>
         </section>
-        <aside className="rounded-xl border bg-card p-4 sm:p-6">
-          <h2 className="text-sm font-semibold">Budget overview</h2>
-          {loading ? (
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-4 w-28" />
-                <Skeleton className="h-4 w-16" />
-              </div>
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-4 w-36" />
-                <Skeleton className="h-4 w-16" />
-              </div>
-              <Skeleton className="h-2 w-full" />
-            </div>
-          ) : (
-            <div className="mt-4 text-sm space-y-2">
-              <div className="flex items-center justify-between">
-                <span>Estimated total</span>
-                <span className="font-semibold">{totalCost.toFixed(2)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Remaining vs budget</span>
-                <span
-                  className={
-                    overUnder >= 0 ? "text-emerald-600" : "text-red-600"
-                  }
-                >
-                  {overUnder >= 0 ? "+" : ""}
-                  {overUnder.toFixed(2)}
-                </span>
-              </div>
-              {profile && (
-                <div className="mt-2">
-                  <BudgetProgressBar
-                    total={totalCost}
-                    budget={profile.budgetPerWeek}
-                  />
+        <aside className="rounded-xl border bg-card p-4 sm:p-6 space-y-4">
+          <div>
+            <h2 className="text-sm font-semibold">Budget overview</h2>
+            {loading ? (
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-4 w-16" />
                 </div>
-              )}
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-4 w-36" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+                <Skeleton className="h-2 w-full" />
+              </div>
+            ) : (
+              <div className="mt-4 text-sm space-y-2">
+                <div className="flex items-center justify-between">
+                  <span>Estimated total</span>
+                  <span className="font-semibold">{totalCost.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Remaining vs budget</span>
+                  <span
+                    className={
+                      overUnder >= 0 ? "text-emerald-600" : "text-red-600"
+                    }
+                  >
+                    {overUnder >= 0 ? "+" : ""}
+                    {overUnder.toFixed(2)}
+                  </span>
+                </div>
+                {profile && (
+                  <div className="mt-2">
+                    <BudgetProgressBar
+                      total={totalCost}
+                      budget={profile.budgetPerWeek}
+                    />
+                  </div>
+                )}
+                {overUnder < 0 && (
+                  <button
+                    onClick={() => {
+                      if (!plan || !profile) return;
+                      const { plan: np, changed } = replanUnderBudget(
+                        {
+                          ...plan,
+                          days: [
+                            ...plan.days.map((d) => ({
+                              ...d,
+                              meals: [...d.meals],
+                            })),
+                          ],
+                        },
+                        profile.budgetPerWeek,
+                      );
+                      track("budget_replan", { changed });
+                      localStorage.setItem(
+                        "smartmeal.plan.v1",
+                        JSON.stringify(np),
+                      );
+                      window.location.reload();
+                    }}
+                    className="mt-3 w-full rounded-md border px-3 py-2 text-sm hover:bg-secondary"
+                  >
+                    Replan under budget
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <h2 className="text-sm font-semibold">Pantry</h2>
+            <p className="text-xs text-foreground/60">
+              Exclude items you already own.
+            </p>
+            <div className="mt-2 grid gap-2 max-h-48 overflow-auto">
+              {pantryList.map((p) => (
+                <label key={p} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={!!userPantry[p.toLowerCase()]}
+                    onChange={(e) =>
+                      setUserPantry((prev) => ({
+                        ...prev,
+                        [p.toLowerCase()]: e.target.checked,
+                      }))
+                    }
+                  />
+                  <span className="truncate">{p}</span>
+                </label>
+              ))}
             </div>
-          )}
-          <p className="mt-4 text-xs text-foreground/60">
+          </div>
+
+          <div>
+            <h2 className="text-sm font-semibold">Protein value</h2>
+            <p className="text-xs text-foreground/60">
+              Cost per gram of protein (lower is better).
+            </p>
+            <ul className="mt-2 space-y-1 text-sm">
+              {groupGroceries(items)
+                .flatMap((g) => g.list)
+                .filter(
+                  (i) =>
+                    (cats[i.name.toLowerCase()] || "").toLowerCase() ===
+                    "proteins",
+                )
+                .slice(0, 6)
+                .map((i) => (
+                  <li
+                    key={`${i.name}-${i.unit}`}
+                    className="flex items-center justify-between"
+                  >
+                    <span className="truncate mr-3">{i.name}</span>
+                    <span className="text-foreground/60">
+                      {i.cost && i.qty
+                        ? (i.cost / Math.max(1, i.qty)).toFixed(2)
+                        : "—"}
+                      /g
+                    </span>
+                  </li>
+                ))}
+            </ul>
+          </div>
+
+          <p className="text-xs text-foreground/60">
             Ingredients grouped by category to simplify shopping.
           </p>
         </aside>

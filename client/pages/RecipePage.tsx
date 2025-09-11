@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { getRecipe } from "@/lib/recipesStore";
 import IngredientPill from "@/components/recipes/IngredientPill";
 import Timer from "@/components/recipes/Timer";
@@ -7,20 +7,37 @@ import VoiceControl from "@/components/recipes/VoiceControl";
 import { MEALS } from "@/data/meals";
 import { toast } from "@/hooks/use-toast";
 import { pushLogAction, loadLogs, saveLogs, DayLog } from "@/lib/planner";
+import subs from "@/data/substitutions.json";
+import { track } from "@/lib/analytics";
 
 function todayKey() {
   const d = new Date();
   return d.toISOString().slice(0, 10);
 }
 
+function findSubs(name: string): string[] | null {
+  const n = name.toLowerCase();
+  for (const key of Object.keys(subs)) {
+    if (n.includes(key.toLowerCase()))
+      return (subs as Record<string, string[]>)[key];
+  }
+  return null;
+}
+
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>();
+  const [sp] = useSearchParams();
   const recipe = id ? getRecipe(id) : undefined;
   const meal = useMemo(
     () => MEALS.find((m) => m.id === recipe?.mealId),
     [recipe],
   );
   const [servings, setServings] = useState<number>(recipe?.servings || 2);
+  const stepParam = Math.max(0, parseInt(sp.get("step") || "0", 10));
+
+  useEffect(() => {
+    if (recipe) track("view_recipe", { recipeId: recipe.id });
+  }, [recipe]);
 
   if (!recipe)
     return (
@@ -33,6 +50,7 @@ export default function RecipePage() {
   const scale = servings / Math.max(1, recipe.servings || 1);
 
   const quickAdd = () => {
+    track("quick_add_from_recipe", { recipeId: recipe.id, servings });
     if (!meal) return;
     const logs = loadLogs();
     const today =
@@ -63,6 +81,13 @@ export default function RecipePage() {
     toast({ title: "Logged", description: "Meal added to today's progress." });
   };
 
+  const substitutions = (recipe.ingredients || [])
+    .map((i) => ({ name: i.name, suggestions: findSubs(i.name) }))
+    .filter((x) => x.suggestions && x.suggestions.length) as {
+    name: string;
+    suggestions: string[];
+  }[];
+
   return (
     <div className="container mx-auto py-8 sm:py-10">
       <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
@@ -80,11 +105,22 @@ export default function RecipePage() {
                 {title}
               </h1>
               <div className="text-xs text-foreground/60 flex gap-3">
+                {recipe.category && <span>{recipe.category}</span>}
                 <span>{recipe.difficulty}</span>
                 <span>⏱ {recipe.prepTime + recipe.cookTime} min</span>
                 <span>👥 {servings}</span>
               </div>
             </div>
+
+            {recipe.tags && recipe.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 text-[10px] text-foreground/70">
+                {recipe.tags.map((t) => (
+                  <span key={t} className="rounded-full border px-2 py-0.5">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <div className="flex items-center gap-3">
               <label className="text-sm">Servings</label>
@@ -104,7 +140,7 @@ export default function RecipePage() {
                 Quick-Add to Today
               </button>
               <Link
-                to={`/cook/${recipe.id}`}
+                to={`/cook/${recipe.id}?step=${stepParam}`}
                 className="rounded-md border px-3 py-1 text-xs hover:bg-secondary"
               >
                 Start Cooking
@@ -127,6 +163,21 @@ export default function RecipePage() {
                 <p className="mt-2 text-xs text-foreground/60">
                   Tap an ingredient to add it to Grocery.
                 </p>
+                {substitutions.length > 0 && (
+                  <div className="mt-3 rounded-md border p-3 bg-secondary/30">
+                    <div className="text-xs font-semibold mb-1">
+                      Substitutions
+                    </div>
+                    <ul className="text-xs space-y-1">
+                      {substitutions.map((s) => (
+                        <li key={s.name}>
+                          <span className="font-medium">{s.name}:</span>{" "}
+                          {s.suggestions.join(", ")}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
 
@@ -136,7 +187,18 @@ export default function RecipePage() {
                 {recipe.steps
                   .sort((a, b) => a.order - b.order)
                   .map((s) => (
-                    <li key={s.order} className="space-y-2">
+                    <li
+                      key={s.order}
+                      className="space-y-2"
+                      ref={(el) => {
+                        if (!el) return;
+                        if (s.order - 1 === stepParam)
+                          el.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                          });
+                      }}
+                    >
                       <div className="flex items-start justify-between gap-3">
                         <p className="text-sm leading-relaxed flex-1">
                           {s.text}

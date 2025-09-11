@@ -2,6 +2,19 @@ export interface RecipeStep {
   order: number;
   text: string;
   time?: number; // seconds
+  media?: string; // optional media per step
+  type?: "prep" | "cook" | "rest";
+}
+
+export type RecipeCategory = "Breakfast" | "Lunch/Dinner" | "Snack/Dessert";
+// Tags are free-form labels (e.g., "low_cost", "high_protein", "vegan", "vietnamese", "western", "salad", ...)
+export type RecipeTag = string;
+
+export interface RecipeIngredient {
+  name: string;
+  qty: number;
+  unit: string;
+  optional?: boolean;
 }
 
 export interface Recipe {
@@ -15,13 +28,21 @@ export interface Recipe {
   tips?: string[];
   image?: string;
   videoUrl?: string;
-  tags?: string[];
-  ingredients?: {
-    name: string;
-    qty: number;
-    unit: string;
-    optional?: boolean;
-  }[];
+  // i18n-friendly naming
   title_vi?: string;
   title_en?: string;
+  name?: string; // generic name if needed
+  description?: string;
+  // discovery
+  category?: RecipeCategory;
+  tags?: RecipeTag[];
+  // ingredients and nutrition
+  ingredients?: RecipeIngredient[];
+  macrosPerServing?: {
+    kcal: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
+  costPerServing?: number;
 }
