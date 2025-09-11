@@ -27,6 +27,53 @@ function findSubs(name: string): string[] | null {
   return null;
 }
 
+function FavButton({ id }: { id: string }) {
+  const [fav, setFav] = ReactUseState<boolean>(() => isFavorite(id));
+  ReactUseEffect(() => {
+    const on = () => setFav(isFavorite(id));
+    window.addEventListener("storage", on);
+    return () => window.removeEventListener("storage", on);
+  }, [id]);
+  return (
+    <button
+      aria-pressed={fav}
+      aria-label={fav ? "Remove from favorites" : "Add to favorites"}
+      className={`rounded-full border px-2 py-1 text-xs ${fav ? "bg-amber-100 text-amber-800" : "hover:bg-secondary"}`}
+      onClick={() => {
+        const next = toggleFavorite(id);
+        setFav(next);
+        track("favorite_toggle", { recipeId: id, value: next });
+      }}
+    >
+      {fav ? "★" : "☆"}
+    </button>
+  );
+}
+
+function Rating({ id }: { id: string }) {
+  const [rate, setRate] = ReactUseState<number>(getRating(id) || 0);
+  const Star = ({ n }: { n: number }) => (
+    <button
+      aria-label={`Rate ${n} star${n > 1 ? "s" : ""}`}
+      className={`text-sm ${rate >= n ? "text-amber-500" : "text-foreground/40"}`}
+      onClick={() => {
+        setRating(id, n);
+        setRate(n);
+        track("rate_recipe", { recipeId: id, rating: n });
+      }}
+    >
+      ★
+    </button>
+  );
+  return (
+    <div role="radiogroup" aria-label="Rate recipe" className="inline-flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <Star key={n} n={n} />
+      ))}
+    </div>
+  );
+}
+
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>();
   const [sp] = useSearchParams();
