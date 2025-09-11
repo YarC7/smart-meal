@@ -184,7 +184,14 @@ export default function RecipePage() {
                 {recipe.steps
                   .sort((a, b) => a.order - b.order)
                   .map((s) => (
-                    <li key={s.order} className="space-y-2">
+                    <li
+                      key={s.order}
+                      className="space-y-2"
+                      ref={(el) => {
+                        if (!el) return;
+                        if (s.order - 1 === stepParam) el.scrollIntoView({ behavior: "smooth", block: "center" });
+                      }}
+                    >
                       <div className="flex items-start justify-between gap-3">
                         <p className="text-sm leading-relaxed flex-1">
                           {s.text}
