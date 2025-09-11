@@ -281,7 +281,19 @@ export default function Grocery() {
                           }}
                           title="Click to see cheaper alternatives"
                         >
-                          <span className="truncate mr-3">{i.name}</span>
+                          <label className="flex items-center gap-2 mr-3" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              type="checkbox"
+                              checked={!!purchased[`${i.name}|${i.unit}`]}
+                              onChange={(e) => {
+                                const k = `${i.name}|${i.unit}`;
+                                setPurchased((prev) => ({ ...prev, [k]: e.target.checked }));
+                                track("purchase_toggle", { key: `${i.name}|${i.unit}`, value: e.target.checked });
+                              }}
+                              aria-label={`Mark ${i.name} as purchased`}
+                            />
+                            <span className="truncate">{i.name}</span>
+                          </label>
                           <div className="flex items-center gap-3">
                             <Link
                               to={`/recipes?q=${encodeURIComponent(i.name)}`}
