@@ -4,7 +4,10 @@ type EventName =
   | "step_next"
   | "timer_complete"
   | "quick_add_from_recipe"
-  | "budget_replan";
+  | "budget_replan"
+  | "favorite_toggle"
+  | "rate_recipe"
+  | "purchase_toggle";
 
 export function track(name: EventName, props?: Record<string, any>) {
   // eslint-disable-next-line no-console
