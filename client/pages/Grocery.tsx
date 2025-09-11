@@ -303,48 +303,106 @@ export default function Grocery() {
             </button>
           </div>
         </section>
-        <aside className="rounded-xl border bg-card p-4 sm:p-6">
-          <h2 className="text-sm font-semibold">Budget overview</h2>
-          {loading ? (
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-4 w-28" />
-                <Skeleton className="h-4 w-16" />
-              </div>
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-4 w-36" />
-                <Skeleton className="h-4 w-16" />
-              </div>
-              <Skeleton className="h-2 w-full" />
-            </div>
-          ) : (
-            <div className="mt-4 text-sm space-y-2">
-              <div className="flex items-center justify-between">
-                <span>Estimated total</span>
-                <span className="font-semibold">{totalCost.toFixed(2)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Remaining vs budget</span>
-                <span
-                  className={
-                    overUnder >= 0 ? "text-emerald-600" : "text-red-600"
-                  }
-                >
-                  {overUnder >= 0 ? "+" : ""}
-                  {overUnder.toFixed(2)}
-                </span>
-              </div>
-              {profile && (
-                <div className="mt-2">
-                  <BudgetProgressBar
-                    total={totalCost}
-                    budget={profile.budgetPerWeek}
-                  />
+        <aside className="rounded-xl border bg-card p-4 sm:p-6 space-y-4">
+          <div>
+            <h2 className="text-sm font-semibold">Budget overview</h2>
+            {loading ? (
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-4 w-16" />
                 </div>
-              )}
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-4 w-36" />
+                  <Skeleton className="h-4 w-16" />
+                </div>
+                <Skeleton className="h-2 w-full" />
+              </div>
+            ) : (
+              <div className="mt-4 text-sm space-y-2">
+                <div className="flex items-center justify-between">
+                  <span>Estimated total</span>
+                  <span className="font-semibold">{totalCost.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Remaining vs budget</span>
+                  <span
+                    className={
+                      overUnder >= 0 ? "text-emerald-600" : "text-red-600"
+                    }
+                  >
+                    {overUnder >= 0 ? "+" : ""}
+                    {overUnder.toFixed(2)}
+                  </span>
+                </div>
+                {profile && (
+                  <div className="mt-2">
+                    <BudgetProgressBar
+                      total={totalCost}
+                      budget={profile.budgetPerWeek}
+                    />
+                  </div>
+                )}
+                {overUnder < 0 && (
+                  <button
+                    onClick={() => {
+                      if (!plan || !profile) return;
+                      const { plan: np, changed } = replanUnderBudget(
+                        { ...plan, days: [...plan.days.map((d) => ({ ...d, meals: [...d.meals] }))] },
+                        profile.budgetPerWeek,
+                      );
+                      track("budget_replan", { changed });
+                      localStorage.setItem("smartmeal.plan.v1", JSON.stringify(np));
+                      window.location.reload();
+                    }}
+                    className="mt-3 w-full rounded-md border px-3 py-2 text-sm hover:bg-secondary"
+                  >
+                    Replan under budget
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <h2 className="text-sm font-semibold">Pantry</h2>
+            <p className="text-xs text-foreground/60">Exclude items you already own.</p>
+            <div className="mt-2 grid gap-2 max-h-48 overflow-auto">
+              {pantryList.map((p) => (
+                <label key={p} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={!!userPantry[p.toLowerCase()]}
+                    onChange={(e) =>
+                      setUserPantry((prev) => ({ ...prev, [p.toLowerCase()]: e.target.checked }))
+                    }
+                  />
+                  <span className="truncate">{p}</span>
+                </label>
+              ))}
             </div>
-          )}
-          <p className="mt-4 text-xs text-foreground/60">
+          </div>
+
+          <div>
+            <h2 className="text-sm font-semibold">Protein value</h2>
+            <p className="text-xs text-foreground/60">Cost per gram of protein (lower is better).</p>
+            <ul className="mt-2 space-y-1 text-sm">
+              {groupGroceries(items)
+                .flatMap((g) => g.list)
+                .filter((i) => (cats[i.name.toLowerCase()] || "").toLowerCase() === "proteins")
+                .slice(0, 6)
+                .map((i) => (
+                  <li key={`${i.name}-${i.unit}`} className="flex items-center justify-between">
+                    <span className="truncate mr-3">{i.name}</span>
+                    <span className="text-foreground/60">
+                      {i.cost && i.qty ? (i.cost / Math.max(1, i.qty)).toFixed(2) : "—"}/g
+                    </span>
+                  </li>
+                ))}
+            </ul>
+          </div>
+
+          <p className="text-xs text-foreground/60">
             Ingredients grouped by category to simplify shopping.
           </p>
         </aside>
