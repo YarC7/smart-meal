@@ -93,6 +93,8 @@ export default function RecipePage() {
   const [servings, setServings] = useState<number>(recipe?.servings || 2);
   const stepParam = Math.max(0, parseInt(sp.get("step") || "0", 10));
 
+  const title = recipe ? recipe.title_vi || recipe.title_en || "Recipe" : "Recipe";
+
   useEffect(() => {
     if (recipe) {
       track("view_recipe", { recipeId: recipe.id });
