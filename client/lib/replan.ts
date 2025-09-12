@@ -92,10 +92,29 @@ export function replanUnderBudget(
       if (targetIdx >= 0) {
         const pick = pool.find((m) => (freq.get(m.id) || 0) < rules.maxRepeatPerWeek);
         if (pick) {
+          const prevCost = mealCost(plan.days[di].meals[targetIdx]);
           plan.days[di].meals[targetIdx] = pick;
           freq.set(pick.id, (freq.get(pick.id) || 0) + 1);
+          total -= Math.max(0, prevCost - mealCost(pick));
           changed++;
         }
+      }
+    }
+  }
+  // Final budget-forcing pass ignoring diversity if still over
+  if (total > budget) {
+    const flat2: { di: number; mi: number; cost: number }[] = [];
+    plan.days.forEach((d, di) => d.meals.forEach((m, mi) => flat2.push({ di, mi, cost: mealCost(m) })));
+    for (const it of flat2.sort((a, b) => b.cost - a.cost)) {
+      if (total <= budget) break;
+      const cur = plan.days[it.di].meals[it.mi];
+      const cand = all
+        .filter((m) => similarMacros(cur, m) && mealCost(m) < it.cost)
+        .sort((a, b) => mealCost(a) - mealCost(b))[0];
+      if (cand) {
+        plan.days[it.di].meals[it.mi] = cand;
+        total -= it.cost - mealCost(cand);
+        changed++;
       }
     }
   }
