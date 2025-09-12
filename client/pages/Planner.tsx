@@ -56,6 +56,15 @@ export default function Planner() {
     "all" | "vietnamese" | "western" | "fusion"
   >("all");
 
+  // DnD accessibility & mobile long-press
+  const [grabbed, setGrabbed] = useState<{ day: number; meal: number } | null>(
+    null,
+  );
+  const [dragEnable, setDragEnable] = useState<{
+    day: number;
+    meal: number;
+  } | null>(null);
+
   const targets = useMemo(() => computeTargets(profile), [profile]);
 
   useEffect(() => {
@@ -214,7 +223,7 @@ export default function Planner() {
               disabled={generating}
               className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90 disabled:opacity-60"
             >
-              {generating ? "Generating…" : "Generate 7‑day plan"}
+              {generating ? "Generating���" : "Generate 7‑day plan"}
             </button>
           </div>
         </section>
