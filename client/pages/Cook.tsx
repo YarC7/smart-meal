@@ -56,6 +56,12 @@ export default function Cook() {
   useEffect(() => {
     if (!recipe || !step) return;
     track("start_cook", { recipeId: recipe.id, step: index });
+    try {
+      window.speechSynthesis?.cancel();
+      const u = new SpeechSynthesisUtterance(step.text);
+      u.lang = "vi-VN";
+      window.speechSynthesis?.speak(u);
+    } catch {}
     // Preload next media if image
     const next = steps[index + 1];
     if (next?.media && /\.(png|jpe?g|webp|gif|svg)$/i.test(next.media)) {
