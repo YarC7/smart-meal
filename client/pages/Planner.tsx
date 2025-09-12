@@ -254,17 +254,45 @@ export default function Planner() {
           </div>
           {plan ? (
             <div className="mt-4 grid md:grid-cols-2 gap-6">
-              {plan.days.map((d) => (
+              {plan.days.map((d, di) => (
                 <div key={d.day} className="rounded-xl border bg-card p-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold">{d.day}</h3>
                   </div>
-                  <ul className="mt-3 space-y-2 text-sm">
+                  <ul className="mt-3 space-y-2 text-sm"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      if (!plan) return;
+                      const data = e.dataTransfer.getData("text/plain");
+                      const [fromDay, fromMeal] = data.split(":").map((x) => parseInt(x, 10));
+                      const toDay = di;
+                      const toMeal = (e.currentTarget as any)._dropIndex ?? 0;
+                      if (Number.isNaN(fromDay) || Number.isNaN(fromMeal)) return;
+                      const newPlan: WeekPlan = {
+                        ...plan,
+                        days: plan.days.map((day, idx) => ({ ...day, meals: [...day.meals] })),
+                      };
+                      const item = newPlan.days[fromDay].meals.splice(fromMeal, 1)[0];
+                      const insertAt = Math.min(Math.max(toMeal, 0), newPlan.days[toDay].meals.length);
+                      newPlan.days[toDay].meals.splice(insertAt, 0, item);
+                      setPlan(newPlan);
+                      savePlan(newPlan);
+                    }}
+                  >
                     {d.meals.map((m, mi) => {
                       const rec = getRecipeByMealId(m.id);
                       return (
                         <li
                           key={m.id}
+                          draggable
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData("text/plain", `${di}:${mi}`);
+                            e.dataTransfer.effectAllowed = "move";
+                          }}
+                          onDragOver={(e) => {
+                            (e.currentTarget.parentElement as any)._dropIndex = mi;
+                            e.preventDefault();
+                          }}
                           className="flex items-center justify-between rounded-md border px-3 py-2 gap-3"
                         >
                           <span className="truncate mr-3 flex-1 min-w-0">
@@ -286,7 +314,7 @@ export default function Planner() {
                             onClick={() =>
                               setSwapState({
                                 open: true,
-                                dayIndex: plan.days.indexOf(d),
+                                dayIndex: di,
                                 mealIndex: mi,
                               })
                             }
@@ -305,7 +333,7 @@ export default function Planner() {
                         if (!plan) return;
                         const updated = regenerateDay(
                           plan,
-                          plan.days.indexOf(d),
+                          di,
                           profile.preference,
                         );
                         setPlan(updated);
