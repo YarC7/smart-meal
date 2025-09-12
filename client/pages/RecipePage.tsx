@@ -20,9 +20,13 @@ function todayKey() {
 
 function findSubs(name: string): string[] | null {
   const n = name.toLowerCase();
-  for (const key of Object.keys(subs)) {
-    if (n.includes(key.toLowerCase()))
-      return (subs as Record<string, string[]>)[key];
+  const data: any = subs as any;
+  for (const key of Object.keys(data)) {
+    if (n.includes(key.toLowerCase())) {
+      const v = (data as any)[key];
+      if (Array.isArray(v)) return v as string[];
+      if (v && Array.isArray(v.alternatives)) return v.alternatives as string[];
+    }
   }
   return null;
 }
