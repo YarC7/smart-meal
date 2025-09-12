@@ -227,7 +227,7 @@ export type GroceryItem = {
   cost?: number;
 };
 
-import UNIT_ALIASES_RAW from "@/data/unit_aliases.json" assert { type: "json" };
+import UNIT_ALIASES_RAW from "@/data/unit_aliases.json";
 
 export function normalizeUnitAndQty(
   qty: number,
