@@ -311,6 +311,27 @@ export default function Grocery() {
                                 {(i.cost ?? 0).toFixed(2)}
                               </span>
                             )}
+                            {(() => {
+                              const unit = i.unit.toLowerCase();
+                              const per100 = getProteinPer100g(i.name);
+                              if (
+                                (cats[i.name.toLowerCase()] || "").toLowerCase() ===
+                                  "proteins" &&
+                                per100 &&
+                                unit === "g" &&
+                                i.cost != null &&
+                                i.qty > 0
+                              ) {
+                                const proteinGrams = (per100 / 100) * i.qty;
+                                const val = (i.cost / Math.max(1, proteinGrams)).toFixed(3);
+                                return (
+                                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">
+                                    ₫/g protein: {val}
+                                  </span>
+                                );
+                              }
+                              return null;
+                            })()}
                           </div>
                         </li>
                       ))}
