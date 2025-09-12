@@ -251,6 +251,19 @@ export default function Cook() {
               >
                 Add timer
               </button>
+              {Array.isArray(step.timers) && step.timers.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {step.timers.map((sec: number, i: number) => (
+                    <button
+                      key={i}
+                      className="rounded border px-2 py-1 text-xs hover:bg-secondary"
+                      onClick={() => setTimers((t) => [...t, sec])}
+                    >
+                      Start {Math.round(sec / 60)}m
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="flex flex-wrap gap-3">
               {timers.map((t, i) => (
