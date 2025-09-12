@@ -36,6 +36,7 @@ import {
 } from "@/lib/catalog";
 import { track } from "@/lib/analytics";
 import { replanUnderBudget, estimateMealCost } from "@/lib/replan";
+import { getProteinPer100g } from "@/lib/nutrition";
 
 export default function Grocery() {
   const plan = loadPlan();
@@ -77,6 +78,22 @@ export default function Grocery() {
   }, [userPantry]);
 
   const [copying, setCopying] = useState(false);
+  const [purchased, setPurchased] = useState<Record<string, boolean>>(() => {
+    try {
+      const v = localStorage.getItem("smartmeal.grocery.purchased.v1");
+      return v ? (JSON.parse(v) as Record<string, boolean>) : {};
+    } catch {
+      return {};
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "smartmeal.grocery.purchased.v1",
+        JSON.stringify(purchased),
+      );
+    } catch {}
+  }, [purchased]);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<{
     name: string;
@@ -105,6 +122,7 @@ export default function Grocery() {
 
   const copy = async () => {
     const text = items
+      .filter((i) => !purchased[`${i.name}|${i.unit}`])
       .map((i) => `• ${i.name} — ${formatQty(i.qty)} ${i.unit}`)
       .join("\n");
     try {
@@ -223,7 +241,7 @@ export default function Grocery() {
                       {list.map((i) => (
                         <li
                           key={`${category}-${i.name}-${i.unit}`}
-                          className="flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary"
+                          className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm cursor-pointer hover:bg-secondary ${purchased[`${i.name}|${i.unit}`] ? "opacity-60 line-through" : ""}`}
                           onClick={() => {
                             if (overUnder < 0) {
                               const s =
@@ -250,10 +268,15 @@ export default function Grocery() {
                               });
                             } else {
                               const msg = peers
-                                .map(
-                                  (p) =>
-                                    `${p.name} (${(p.cost ?? 0).toFixed(2)})`,
-                                )
+                                .map((p) => {
+                                  const saving =
+                                    i.cost && p.cost
+                                      ? Math.round(
+                                          ((i.cost - p.cost) / i.cost) * 100,
+                                        )
+                                      : 0;
+                                  return `${p.name} (${(p.cost ?? 0).toFixed(2)}${saving > 0 ? `, -${saving}%` : ""})`;
+                                })
                                 .join(", ");
                               toast({
                                 title: "Cheaper alternatives",
@@ -263,7 +286,28 @@ export default function Grocery() {
                           }}
                           title="Click to see cheaper alternatives"
                         >
-                          <span className="truncate mr-3">{i.name}</span>
+                          <label
+                            className="flex items-center gap-2 mr-3"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={!!purchased[`${i.name}|${i.unit}`]}
+                              onChange={(e) => {
+                                const k = `${i.name}|${i.unit}`;
+                                setPurchased((prev) => ({
+                                  ...prev,
+                                  [k]: e.target.checked,
+                                }));
+                                track("purchase_toggle", {
+                                  key: `${i.name}|${i.unit}`,
+                                  value: e.target.checked,
+                                });
+                              }}
+                              aria-label={`Mark ${i.name} as purchased`}
+                            />
+                            <span className="truncate">{i.name}</span>
+                          </label>
                           <div className="flex items-center gap-3">
                             <Link
                               to={`/recipes?q=${encodeURIComponent(i.name)}`}
@@ -281,6 +325,30 @@ export default function Grocery() {
                                 {(i.cost ?? 0).toFixed(2)}
                               </span>
                             )}
+                            {(() => {
+                              const unit = i.unit.toLowerCase();
+                              const per100 = getProteinPer100g(i.name);
+                              if (
+                                (
+                                  cats[i.name.toLowerCase()] || ""
+                                ).toLowerCase() === "proteins" &&
+                                per100 &&
+                                unit === "g" &&
+                                i.cost != null &&
+                                i.qty > 0
+                              ) {
+                                const proteinGrams = (per100 / 100) * i.qty;
+                                const val = (
+                                  i.cost / Math.max(1, proteinGrams)
+                                ).toFixed(3);
+                                return (
+                                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">
+                                    ₫/g protein: {val}
+                                  </span>
+                                );
+                              }
+                              return null;
+                            })()}
                           </div>
                         </li>
                       ))}
@@ -307,6 +375,12 @@ export default function Grocery() {
               className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary"
             >
               Print
+            </button>
+            <button
+              onClick={() => setPurchased({})}
+              className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-secondary"
+            >
+              Clear purchased
             </button>
           </div>
         </section>
@@ -351,32 +425,69 @@ export default function Grocery() {
                   </div>
                 )}
                 {overUnder < 0 && (
-                  <button
-                    onClick={() => {
-                      if (!plan || !profile) return;
-                      const { plan: np, changed } = replanUnderBudget(
-                        {
-                          ...plan,
-                          days: [
-                            ...plan.days.map((d) => ({
-                              ...d,
-                              meals: [...d.meals],
-                            })),
-                          ],
-                        },
-                        profile.budgetPerWeek,
-                      );
-                      track("budget_replan", { changed });
-                      localStorage.setItem(
-                        "smartmeal.plan.v1",
-                        JSON.stringify(np),
-                      );
-                      window.location.reload();
-                    }}
-                    className="mt-3 w-full rounded-md border px-3 py-2 text-sm hover:bg-secondary"
-                  >
-                    Replan under budget
-                  </button>
+                  <>
+                    <div className="mt-3 rounded-md border p-3 bg-red-50/50">
+                      <div className="text-xs font-semibold mb-1">
+                        Top cheaper swaps
+                      </div>
+                      <ul className="text-xs space-y-1">
+                        {groupGroceries(items)
+                          .flatMap((g) => g.list)
+                          .filter((i) => i.cost != null)
+                          .sort((a, b) => (b.cost ?? 0) - (a.cost ?? 0))
+                          .slice(0, 5)
+                          .map((i) => {
+                            const peers = items
+                              .filter((p) => p.name !== i.name)
+                              .filter(
+                                (p) =>
+                                  (p.cost ?? Infinity) < (i.cost ?? Infinity),
+                              )
+                              .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))
+                              .slice(0, 3);
+                            return (
+                              <li key={`${i.name}-${i.unit}`}>
+                                <span className="font-medium">{i.name}:</span>{" "}
+                                {peers.length
+                                  ? peers
+                                      .map(
+                                        (p) =>
+                                          `${p.name} (${(p.cost ?? 0).toFixed(2)})`,
+                                      )
+                                      .join(", ")
+                                  : "No cheaper peers"}
+                              </li>
+                            );
+                          })}
+                      </ul>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (!plan || !profile) return;
+                        const { plan: np, changed } = replanUnderBudget(
+                          {
+                            ...plan,
+                            days: [
+                              ...plan.days.map((d) => ({
+                                ...d,
+                                meals: [...d.meals],
+                              })),
+                            ],
+                          },
+                          profile.budgetPerWeek,
+                        );
+                        track("budget_replan", { changed });
+                        localStorage.setItem(
+                          "smartmeal.plan.v1",
+                          JSON.stringify(np),
+                        );
+                        window.location.reload();
+                      }}
+                      className="mt-3 w-full rounded-md border px-3 py-2 text-sm hover:bg-secondary"
+                    >
+                      Replan under budget
+                    </button>
+                  </>
                 )}
               </div>
             )}
@@ -419,18 +530,29 @@ export default function Grocery() {
                     (cats[i.name.toLowerCase()] || "").toLowerCase() ===
                     "proteins",
                 )
+                .map((i) => {
+                  // compute using nutrition table when unit is in grams
+                  const per100 = getProteinPer100g(i.name);
+                  const unit = i.unit.toLowerCase();
+                  if (!per100 || i.cost == null) return null;
+                  const grams = unit === "g" ? i.qty : 0;
+                  if (!grams) return null;
+                  const proteinGrams = (per100 / 100) * grams;
+                  if (!proteinGrams) return null;
+                  const value = i.cost / proteinGrams; // cost per gram protein
+                  return { name: i.name, unit: i.unit, value };
+                })
+                .filter(Boolean)
+                .sort((a: any, b: any) => a.value - b.value)
                 .slice(0, 6)
-                .map((i) => (
+                .map((row: any) => (
                   <li
-                    key={`${i.name}-${i.unit}`}
+                    key={`${row.name}-${row.unit}`}
                     className="flex items-center justify-between"
                   >
-                    <span className="truncate mr-3">{i.name}</span>
+                    <span className="truncate mr-3">{row.name}</span>
                     <span className="text-foreground/60">
-                      {i.cost && i.qty
-                        ? (i.cost / Math.max(1, i.qty)).toFixed(2)
-                        : "—"}
-                      /g
+                      {row.value.toFixed(3)}/g protein
                     </span>
                   </li>
                 ))}

@@ -5,6 +5,7 @@ interface TimerProps {
   seconds: number;
   autoStart?: boolean;
   onComplete?: () => void;
+  onRunningChange?: (running: boolean) => void;
   label?: string;
 }
 
@@ -30,6 +31,7 @@ export default function Timer({
   seconds,
   autoStart,
   onComplete,
+  onRunningChange,
   label,
 }: TimerProps) {
   const [remaining, setRemaining] = useState(seconds);
@@ -37,6 +39,7 @@ export default function Timer({
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
+    if (onRunningChange) onRunningChange(running);
     if (!running) return;
     intervalRef.current = window.setInterval(() => {
       setRemaining((r) => {
@@ -44,6 +47,7 @@ export default function Timer({
           window.clearInterval(intervalRef.current!);
           intervalRef.current = null;
           setRunning(false);
+          if (onRunningChange) onRunningChange(false);
           beepAndVibrate();
           track("timer_complete", { label, seconds });
           if (onComplete) onComplete();
@@ -55,7 +59,7 @@ export default function Timer({
     return () => {
       if (intervalRef.current) window.clearInterval(intervalRef.current);
     };
-  }, [running, onComplete, label, seconds]);
+  }, [running, onComplete, onRunningChange, label, seconds]);
 
   const minutes = Math.floor(remaining / 60)
     .toString()
@@ -70,6 +74,7 @@ export default function Timer({
       role="timer"
       aria-live="polite"
       aria-label={label || "timer"}
+      data-running={running ? "true" : "false"}
     >
       <div className="font-mono text-lg tabular-nums">
         {minutes}:{secs}
@@ -78,14 +83,20 @@ export default function Timer({
         {!running ? (
           <button
             className="rounded border px-2 py-1 text-xs hover:bg-secondary"
-            onClick={() => setRunning(true)}
+            onClick={() => {
+              setRunning(true);
+              if (onRunningChange) onRunningChange(true);
+            }}
           >
             Start
           </button>
         ) : (
           <button
             className="rounded border px-2 py-1 text-xs hover:bg-secondary"
-            onClick={() => setRunning(false)}
+            onClick={() => {
+              setRunning(false);
+              if (onRunningChange) onRunningChange(false);
+            }}
           >
             Pause
           </button>
@@ -94,6 +105,7 @@ export default function Timer({
           className="rounded border px-2 py-1 text-xs hover:bg-secondary"
           onClick={() => {
             setRunning(false);
+            if (onRunningChange) onRunningChange(false);
             setRemaining(seconds);
           }}
         >

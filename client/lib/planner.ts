@@ -227,17 +227,81 @@ export type GroceryItem = {
   cost?: number;
 };
 
+export function normalizeUnitAndQty(
+  qty: number,
+  unit: string,
+): { qty: number; unit: string; costFactor: number } {
+  const u = unit.toLowerCase().trim();
+  // costFactor scales costPerUnit so that qty * costPerUnit remains invariant after unit conversion
+  // When converting 1 oldUnit = r newUnits, we multiply qty by r and divide costPerUnit by r (costFactor = 1/r)
+  switch (u) {
+    case "gram":
+    case "grams":
+    case "g":
+      return { qty, unit: "g", costFactor: 1 };
+    case "kg":
+    case "kgs":
+      return { qty: qty * 1000, unit: "g", costFactor: 1 / 1000 };
+    case "milliliter":
+    case "millilitre":
+    case "milliliters":
+    case "milliliters":
+    case "ml":
+      return { qty, unit: "ml", costFactor: 1 };
+    case "l":
+    case "lt":
+    case "liter":
+    case "liters":
+      return { qty: qty * 1000, unit: "ml", costFactor: 1 / 1000 };
+    case "tablespoon":
+    case "tablespoons":
+    case "tbs":
+    case "tbsp":
+      return { qty, unit: "tbsp", costFactor: 1 };
+    case "teaspoon":
+    case "teaspoons":
+    case "tsp":
+      return { qty, unit: "tsp", costFactor: 1 };
+    case "cup":
+    case "cups":
+      // approximate 1 cup = 240ml
+      return { qty: qty * 240, unit: "ml", costFactor: 1 / 240 };
+    case "piece":
+    case "pieces":
+    case "pcs":
+    case "quả":
+    case "chiếc":
+    case "pieces":
+    case "pc":
+    case "pcs":
+      return { qty, unit: "piece", costFactor: 1 };
+    case "slice":
+    case "slices":
+      return { qty, unit: "slice", costFactor: 1 };
+    default:
+      return { qty, unit: u, costFactor: 1 };
+  }
+}
+
 export function aggregateGroceries(plan: WeekPlan) {
   const map = new Map<string, GroceryItem>();
 
   for (const day of plan.days) {
     for (const meal of day.meals) {
       for (const ing of meal.ingredients) {
-        const key = `${ing.name}|${ing.unit}`;
+        const {
+          qty: nQty,
+          unit: nUnit,
+          costFactor,
+        } = normalizeUnitAndQty(ing.qty, ing.unit);
+        const key = `${ing.name}|${nUnit}`;
         const prev = map.get(key);
-        const qty = (prev?.qty || 0) + ing.qty;
-        const cost = ing.costPerUnit ? qty * ing.costPerUnit : prev?.cost;
-        map.set(key, { name: ing.name, unit: ing.unit, qty, cost });
+        const qty = (prev?.qty || 0) + nQty;
+        const effCostPerUnit = ing.costPerUnit
+          ? ing.costPerUnit * costFactor
+          : undefined;
+        const cost = effCostPerUnit ? qty * effCostPerUnit : prev?.cost;
+        map.set(key, { name: ing.name, unit: nUnit, qty, cost });
       }
     }
   }

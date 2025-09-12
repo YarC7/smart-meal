@@ -56,6 +56,15 @@ export default function Planner() {
     "all" | "vietnamese" | "western" | "fusion"
   >("all");
 
+  // DnD accessibility & mobile long-press
+  const [grabbed, setGrabbed] = useState<{ day: number; meal: number } | null>(
+    null,
+  );
+  const [dragEnable, setDragEnable] = useState<{
+    day: number;
+    meal: number;
+  } | null>(null);
+
   const targets = useMemo(() => computeTargets(profile), [profile]);
 
   useEffect(() => {
@@ -254,18 +263,132 @@ export default function Planner() {
           </div>
           {plan ? (
             <div className="mt-4 grid md:grid-cols-2 gap-6">
-              {plan.days.map((d) => (
+              {plan.days.map((d, di) => (
                 <div key={d.day} className="rounded-xl border bg-card p-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold">{d.day}</h3>
                   </div>
-                  <ul className="mt-3 space-y-2 text-sm">
+                  <ul
+                    className="mt-3 space-y-2 text-sm"
+                    role="list"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      if (!plan) return;
+                      const data = e.dataTransfer.getData("text/plain");
+                      const [fromDay, fromMeal] = data
+                        .split(":")
+                        .map((x) => parseInt(x, 10));
+                      const toDay = di;
+                      const toMeal = (e.currentTarget as any)._dropIndex ?? 0;
+                      if (
+                        Number.isNaN(fromDay) ||
+                        Number.isNaN(fromMeal) ||
+                        fromDay !== toDay
+                      )
+                        return; // restrict to within the same day
+                      const newPlan: WeekPlan = {
+                        ...plan,
+                        days: plan.days.map((day) => ({
+                          ...day,
+                          meals: [...day.meals],
+                        })),
+                      };
+                      const item = newPlan.days[fromDay].meals.splice(
+                        fromMeal,
+                        1,
+                      )[0];
+                      const insertAt = Math.min(
+                        Math.max(toMeal, 0),
+                        newPlan.days[toDay].meals.length,
+                      );
+                      newPlan.days[toDay].meals.splice(insertAt, 0, item);
+                      setPlan(newPlan);
+                      savePlan(newPlan);
+                    }}
+                  >
                     {d.meals.map((m, mi) => {
                       const rec = getRecipeByMealId(m.id);
                       return (
                         <li
                           key={m.id}
-                          className="flex items-center justify-between rounded-md border px-3 py-2 gap-3"
+                          draggable={
+                            !!dragEnable &&
+                            dragEnable.day === di &&
+                            dragEnable.meal === mi
+                          }
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData("text/plain", `${di}:${mi}`);
+                            e.dataTransfer.effectAllowed = "move";
+                          }}
+                          onDragEnd={() => setDragEnable(null)}
+                          onTouchStart={() => {
+                            const t = window.setTimeout(
+                              () => setDragEnable({ day: di, meal: mi }),
+                              300,
+                            );
+                            (window as any)._lp = t;
+                          }}
+                          onTouchEnd={() => {
+                            const t = (window as any)._lp;
+                            if (t) window.clearTimeout(t);
+                            setDragEnable(null);
+                          }}
+                          onDragOver={(e) => {
+                            (e.currentTarget.parentElement as any)._dropIndex =
+                              mi;
+                            e.preventDefault();
+                          }}
+                          tabIndex={0}
+                          role="listitem"
+                          aria-grabbed={
+                            grabbed?.day === di && grabbed?.meal === mi
+                          }
+                          onKeyDown={(e) => {
+                            if (!plan) return;
+                            if (e.key === " " || e.key === "Spacebar") {
+                              e.preventDefault();
+                              setGrabbed((g) =>
+                                g && g.day === di && g.meal === mi
+                                  ? null
+                                  : { day: di, meal: mi },
+                              );
+                            }
+                            if (grabbed && grabbed.day === di) {
+                              const move = (to: number) => {
+                                const newPlan: WeekPlan = {
+                                  ...plan,
+                                  days: plan.days.map((day) => ({
+                                    ...day,
+                                    meals: [...day.meals],
+                                  })),
+                                };
+                                const arr = newPlan.days[di].meals;
+                                const from = grabbed.meal;
+                                const at = Math.min(
+                                  Math.max(to, 0),
+                                  arr.length - 1,
+                                );
+                                const [item] = arr.splice(from, 1);
+                                arr.splice(at, 0, item);
+                                setPlan(newPlan);
+                                savePlan(newPlan);
+                                setGrabbed({ day: di, meal: at });
+                              };
+                              if (e.key === "ArrowUp") {
+                                e.preventDefault();
+                                move(grabbed.meal - 1);
+                              }
+                              if (e.key === "ArrowDown") {
+                                e.preventDefault();
+                                move(grabbed.meal + 1);
+                              }
+                              if (e.key === "Escape") {
+                                e.preventDefault();
+                                setGrabbed(null);
+                              }
+                            }
+                          }}
+                          className={`flex items-center justify-between rounded-md border px-3 py-2 gap-3 ${grabbed?.day === di && grabbed?.meal === mi ? "ring-2 ring-emerald-400" : ""}`}
                         >
                           <span className="truncate mr-3 flex-1 min-w-0">
                             {m.name}
@@ -286,7 +409,7 @@ export default function Planner() {
                             onClick={() =>
                               setSwapState({
                                 open: true,
-                                dayIndex: plan.days.indexOf(d),
+                                dayIndex: di,
                                 mealIndex: mi,
                               })
                             }
@@ -305,7 +428,7 @@ export default function Planner() {
                         if (!plan) return;
                         const updated = regenerateDay(
                           plan,
-                          plan.days.indexOf(d),
+                          di,
                           profile.preference,
                         );
                         setPlan(updated);

@@ -107,4 +107,42 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* High-contrast mode using a class on html/body: add class 'hc' to enable */
+  .hc :root, :root.hc, body.hc {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 7%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+    --primary: 210 100% 30%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 92%;
+    --secondary-foreground: 0 0% 7%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 12%;
+    --accent: 199 100% 30%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 100% 35%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 210 100% 30%;
+  }
+
+  /* System forced-colors */
+  @media (forced-colors: active) {
+    * { forced-color-adjust: auto; }
+  }
 }

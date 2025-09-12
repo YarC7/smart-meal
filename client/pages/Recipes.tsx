@@ -4,6 +4,7 @@ import { loadRecipes } from "@/lib/recipesStore";
 import RecipeCard from "@/components/recipes/RecipeCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { RecipeCategory } from "@shared/recipe";
+import { loadFavorites } from "@/lib/favorites";
 
 const ALL_TAGS: string[] = [
   "low_cost",
@@ -26,6 +27,13 @@ export default function Recipes() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [category, setCategory] = useState<"All" | RecipeCategory>("All");
   const recipes = loadRecipes();
+  const [favOnly, setFavOnly] = useState(false);
+  const [favIds, setFavIds] = useState<Set<string>>(() => loadFavorites());
+  useEffect(() => {
+    const on = () => setFavIds(loadFavorites());
+    window.addEventListener("storage", on);
+    return () => window.removeEventListener("storage", on);
+  }, []);
 
   useEffect(() => {
     setQ(sp.get("q") || "");
@@ -39,6 +47,7 @@ export default function Recipes() {
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     return recipes.filter((r) => {
+      if (favOnly && !favIds.has(r.id)) return false;
       // category
       if (category !== "All" && r.category !== category) return false;
       // tags (AND)
@@ -79,6 +88,10 @@ export default function Recipes() {
       </div>
 
       <div className="mt-3 flex items-center gap-3 flex-wrap">
+        <label className="flex items-center gap-2 text-xs border rounded-md px-2 py-1 cursor-pointer">
+          <input type="checkbox" checked={favOnly} onChange={(e) => setFavOnly(e.target.checked)} />
+          Favorites only
+        </label>
         <div className="inline-flex gap-1 rounded-md border p-1">
           {CATEGORIES.map((c) => (
             <button

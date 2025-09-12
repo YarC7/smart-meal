@@ -9,6 +9,9 @@ import { toast } from "@/hooks/use-toast";
 import { pushLogAction, loadLogs, saveLogs, DayLog } from "@/lib/planner";
 import subs from "@/data/substitutions.json";
 import { track } from "@/lib/analytics";
+import { useEffect as ReactUseEffect, useState as ReactUseState } from "react";
+import { isFavorite, toggleFavorite } from "@/lib/favorites";
+import { getRating, setRating } from "@/lib/ratings";
 
 function todayKey() {
   const d = new Date();
@@ -24,6 +27,57 @@ function findSubs(name: string): string[] | null {
   return null;
 }
 
+function FavButton({ id }: { id: string }) {
+  const [fav, setFav] = ReactUseState<boolean>(() => isFavorite(id));
+  ReactUseEffect(() => {
+    const on = () => setFav(isFavorite(id));
+    window.addEventListener("storage", on);
+    return () => window.removeEventListener("storage", on);
+  }, [id]);
+  return (
+    <button
+      aria-pressed={fav}
+      aria-label={fav ? "Remove from favorites" : "Add to favorites"}
+      className={`rounded-full border px-2 py-1 text-xs ${fav ? "bg-amber-100 text-amber-800" : "hover:bg-secondary"}`}
+      onClick={() => {
+        const next = toggleFavorite(id);
+        setFav(next);
+        track("favorite_toggle", { recipeId: id, value: next });
+      }}
+    >
+      {fav ? "★" : "☆"}
+    </button>
+  );
+}
+
+function Rating({ id }: { id: string }) {
+  const [rate, setRate] = ReactUseState<number>(getRating(id) || 0);
+  const Star = ({ n }: { n: number }) => (
+    <button
+      aria-label={`Rate ${n} star${n > 1 ? "s" : ""}`}
+      className={`text-sm ${rate >= n ? "text-amber-500" : "text-foreground/40"}`}
+      onClick={() => {
+        setRating(id, n);
+        setRate(n);
+        track("rate_recipe", { recipeId: id, rating: n });
+      }}
+    >
+      ���
+    </button>
+  );
+  return (
+    <div
+      role="radiogroup"
+      aria-label="Rate recipe"
+      className="inline-flex gap-0.5"
+    >
+      {[1, 2, 3, 4, 5].map((n) => (
+        <Star key={n} n={n} />
+      ))}
+    </div>
+  );
+}
+
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>();
   const [sp] = useSearchParams();
@@ -36,8 +90,29 @@ export default function RecipePage() {
   const stepParam = Math.max(0, parseInt(sp.get("step") || "0", 10));
 
   useEffect(() => {
-    if (recipe) track("view_recipe", { recipeId: recipe.id });
-  }, [recipe]);
+    if (recipe) {
+      track("view_recipe", { recipeId: recipe.id });
+      try {
+        document.title = title;
+        const setMeta = (p: string, c: string) => {
+          let m = document.querySelector(`meta[property='${p}']`);
+          if (!m) {
+            m = document.createElement("meta");
+            m.setAttribute("property", p);
+            document.head.appendChild(m);
+          }
+          m.setAttribute("content", c);
+        };
+        setMeta("og:title", title);
+        setMeta("og:type", "article");
+        if (recipe.image) setMeta("og:image", recipe.image);
+        setMeta(
+          "og:description",
+          `${recipe.prepTime + recipe.cookTime} min • ${recipe.difficulty}`,
+        );
+      } catch {}
+    }
+  }, [recipe, title]);
 
   if (!recipe)
     return (
@@ -104,7 +179,11 @@ export default function RecipePage() {
               <h1 className="text-xl font-semibold truncate" title={title}>
                 {title}
               </h1>
-              <div className="text-xs text-foreground/60 flex gap-3">
+              <div className="flex items-center gap-2 ml-auto">
+                <FavButton id={recipe.id} />
+                <Rating id={recipe.id} />
+              </div>
+              <div className="text-xs text-foreground/60 flex gap-3 w-full">
                 {recipe.category && <span>{recipe.category}</span>}
                 <span>{recipe.difficulty}</span>
                 <span>⏱ {recipe.prepTime + recipe.cookTime} min</span>
@@ -174,6 +253,16 @@ export default function RecipePage() {
                           <span className="font-medium">{s.name}:</span>{" "}
                           {s.suggestions.join(", ")}
                         </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {recipe.equipment && recipe.equipment.length > 0 && (
+                  <div className="mt-3 rounded-md border p-3">
+                    <div className="text-xs font-semibold mb-1">Equipment</div>
+                    <ul className="text-xs space-y-1 list-disc ml-4">
+                      {recipe.equipment.map((e, i) => (
+                        <li key={i}>{e}</li>
                       ))}
                     </ul>
                   </div>
