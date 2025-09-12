@@ -268,10 +268,10 @@ export default function Grocery() {
                               });
                             } else {
                               const msg = peers
-                                .map(
-                                  (p) =>
-                                    `${p.name} (${(p.cost ?? 0).toFixed(2)})`,
-                                )
+                                .map((p) => {
+                                  const saving = i.cost && p.cost ? Math.round(((i.cost - p.cost) / i.cost) * 100) : 0;
+                                  return `${p.name} (${(p.cost ?? 0).toFixed(2)}${saving > 0 ? `, -${saving}%` : ""})`;
+                                })
                                 .join(", ");
                               toast({
                                 title: "Cheaper alternatives",
