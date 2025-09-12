@@ -227,53 +227,84 @@ export type GroceryItem = {
   cost?: number;
 };
 
+import UNIT_ALIASES_RAW from "@/data/unit_aliases.json" assert { type: "json" };
+
 export function normalizeUnitAndQty(
   qty: number,
   unit: string,
 ): { qty: number; unit: string; costFactor: number } {
-  const u = unit.toLowerCase().trim();
+  let u = unit.toLowerCase().trim();
+  // Build alias map (synonym -> canonical)
+  const aliases = UNIT_ALIASES_RAW as any;
+  const aliasMap: Record<string, string> = {};
+  for (const key of Object.keys(aliases)) {
+    if (key.includes("->")) continue;
+    aliasMap[key.toLowerCase()] = key.toLowerCase();
+    const list = Array.isArray(aliases[key]) ? (aliases[key] as string[]) : [];
+    for (const syn of list) aliasMap[syn.toLowerCase()] = key.toLowerCase();
+  }
+  // Normalize alias
+  u = aliasMap[u] || u;
+
+  // Conversion factors (e.g., tbsp->ml, tsp->ml, cup->ml)
+  const conv: Record<string, { to: string; factor: number }> = {};
+  for (const key of Object.keys(aliases)) {
+    if (!key.includes("->")) continue;
+    const [from, to] = key.split("->");
+    const factor = Number(aliases[key]);
+    if (!Number.isNaN(factor)) conv[from.toLowerCase()] = { to: to.toLowerCase(), factor };
+  }
+
   // costFactor scales costPerUnit so that qty * costPerUnit remains invariant after unit conversion
   // When converting 1 oldUnit = r newUnits, we multiply qty by r and divide costPerUnit by r (costFactor = 1/r)
   switch (u) {
+    case "g":
     case "gram":
     case "grams":
-    case "g":
       return { qty, unit: "g", costFactor: 1 };
     case "kg":
     case "kgs":
       return { qty: qty * 1000, unit: "g", costFactor: 1 / 1000 };
+    case "ml":
     case "milliliter":
     case "millilitre":
     case "milliliters":
-    case "milliliters":
-    case "ml":
+    case "millilitres":
       return { qty, unit: "ml", costFactor: 1 };
     case "l":
     case "lt":
     case "liter":
     case "liters":
       return { qty: qty * 1000, unit: "ml", costFactor: 1 / 1000 };
+    case "cup":
+    case "cups": {
+      // Prefer JSON factor when available
+      const c = conv["cup"];
+      if (c && c.to === "ml") return { qty: qty * c.factor, unit: "ml", costFactor: 1 / c.factor };
+      return { qty: qty * 240, unit: "ml", costFactor: 1 / 240 };
+    }
+    case "tbsp":
     case "tablespoon":
     case "tablespoons":
-    case "tbs":
-    case "tbsp":
+    case "tbs": {
+      const c = conv["tbsp"];
+      if (c && c.to === "ml") return { qty: qty * c.factor, unit: "ml", costFactor: 1 / c.factor };
+      // fallback: keep as tbsp if no factor
       return { qty, unit: "tbsp", costFactor: 1 };
-    case "teaspoon":
-    case "teaspoons":
+    }
     case "tsp":
+    case "teaspoon":
+    case "teaspoons": {
+      const c = conv["tsp"];
+      if (c && c.to === "ml") return { qty: qty * c.factor, unit: "ml", costFactor: 1 / c.factor };
       return { qty, unit: "tsp", costFactor: 1 };
-    case "cup":
-    case "cups":
-      // approximate 1 cup = 240ml
-      return { qty: qty * 240, unit: "ml", costFactor: 1 / 240 };
+    }
     case "piece":
-    case "pieces":
-    case "pcs":
-    case "quả":
-    case "chiếc":
     case "pieces":
     case "pc":
     case "pcs":
+    case "quả":
+    case "chiếc":
       return { qty, unit: "piece", costFactor: 1 };
     case "slice":
     case "slices":
