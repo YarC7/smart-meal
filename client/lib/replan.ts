@@ -30,7 +30,7 @@ function similarMacros(base: Meal, cand: Meal): boolean {
   );
 }
 
-import DIVERSITY_RULES_RAW from "@/data/diversity_rules.json" assert { type: "json" };
+import DIVERSITY_RULES_RAW from "@/data/diversity_rules.json";
 
 function getDiversityRulesSync() {
   try {
