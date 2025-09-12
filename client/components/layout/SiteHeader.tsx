@@ -74,6 +74,23 @@ export function SiteHeader() {
           </NavLink>
         </nav>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              const b = document.body.classList;
+              if (b.contains("hc")) b.remove("hc");
+              else b.add("hc");
+              try {
+                localStorage.setItem(
+                  "smartmeal.pref.high_contrast",
+                  b.contains("hc") ? "1" : "0",
+                );
+              } catch {}
+            }}
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md border px-3 py-2 text-sm font-medium hover:bg-secondary"
+            title="Toggle high-contrast"
+          >
+            HC
+          </button>
           {canInstall && (
             <button
               onClick={showPrompt}
