@@ -1,0 +1,11 @@
+{
+  "salmon": {"alternatives": ["pangasius (cá basa)", "mackerel"], "note": "Cheaper fish with similar protein"},
+  "beef": {"alternatives": ["chicken thigh", "tofu"], "note": "Lower cost protein options"},
+  "avocado": {"alternatives": ["banana", "papaya"], "note": "Local fruits cheaper and available"},
+  "quinoa": {"alternatives": ["brown rice", "millet"], "note": "More affordable grains"},
+  "greek yogurt": {"alternatives": ["plain yogurt", "soy yogurt"], "note": "Accessible dairy/plant substitutes"},
+  "shrimp": {"alternatives": ["tofu", "chicken breast"], "note": "Affordable lean protein"},
+  "broccoli": {"alternatives": ["cabbage", "cauliflower"], "note": "Common local veggies"},
+  "pasta": {"alternatives": ["rice noodles", "buckwheat noodles"], "note": "Cheaper carb base"},
+  "olive oil": {"alternatives": ["vegetable oil", "canola oil"], "note": "Affordable cooking oils"}
+}
