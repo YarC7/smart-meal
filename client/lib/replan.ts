@@ -27,6 +27,8 @@ function similarMacros(base: Meal, cand: Meal): boolean {
   );
 }
 
+import DIVERSITY_RULES_RAW from "@/data/diversity_rules.json" assert { type: "json" };
+
 function getDiversityRulesSync() {
   try {
     const v = localStorage.getItem("smartmeal.diversity.rules.v1");
@@ -36,6 +38,16 @@ function getDiversityRulesSync() {
         minVegetablePerDay: number;
         preferTags: string[];
       };
+  } catch {}
+  try {
+    const raw: any = DIVERSITY_RULES_RAW as any;
+    const minVegetablePerDay =
+      raw.minVegetablePerDay ?? raw.minVeggiesPerDay ?? 1;
+    return {
+      maxRepeatPerWeek: Number(raw.maxRepeatPerWeek) || 2,
+      minVegetablePerDay,
+      preferTags: Array.isArray(raw.preferTags) ? raw.preferTags : ["low_cost", "vietnamese"],
+    };
   } catch {}
   return {
     maxRepeatPerWeek: 2,
