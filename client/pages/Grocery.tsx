@@ -15,7 +15,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import BudgetProgressBar from "@/components/smartmeal/BudgetProgressBar";
-import subs from "@/data/substitutions_updated.json" assert { type: "json" };
+import subs from "@/data/substitutions_updated.json";
 import {
   Dialog,
   DialogContent,
