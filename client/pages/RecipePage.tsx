@@ -232,6 +232,16 @@ export default function RecipePage() {
                     </ul>
                   </div>
                 )}
+                {recipe.equipment && recipe.equipment.length > 0 && (
+                  <div className="mt-3 rounded-md border p-3">
+                    <div className="text-xs font-semibold mb-1">Equipment</div>
+                    <ul className="text-xs space-y-1 list-disc ml-4">
+                      {recipe.equipment.map((e, i) => (
+                        <li key={i}>{e}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
 
