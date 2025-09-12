@@ -311,16 +311,69 @@ export default function Planner() {
                       return (
                         <li
                           key={m.id}
-                          draggable
+                          draggable={!!dragEnable && dragEnable.day === di && dragEnable.meal === mi}
                           onDragStart={(e) => {
                             e.dataTransfer.setData("text/plain", `${di}:${mi}`);
                             e.dataTransfer.effectAllowed = "move";
+                          }}
+                          onDragEnd={() => setDragEnable(null)}
+                          onTouchStart={() => {
+                            const t = window.setTimeout(
+                              () => setDragEnable({ day: di, meal: mi }),
+                              300,
+                            );
+                            (window as any)._lp = t;
+                          }}
+                          onTouchEnd={() => {
+                            const t = (window as any)._lp;
+                            if (t) window.clearTimeout(t);
+                            setDragEnable(null);
                           }}
                           onDragOver={(e) => {
                             (e.currentTarget.parentElement as any)._dropIndex = mi;
                             e.preventDefault();
                           }}
-                          className="flex items-center justify-between rounded-md border px-3 py-2 gap-3"
+                          tabIndex={0}
+                          role="listitem"
+                          aria-grabbed={grabbed?.day === di && grabbed?.meal === mi}
+                          onKeyDown={(e) => {
+                            if (!plan) return;
+                            if (e.key === " " || e.key === "Spacebar") {
+                              e.preventDefault();
+                              setGrabbed((g) =>
+                                g && g.day === di && g.meal === mi ? null : { day: di, meal: mi },
+                              );
+                            }
+                            if (grabbed && grabbed.day === di) {
+                              const move = (to: number) => {
+                                const newPlan: WeekPlan = {
+                                  ...plan,
+                                  days: plan.days.map((day) => ({ ...day, meals: [...day.meals] })),
+                                };
+                                const arr = newPlan.days[di].meals;
+                                const from = grabbed.meal;
+                                const at = Math.min(Math.max(to, 0), arr.length - 1);
+                                const [item] = arr.splice(from, 1);
+                                arr.splice(at, 0, item);
+                                setPlan(newPlan);
+                                savePlan(newPlan);
+                                setGrabbed({ day: di, meal: at });
+                              };
+                              if (e.key === "ArrowUp") {
+                                e.preventDefault();
+                                move(grabbed.meal - 1);
+                              }
+                              if (e.key === "ArrowDown") {
+                                e.preventDefault();
+                                move(grabbed.meal + 1);
+                              }
+                              if (e.key === "Escape") {
+                                e.preventDefault();
+                                setGrabbed(null);
+                              }
+                            }
+                          }}
+                          className={`flex items-center justify-between rounded-md border px-3 py-2 gap-3 ${grabbed?.day === di && grabbed?.meal === mi ? "ring-2 ring-emerald-400" : ""}`}
                         >
                           <span className="truncate mr-3 flex-1 min-w-0">
                             {m.name}
