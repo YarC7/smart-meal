@@ -223,7 +223,7 @@ export default function Planner() {
               disabled={generating}
               className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90 disabled:opacity-60"
             >
-              {generating ? "Generating���" : "Generate 7‑day plan"}
+              {generating ? "Generating…" : "Generate 7‑day plan"}
             </button>
           </div>
         </section>
@@ -268,21 +268,39 @@ export default function Planner() {
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold">{d.day}</h3>
                   </div>
-                  <ul className="mt-3 space-y-2 text-sm"
+                  <ul
+                    className="mt-3 space-y-2 text-sm"
+                    role="list"
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => {
                       if (!plan) return;
                       const data = e.dataTransfer.getData("text/plain");
-                      const [fromDay, fromMeal] = data.split(":").map((x) => parseInt(x, 10));
+                      const [fromDay, fromMeal] = data
+                        .split(":")
+                        .map((x) => parseInt(x, 10));
                       const toDay = di;
                       const toMeal = (e.currentTarget as any)._dropIndex ?? 0;
-                      if (Number.isNaN(fromDay) || Number.isNaN(fromMeal)) return;
+                      if (
+                        Number.isNaN(fromDay) ||
+                        Number.isNaN(fromMeal) ||
+                        fromDay !== toDay
+                      )
+                        return; // restrict to within the same day
                       const newPlan: WeekPlan = {
                         ...plan,
-                        days: plan.days.map((day, idx) => ({ ...day, meals: [...day.meals] })),
+                        days: plan.days.map((day) => ({
+                          ...day,
+                          meals: [...day.meals],
+                        })),
                       };
-                      const item = newPlan.days[fromDay].meals.splice(fromMeal, 1)[0];
-                      const insertAt = Math.min(Math.max(toMeal, 0), newPlan.days[toDay].meals.length);
+                      const item = newPlan.days[fromDay].meals.splice(
+                        fromMeal,
+                        1,
+                      )[0];
+                      const insertAt = Math.min(
+                        Math.max(toMeal, 0),
+                        newPlan.days[toDay].meals.length,
+                      );
                       newPlan.days[toDay].meals.splice(insertAt, 0, item);
                       setPlan(newPlan);
                       savePlan(newPlan);
