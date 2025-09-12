@@ -17,6 +17,10 @@ export function SiteHeader() {
   useEffect(() => {
     const onStorage = () => setHasPlan(!!loadPlan());
     window.addEventListener("storage", onStorage);
+    try {
+      const v = localStorage.getItem("smartmeal.pref.high_contrast");
+      if (v === "1") document.body.classList.add("hc");
+    } catch {}
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
