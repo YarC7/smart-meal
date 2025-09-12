@@ -127,7 +127,6 @@ export default function RecipePage() {
       </div>
     );
 
-  const title = recipe.title_vi || recipe.title_en || "Recipe";
   const scale = servings / Math.max(1, recipe.servings || 1);
 
   const quickAdd = () => {
