@@ -4,6 +4,8 @@ export interface RecipeStep {
   time?: number; // seconds
   media?: string; // optional media per step
   type?: "prep" | "cook" | "rest";
+  heat?: "low" | "med" | "high";
+  timers?: number[]; // extra timers in seconds
 }
 
 export type RecipeCategory = "Breakfast" | "Lunch/Dinner" | "Snack/Dessert";
@@ -28,6 +30,7 @@ export interface Recipe {
   tips?: string[];
   image?: string;
   videoUrl?: string;
+  equipment?: string[];
   // i18n-friendly naming
   title_vi?: string;
   title_en?: string;
@@ -36,6 +39,7 @@ export interface Recipe {
   // discovery
   category?: RecipeCategory;
   tags?: RecipeTag[];
+  allergens?: ("peanut"|"soy"|"egg"|"gluten"|"milk"|"shellfish")[];
   // ingredients and nutrition
   ingredients?: RecipeIngredient[];
   macrosPerServing?: {
@@ -44,5 +48,6 @@ export interface Recipe {
     carbs: number;
     fat: number;
   };
+  micros?: { sodium?: number; fiber?: number; calcium?: number; iron?: number };
   costPerServing?: number;
 }
