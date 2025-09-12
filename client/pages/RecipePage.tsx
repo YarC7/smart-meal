@@ -66,7 +66,11 @@ function Rating({ id }: { id: string }) {
     </button>
   );
   return (
-    <div role="radiogroup" aria-label="Rate recipe" className="inline-flex gap-0.5">
+    <div
+      role="radiogroup"
+      aria-label="Rate recipe"
+      className="inline-flex gap-0.5"
+    >
       {[1, 2, 3, 4, 5].map((n) => (
         <Star key={n} n={n} />
       ))}
@@ -102,7 +106,10 @@ export default function RecipePage() {
         setMeta("og:title", title);
         setMeta("og:type", "article");
         if (recipe.image) setMeta("og:image", recipe.image);
-        setMeta("og:description", `${recipe.prepTime + recipe.cookTime} min • ${recipe.difficulty}`);
+        setMeta(
+          "og:description",
+          `${recipe.prepTime + recipe.cookTime} min • ${recipe.difficulty}`,
+        );
       } catch {}
     }
   }, [recipe, title]);

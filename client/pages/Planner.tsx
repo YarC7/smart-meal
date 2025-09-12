@@ -311,7 +311,11 @@ export default function Planner() {
                       return (
                         <li
                           key={m.id}
-                          draggable={!!dragEnable && dragEnable.day === di && dragEnable.meal === mi}
+                          draggable={
+                            !!dragEnable &&
+                            dragEnable.day === di &&
+                            dragEnable.meal === mi
+                          }
                           onDragStart={(e) => {
                             e.dataTransfer.setData("text/plain", `${di}:${mi}`);
                             e.dataTransfer.effectAllowed = "move";
@@ -330,29 +334,40 @@ export default function Planner() {
                             setDragEnable(null);
                           }}
                           onDragOver={(e) => {
-                            (e.currentTarget.parentElement as any)._dropIndex = mi;
+                            (e.currentTarget.parentElement as any)._dropIndex =
+                              mi;
                             e.preventDefault();
                           }}
                           tabIndex={0}
                           role="listitem"
-                          aria-grabbed={grabbed?.day === di && grabbed?.meal === mi}
+                          aria-grabbed={
+                            grabbed?.day === di && grabbed?.meal === mi
+                          }
                           onKeyDown={(e) => {
                             if (!plan) return;
                             if (e.key === " " || e.key === "Spacebar") {
                               e.preventDefault();
                               setGrabbed((g) =>
-                                g && g.day === di && g.meal === mi ? null : { day: di, meal: mi },
+                                g && g.day === di && g.meal === mi
+                                  ? null
+                                  : { day: di, meal: mi },
                               );
                             }
                             if (grabbed && grabbed.day === di) {
                               const move = (to: number) => {
                                 const newPlan: WeekPlan = {
                                   ...plan,
-                                  days: plan.days.map((day) => ({ ...day, meals: [...day.meals] })),
+                                  days: plan.days.map((day) => ({
+                                    ...day,
+                                    meals: [...day.meals],
+                                  })),
                                 };
                                 const arr = newPlan.days[di].meals;
                                 const from = grabbed.meal;
-                                const at = Math.min(Math.max(to, 0), arr.length - 1);
+                                const at = Math.min(
+                                  Math.max(to, 0),
+                                  arr.length - 1,
+                                );
                                 const [item] = arr.splice(from, 1);
                                 arr.splice(at, 0, item);
                                 setPlan(newPlan);

@@ -30,9 +30,18 @@ function similarMacros(base: Meal, cand: Meal): boolean {
 function getDiversityRulesSync() {
   try {
     const v = localStorage.getItem("smartmeal.diversity.rules.v1");
-    if (v) return JSON.parse(v) as { maxRepeatPerWeek: number; minVegetablePerDay: number; preferTags: string[] };
+    if (v)
+      return JSON.parse(v) as {
+        maxRepeatPerWeek: number;
+        minVegetablePerDay: number;
+        preferTags: string[];
+      };
   } catch {}
-  return { maxRepeatPerWeek: 2, minVegetablePerDay: 1, preferTags: ["low_cost", "vietnamese"] };
+  return {
+    maxRepeatPerWeek: 2,
+    minVegetablePerDay: 1,
+    preferTags: ["low_cost", "vietnamese"],
+  };
 }
 
 function hasVegetable(meal: Meal): boolean {
@@ -44,20 +53,30 @@ export function replanUnderBudget(
   budget: number,
 ): { plan: WeekPlan; changed: number } {
   const rules = getDiversityRulesSync();
-  const flat: { dayIndex: number; mealIndex: number; meal: Meal; cost: number }[] = [];
+  const flat: {
+    dayIndex: number;
+    mealIndex: number;
+    meal: Meal;
+    cost: number;
+  }[] = [];
   plan.days.forEach((d, di) =>
-    d.meals.forEach((m, mi) => flat.push({ dayIndex: di, mealIndex: mi, meal: m, cost: mealCost(m) })),
+    d.meals.forEach((m, mi) =>
+      flat.push({ dayIndex: di, mealIndex: mi, meal: m, cost: mealCost(m) }),
+    ),
   );
   let total = flat.reduce((s, x) => s + x.cost, 0);
   let changed = 0;
   const all = filterMeals("omnivore" as any);
 
   const freq = new Map<string, number>();
-  for (const m of flat.map((f) => f.meal)) freq.set(m.id, (freq.get(m.id) || 0) + 1);
+  for (const m of flat.map((f) => f.meal))
+    freq.set(m.id, (freq.get(m.id) || 0) + 1);
 
   for (const item of flat.sort((a, b) => b.cost - a.cost)) {
     if (total <= budget) break;
-    const dayHasVeg = plan.days[item.dayIndex].meals.some((m) => hasVegetable(m));
+    const dayHasVeg = plan.days[item.dayIndex].meals.some((m) =>
+      hasVegetable(m),
+    );
 
     const candidates = all
       .filter((m) => m.id !== item.meal.id)
@@ -86,11 +105,15 @@ export function replanUnderBudget(
     const day = plan.days[di];
     const vegCount = day.meals.filter(hasVegetable).length;
     if (vegCount >= rules.minVegetablePerDay) continue;
-    const pool = all.filter(hasVegetable).sort((a, b) => mealCost(a) - mealCost(b));
+    const pool = all
+      .filter(hasVegetable)
+      .sort((a, b) => mealCost(a) - mealCost(b));
     for (let add = 0; add < rules.minVegetablePerDay - vegCount; add++) {
       const targetIdx = day.meals.findIndex((m) => !hasVegetable(m));
       if (targetIdx >= 0) {
-        const pick = pool.find((m) => (freq.get(m.id) || 0) < rules.maxRepeatPerWeek);
+        const pick = pool.find(
+          (m) => (freq.get(m.id) || 0) < rules.maxRepeatPerWeek,
+        );
         if (pick) {
           const prevCost = mealCost(plan.days[di].meals[targetIdx]);
           plan.days[di].meals[targetIdx] = pick;
@@ -104,7 +127,9 @@ export function replanUnderBudget(
   // Final budget-forcing pass ignoring diversity if still over
   if (total > budget) {
     const flat2: { di: number; mi: number; cost: number }[] = [];
-    plan.days.forEach((d, di) => d.meals.forEach((m, mi) => flat2.push({ di, mi, cost: mealCost(m) })));
+    plan.days.forEach((d, di) =>
+      d.meals.forEach((m, mi) => flat2.push({ di, mi, cost: mealCost(m) })),
+    );
     for (const it of flat2.sort((a, b) => b.cost - a.cost)) {
       if (total <= budget) break;
       const cur = plan.days[it.di].meals[it.mi];

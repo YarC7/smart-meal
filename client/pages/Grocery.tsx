@@ -269,7 +269,12 @@ export default function Grocery() {
                             } else {
                               const msg = peers
                                 .map((p) => {
-                                  const saving = i.cost && p.cost ? Math.round(((i.cost - p.cost) / i.cost) * 100) : 0;
+                                  const saving =
+                                    i.cost && p.cost
+                                      ? Math.round(
+                                          ((i.cost - p.cost) / i.cost) * 100,
+                                        )
+                                      : 0;
                                   return `${p.name} (${(p.cost ?? 0).toFixed(2)}${saving > 0 ? `, -${saving}%` : ""})`;
                                 })
                                 .join(", ");
@@ -281,14 +286,23 @@ export default function Grocery() {
                           }}
                           title="Click to see cheaper alternatives"
                         >
-                          <label className="flex items-center gap-2 mr-3" onClick={(e) => e.stopPropagation()}>
+                          <label
+                            className="flex items-center gap-2 mr-3"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <input
                               type="checkbox"
                               checked={!!purchased[`${i.name}|${i.unit}`]}
                               onChange={(e) => {
                                 const k = `${i.name}|${i.unit}`;
-                                setPurchased((prev) => ({ ...prev, [k]: e.target.checked }));
-                                track("purchase_toggle", { key: `${i.name}|${i.unit}`, value: e.target.checked });
+                                setPurchased((prev) => ({
+                                  ...prev,
+                                  [k]: e.target.checked,
+                                }));
+                                track("purchase_toggle", {
+                                  key: `${i.name}|${i.unit}`,
+                                  value: e.target.checked,
+                                });
                               }}
                               aria-label={`Mark ${i.name} as purchased`}
                             />
@@ -315,15 +329,18 @@ export default function Grocery() {
                               const unit = i.unit.toLowerCase();
                               const per100 = getProteinPer100g(i.name);
                               if (
-                                (cats[i.name.toLowerCase()] || "").toLowerCase() ===
-                                  "proteins" &&
+                                (
+                                  cats[i.name.toLowerCase()] || ""
+                                ).toLowerCase() === "proteins" &&
                                 per100 &&
                                 unit === "g" &&
                                 i.cost != null &&
                                 i.qty > 0
                               ) {
                                 const proteinGrams = (per100 / 100) * i.qty;
-                                const val = (i.cost / Math.max(1, proteinGrams)).toFixed(3);
+                                const val = (
+                                  i.cost / Math.max(1, proteinGrams)
+                                ).toFixed(3);
                                 return (
                                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">
                                     ₫/g protein: {val}
@@ -422,7 +439,10 @@ export default function Grocery() {
                           .map((i) => {
                             const peers = items
                               .filter((p) => p.name !== i.name)
-                              .filter((p) => (p.cost ?? Infinity) < (i.cost ?? Infinity))
+                              .filter(
+                                (p) =>
+                                  (p.cost ?? Infinity) < (i.cost ?? Infinity),
+                              )
                               .sort((a, b) => (a.cost ?? 0) - (b.cost ?? 0))
                               .slice(0, 3);
                             return (
@@ -430,7 +450,10 @@ export default function Grocery() {
                                 <span className="font-medium">{i.name}:</span>{" "}
                                 {peers.length
                                   ? peers
-                                      .map((p) => `${p.name} (${(p.cost ?? 0).toFixed(2)})`)
+                                      .map(
+                                        (p) =>
+                                          `${p.name} (${(p.cost ?? 0).toFixed(2)})`,
+                                      )
                                       .join(", ")
                                   : "No cheaper peers"}
                               </li>

@@ -108,7 +108,8 @@ export default function Cook() {
         const n = parseInt(m[1], 10);
         if (!Number.isNaN(n)) go(n - 1);
       }
-      const tm = t.match(/(hẹn giờ|timer)\s*(\d+)/) || t.match(/(phút)\s*(\d+)/);
+      const tm =
+        t.match(/(hẹn giờ|timer)\s*(\d+)/) || t.match(/(phút)\s*(\d+)/);
       if (tm) {
         const mins = parseInt(tm[2] || tm[1], 10);
         if (!Number.isNaN(mins)) setTimers((arr) => [...arr, mins * 60]);

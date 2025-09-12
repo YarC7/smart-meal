@@ -39,7 +39,7 @@ export interface Recipe {
   // discovery
   category?: RecipeCategory;
   tags?: RecipeTag[];
-  allergens?: ("peanut"|"soy"|"egg"|"gluten"|"milk"|"shellfish")[];
+  allergens?: ("peanut" | "soy" | "egg" | "gluten" | "milk" | "shellfish")[];
   // ingredients and nutrition
   ingredients?: RecipeIngredient[];
   macrosPerServing?: {
