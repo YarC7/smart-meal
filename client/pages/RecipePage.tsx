@@ -7,7 +7,7 @@ import VoiceControl from "@/components/recipes/VoiceControl";
 import { MEALS } from "@/data/meals";
 import { toast } from "@/hooks/use-toast";
 import { pushLogAction, loadLogs, saveLogs, DayLog } from "@/lib/planner";
-import subs from "@/data/substitutions.json";
+import subs from "@/data/substitutions_updated.json" assert { type: "json" };
 import { track } from "@/lib/analytics";
 import { useEffect as ReactUseEffect, useState as ReactUseState } from "react";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
