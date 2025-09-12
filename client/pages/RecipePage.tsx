@@ -62,7 +62,7 @@ function Rating({ id }: { id: string }) {
         track("rate_recipe", { recipeId: id, rating: n });
       }}
     >
-      ★
+      ���
     </button>
   );
   return (
@@ -86,8 +86,26 @@ export default function RecipePage() {
   const stepParam = Math.max(0, parseInt(sp.get("step") || "0", 10));
 
   useEffect(() => {
-    if (recipe) track("view_recipe", { recipeId: recipe.id });
-  }, [recipe]);
+    if (recipe) {
+      track("view_recipe", { recipeId: recipe.id });
+      try {
+        document.title = title;
+        const setMeta = (p: string, c: string) => {
+          let m = document.querySelector(`meta[property='${p}']`);
+          if (!m) {
+            m = document.createElement("meta");
+            m.setAttribute("property", p);
+            document.head.appendChild(m);
+          }
+          m.setAttribute("content", c);
+        };
+        setMeta("og:title", title);
+        setMeta("og:type", "article");
+        if (recipe.image) setMeta("og:image", recipe.image);
+        setMeta("og:description", `${recipe.prepTime + recipe.cookTime} min • ${recipe.difficulty}`);
+      } catch {}
+    }
+  }, [recipe, title]);
 
   if (!recipe)
     return (
