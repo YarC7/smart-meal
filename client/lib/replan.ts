@@ -1,5 +1,8 @@
 import { WeekPlan, filterMeals, categorize } from "@/lib/planner";
 import { MEALS, Meal } from "@/data/meals";
+import { filterMeals } from "@/lib/planner";
+import type { WeekPlan } from "@/lib/planner";
+import { categorize } from "@/lib/planner";
 
 export function mealCost(meal: Meal): number {
   return meal.ingredients.reduce(
