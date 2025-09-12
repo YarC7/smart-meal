@@ -227,7 +227,7 @@ export type GroceryItem = {
   cost?: number;
 };
 
-function normalizeUnitAndQty(qty: number, unit: string): { qty: number; unit: string; costFactor: number } {
+export function normalizeUnitAndQty(qty: number, unit: string): { qty: number; unit: string; costFactor: number } {
   const u = unit.toLowerCase().trim();
   // costFactor scales costPerUnit so that qty * costPerUnit remains invariant after unit conversion
   // When converting 1 oldUnit = r newUnits, we multiply qty by r and divide costPerUnit by r (costFactor = 1/r)
@@ -237,20 +237,26 @@ function normalizeUnitAndQty(qty: number, unit: string): { qty: number; unit: st
     case "g":
       return { qty, unit: "g", costFactor: 1 };
     case "kg":
+    case "kgs":
       return { qty: qty * 1000, unit: "g", costFactor: 1 / 1000 };
     case "milliliter":
+    case "millilitre":
+    case "milliliters":
     case "milliliters":
     case "ml":
       return { qty, unit: "ml", costFactor: 1 };
     case "l":
+    case "lt":
     case "liter":
     case "liters":
       return { qty: qty * 1000, unit: "ml", costFactor: 1 / 1000 };
     case "tablespoon":
+    case "tablespoons":
     case "tbs":
     case "tbsp":
       return { qty, unit: "tbsp", costFactor: 1 };
     case "teaspoon":
+    case "teaspoons":
     case "tsp":
       return { qty, unit: "tsp", costFactor: 1 };
     case "cup":
@@ -258,6 +264,10 @@ function normalizeUnitAndQty(qty: number, unit: string): { qty: number; unit: st
       // approximate 1 cup = 240ml
       return { qty: qty * 240, unit: "ml", costFactor: 1 / 240 };
     case "piece":
+    case "pieces":
+    case "pcs":
+    case "quả":
+    case "chiếc":
     case "pieces":
     case "pc":
     case "pcs":
