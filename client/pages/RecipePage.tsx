@@ -7,7 +7,7 @@ import VoiceControl from "@/components/recipes/VoiceControl";
 import { MEALS } from "@/data/meals";
 import { toast } from "@/hooks/use-toast";
 import { pushLogAction, loadLogs, saveLogs, DayLog } from "@/lib/planner";
-import subs from "@/data/substitutions.json";
+import subs from "@/data/substitutions_updated.json";
 import { track } from "@/lib/analytics";
 import { useEffect as ReactUseEffect, useState as ReactUseState } from "react";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
@@ -20,9 +20,13 @@ function todayKey() {
 
 function findSubs(name: string): string[] | null {
   const n = name.toLowerCase();
-  for (const key of Object.keys(subs)) {
-    if (n.includes(key.toLowerCase()))
-      return (subs as Record<string, string[]>)[key];
+  const data: any = subs as any;
+  for (const key of Object.keys(data)) {
+    if (n.includes(key.toLowerCase())) {
+      const v = (data as any)[key];
+      if (Array.isArray(v)) return v as string[];
+      if (v && Array.isArray(v.alternatives)) return v.alternatives as string[];
+    }
   }
   return null;
 }
@@ -89,6 +93,10 @@ export default function RecipePage() {
   const [servings, setServings] = useState<number>(recipe?.servings || 2);
   const stepParam = Math.max(0, parseInt(sp.get("step") || "0", 10));
 
+  const title = recipe
+    ? recipe.title_vi || recipe.title_en || "Recipe"
+    : "Recipe";
+
   useEffect(() => {
     if (recipe) {
       track("view_recipe", { recipeId: recipe.id });
@@ -121,7 +129,6 @@ export default function RecipePage() {
       </div>
     );
 
-  const title = recipe.title_vi || recipe.title_en || "Recipe";
   const scale = servings / Math.max(1, recipe.servings || 1);
 
   const quickAdd = () => {
@@ -289,9 +296,46 @@ export default function RecipePage() {
                       }}
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <p className="text-sm leading-relaxed flex-1">
-                          {s.text}
-                        </p>
+                        <div className="flex-1">
+                          <p className="text-sm leading-relaxed">{s.text}</p>
+                          <div className="mt-1 flex items-center gap-2">
+                            {s.type && (
+                              <span
+                                className={`text-[10px] px-2 py-0.5 rounded-full border ${
+                                  s.type === "prep"
+                                    ? "bg-amber-100 text-amber-800"
+                                    : s.type === "cook"
+                                      ? "bg-emerald-100 text-emerald-800"
+                                      : "bg-sky-100 text-sky-800"
+                                }`}
+                              >
+                                {s.type}
+                              </span>
+                            )}
+                            {s.heat && (
+                              <span className="text-[10px] px-2 py-0.5 rounded-full border bg-orange-100 text-orange-800">
+                                {s.heat === "low"
+                                  ? "🔥"
+                                  : s.heat === "med"
+                                    ? "🔥🔥"
+                                    : "🔥🔥🔥"}
+                              </span>
+                            )}
+                            {Array.isArray(s.timers) && s.timers.length > 0 && (
+                              <div className="flex flex-wrap gap-1">
+                                {s.timers.map((sec: number, i: number) => (
+                                  <button
+                                    key={i}
+                                    className="rounded border px-2 py-0.5 text-[10px] hover:bg-secondary"
+                                    onClick={() => {}}
+                                  >
+                                    {Math.round(sec / 60)}m
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                         {s.time ? (
                           <div className="shrink-0">
                             <Timer seconds={s.time} />

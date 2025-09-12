@@ -192,19 +192,26 @@ export default function Cook() {
               />
               <h1 className="text-lg font-semibold">{step.text}</h1>
             </div>
-            {step.type && (
-              <span
-                className={`text-xs px-2 py-0.5 rounded-full border ${
-                  step.type === "prep"
-                    ? "bg-amber-100 text-amber-800"
-                    : step.type === "cook"
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-sky-100 text-sky-800"
-                }`}
-              >
-                {step.type}
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {step.type && (
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full border ${
+                    step.type === "prep"
+                      ? "bg-amber-100 text-amber-800"
+                      : step.type === "cook"
+                        ? "bg-emerald-100 text-emerald-800"
+                        : "bg-sky-100 text-sky-800"
+                  }`}
+                >
+                  {step.type}
+                </span>
+              )}
+              {step.heat && (
+                <span className="text-xs px-2 py-0.5 rounded-full border bg-orange-100 text-orange-800">
+                  {step.heat === "low" ? "🔥" : step.heat === "med" ? "🔥🔥" : "🔥🔥🔥"}
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex items-center justify-between gap-3">
             {step.time ? (

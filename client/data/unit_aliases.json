@@ -1,0 +1,10 @@
+{
+  "kg": ["kilogram", "kgs"],
+  "g": ["gram", "gr"],
+  "l": ["liter", "litre"],
+  "ml": ["milliliter", "mL"],
+  "piece": ["pcs", "pc", "chiếc", "quả"],
+  "tbsp->ml": 15,
+  "tsp->ml": 5,
+  "cup->ml": 240
+}

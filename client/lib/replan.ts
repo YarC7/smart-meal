@@ -1,5 +1,8 @@
 import { WeekPlan, filterMeals, categorize } from "@/lib/planner";
 import { MEALS, Meal } from "@/data/meals";
+import { filterMeals } from "@/lib/planner";
+import type { WeekPlan } from "@/lib/planner";
+import { categorize } from "@/lib/planner";
 
 export function mealCost(meal: Meal): number {
   return meal.ingredients.reduce(
@@ -27,6 +30,8 @@ function similarMacros(base: Meal, cand: Meal): boolean {
   );
 }
 
+import DIVERSITY_RULES_RAW from "@/data/diversity_rules.json";
+
 function getDiversityRulesSync() {
   try {
     const v = localStorage.getItem("smartmeal.diversity.rules.v1");
@@ -36,6 +41,16 @@ function getDiversityRulesSync() {
         minVegetablePerDay: number;
         preferTags: string[];
       };
+  } catch {}
+  try {
+    const raw: any = DIVERSITY_RULES_RAW as any;
+    const minVegetablePerDay =
+      raw.minVegetablePerDay ?? raw.minVeggiesPerDay ?? 1;
+    return {
+      maxRepeatPerWeek: Number(raw.maxRepeatPerWeek) || 2,
+      minVegetablePerDay,
+      preferTags: Array.isArray(raw.preferTags) ? raw.preferTags : ["low_cost", "vietnamese"],
+    };
   } catch {}
   return {
     maxRepeatPerWeek: 2,

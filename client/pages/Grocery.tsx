@@ -15,7 +15,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import BudgetProgressBar from "@/components/smartmeal/BudgetProgressBar";
-import subs from "@/data/substitutions.json";
+import subs from "@/data/substitutions_updated.json";
 import {
   Dialog,
   DialogContent,
@@ -35,7 +35,7 @@ import {
   saveUserPantry,
 } from "@/lib/catalog";
 import { track } from "@/lib/analytics";
-import { replanUnderBudget, estimateMealCost } from "@/lib/replan";
+import { replanUnderBudget, estimateMealCost, mealCost } from "@/lib/replan";
 import { getProteinPer100g } from "@/lib/nutrition";
 
 export default function Grocery() {
@@ -144,9 +144,13 @@ export default function Grocery() {
 
   function findSubs(name: string): string[] | null {
     const n = name.toLowerCase();
-    for (const key of Object.keys(subs)) {
-      if (n.includes(key.toLowerCase()))
-        return (subs as Record<string, string[]>)[key];
+    const data: any = subs as any;
+    for (const key of Object.keys(data)) {
+      if (n.includes(key.toLowerCase())) {
+        const v = (data as any)[key];
+        if (Array.isArray(v)) return v as string[];
+        if (v && Array.isArray(v.alternatives)) return v.alternatives as string[];
+      }
     }
     return null;
   }
@@ -476,7 +480,14 @@ export default function Grocery() {
                           },
                           profile.budgetPerWeek,
                         );
-                        track("budget_replan", { changed });
+                        const totalAfter = np.days
+                          .flatMap((d) => d.meals)
+                          .reduce((s, m) => s + mealCost(m), 0);
+                        track("budget_replan", {
+                          changed,
+                          budgetBefore: profile.budgetPerWeek,
+                          budgetAfter: totalAfter,
+                        });
                         localStorage.setItem(
                           "smartmeal.plan.v1",
                           JSON.stringify(np),
