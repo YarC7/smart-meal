@@ -93,7 +93,9 @@ export default function RecipePage() {
   const [servings, setServings] = useState<number>(recipe?.servings || 2);
   const stepParam = Math.max(0, parseInt(sp.get("step") || "0", 10));
 
-  const title = recipe ? recipe.title_vi || recipe.title_en || "Recipe" : "Recipe";
+  const title = recipe
+    ? recipe.title_vi || recipe.title_en || "Recipe"
+    : "Recipe";
 
   useEffect(() => {
     if (recipe) {
@@ -298,25 +300,35 @@ export default function RecipePage() {
                           <p className="text-sm leading-relaxed">{s.text}</p>
                           <div className="mt-1 flex items-center gap-2">
                             {s.type && (
-                              <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
-                                s.type === "prep"
-                                  ? "bg-amber-100 text-amber-800"
-                                  : s.type === "cook"
-                                    ? "bg-emerald-100 text-emerald-800"
-                                    : "bg-sky-100 text-sky-800"
-                              }`}>
+                              <span
+                                className={`text-[10px] px-2 py-0.5 rounded-full border ${
+                                  s.type === "prep"
+                                    ? "bg-amber-100 text-amber-800"
+                                    : s.type === "cook"
+                                      ? "bg-emerald-100 text-emerald-800"
+                                      : "bg-sky-100 text-sky-800"
+                                }`}
+                              >
                                 {s.type}
                               </span>
                             )}
                             {s.heat && (
                               <span className="text-[10px] px-2 py-0.5 rounded-full border bg-orange-100 text-orange-800">
-                                {s.heat === "low" ? "🔥" : s.heat === "med" ? "🔥🔥" : "🔥🔥🔥"}
+                                {s.heat === "low"
+                                  ? "🔥"
+                                  : s.heat === "med"
+                                    ? "🔥🔥"
+                                    : "🔥🔥🔥"}
                               </span>
                             )}
                             {Array.isArray(s.timers) && s.timers.length > 0 && (
                               <div className="flex flex-wrap gap-1">
                                 {s.timers.map((sec: number, i: number) => (
-                                  <button key={i} className="rounded border px-2 py-0.5 text-[10px] hover:bg-secondary" onClick={() => {}}>
+                                  <button
+                                    key={i}
+                                    className="rounded border px-2 py-0.5 text-[10px] hover:bg-secondary"
+                                    onClick={() => {}}
+                                  >
                                     {Math.round(sec / 60)}m
                                   </button>
                                 ))}

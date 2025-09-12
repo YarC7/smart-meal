@@ -67,7 +67,8 @@ export default function Recipes() {
       if (origin !== "All") {
         const tags = (r.tags || []).map((t) => t.toLowerCase());
         if (origin === "other") {
-          if (tags.includes("vietnamese") || tags.includes("western")) return false;
+          if (tags.includes("vietnamese") || tags.includes("western"))
+            return false;
         } else {
           if (!tags.includes(origin)) return false;
         }
@@ -109,7 +110,11 @@ export default function Recipes() {
 
       <div className="mt-3 flex items-center gap-3 flex-wrap">
         <label className="flex items-center gap-2 text-xs border rounded-md px-2 py-1 cursor-pointer">
-          <input type="checkbox" checked={favOnly} onChange={(e) => setFavOnly(e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={favOnly}
+            onChange={(e) => setFavOnly(e.target.checked)}
+          />
           Favorites only
         </label>
         <div className="inline-flex gap-1 rounded-md border p-1">
