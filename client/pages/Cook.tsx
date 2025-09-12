@@ -17,6 +17,7 @@ export default function Cook() {
   const recipe = id ? getRecipe(id) : undefined;
   const index = Math.max(0, parseInt(sp.get("step") || "0", 10));
   const [timers, setTimers] = useState<number[]>([]);
+  const [checks, setChecks] = useState<boolean[]>([]);
   const wakeRef = useRef<any>(null);
   const recogRef = useRef<any>(null);
 
@@ -25,6 +26,32 @@ export default function Cook() {
     [recipe],
   );
   const step = steps[index];
+
+  // Load persisted progress
+  useEffect(() => {
+    if (!recipe) return;
+    try {
+      const key = `smartmeal.cook.${recipe.id}.v1`;
+      const v = localStorage.getItem(key);
+      if (v) {
+        const obj = JSON.parse(v) as { index: number; checks: boolean[] };
+        setChecks(obj.checks || Array(steps.length).fill(false));
+      } else {
+        setChecks(Array(steps.length).fill(false));
+      }
+    } catch {
+      setChecks(Array(steps.length).fill(false));
+    }
+  }, [recipe, steps.length]);
+
+  // Persist on change
+  useEffect(() => {
+    if (!recipe || checks.length === 0) return;
+    try {
+      const key = `smartmeal.cook.${recipe.id}.v1`;
+      localStorage.setItem(key, JSON.stringify({ index, checks }));
+    } catch {}
+  }, [recipe, index, checks]);
 
   useEffect(() => {
     if (!recipe || !step) return;
@@ -68,8 +95,26 @@ export default function Cook() {
       const t = Array.from(e.results)
         .map((r: any) => r[0]?.transcript?.toLowerCase?.() || "")
         .join(" ");
-      if (t.includes("tiếp theo")) go(index + 1);
-      if (t.includes("quay lại")) go(index - 1);
+      if (/tiếp theo|next/.test(t)) go(index + 1);
+      if (/quay lại|lùi|back/.test(t)) go(index - 1);
+      const m = t.match(/bước\s*(\d+)/) || t.match(/step\s*(\d+)/);
+      if (m) {
+        const n = parseInt(m[1], 10);
+        if (!Number.isNaN(n)) go(n - 1);
+      }
+      const tm = t.match(/(hẹn giờ|timer)\s*(\d+)/) || t.match(/(phút)\s*(\d+)/);
+      if (tm) {
+        const mins = parseInt(tm[2] || tm[1], 10);
+        if (!Number.isNaN(mins)) setTimers((arr) => [...arr, mins * 60]);
+      }
+      if (/đã xong|hoàn thành|done|complete/.test(t)) {
+        setChecks((arr) => {
+          const next = [...arr];
+          next[index] = true;
+          return next;
+        });
+        go(index + 1);
+      }
     };
     rec.onerror = () => {};
     recogRef.current = rec;
@@ -125,7 +170,21 @@ export default function Cook() {
 
         <div className="rounded-xl border p-4 sm:p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-semibold mr-3">{step.text}</h1>
+            <div className="flex items-center gap-3 mr-3">
+              <input
+                type="checkbox"
+                checked={!!checks[index]}
+                onChange={(e) => {
+                  setChecks((arr) => {
+                    const next = [...arr];
+                    next[index] = e.target.checked;
+                    return next;
+                  });
+                }}
+                aria-label="Mark step complete"
+              />
+              <h1 className="text-lg font-semibold">{step.text}</h1>
+            </div>
             {step.type && (
               <span
                 className={`text-xs px-2 py-0.5 rounded-full border ${
@@ -142,11 +201,20 @@ export default function Cook() {
           </div>
           <div className="flex items-center justify-between gap-3">
             {step.time ? (
-              <Timer seconds={step.time} label={`Step ${index + 1}`} />
+              <div className="rounded-md border p-2">
+                <Timer
+                  seconds={step.time}
+                  label={`Step ${index + 1}`}
+                  onRunningChange={() => {}}
+                />
+              </div>
             ) : (
               <div className="text-sm text-foreground/60">No timer</div>
             )}
             <div className="flex items-center gap-2">
+              <div className="text-xs text-foreground/60">
+                {checks.filter(Boolean).length}/{steps.length} done
+              </div>
               <VoiceControl text={step.text} />
               {recogRef.current ? (
                 <button
